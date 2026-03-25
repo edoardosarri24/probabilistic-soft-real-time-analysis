@@ -1,0 +1,29 @@
+classDiagram
+
+    %% class
+    class Scheduler {
+        - taskSet: Taskset
+    }
+
+    class DeadlineMonotonic {
+    }
+
+    class Taskset {
+        - tasks: Set<Task>
+    }
+
+    class Task {
+        - period: Sampler
+        - deadline: Duration
+        - exectutionTime: Sampler
+        - priority: int
+    }
+
+    class MyClock {
+        - currentTime: Duration
+    }
+
+    %% relation
+    Scheduler  --> Taskset
+    Taskset *-- Task
+    Scheduler <|-- DeadlineMonotonic

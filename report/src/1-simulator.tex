@@ -1,0 +1,31 @@
+\chapter{Simulator}
+The simulator objective is to have a instrument to validate our ides and results. In particoular we want obtain sperimentally for each task, the distribution of job execution time.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Taskset Model}
+\label{sec:task_model}
+In this section we define the taskset model, i.e., how the tasks in the taskset can be define and which are their non functional charatteristics.
+From now on we suppose that:
+\begin{itemize}
+    \item Each task is indipendent from the others. This means that there aren't shared resources among two tasks.
+    \item Each task have a single elementary execution unit, i.e. each task have only one chunk.
+    \item The task execution time is defined probabilistically, i.e. the the execution time of each time is sampled from some distribution; this includes also the deterministic one.
+    \item The jobs execution time are i.i.d. (i.e., indipendent and identically distributed). This means that only one distribution that represents the job execution time pattern of a given task. Maybe at the end we will move towards a model in ehich we can define a reletion between job execution time.
+    \item Task can be both periodic and sporadic (i.e. the releases between two consecutive job of the same task are separated from a minimum inter-arrival time). This releasing time is defined in a probabilistic way by some distribution.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Input and Output}
+The simulator input are the following:
+\begin{itemize}
+    \item A fixed priority scheduling algorithm.
+    \item The taskset caratterized from the assumptions in Section~\ref{sec:task_model}.
+    \item The duration of the simulation.
+\end{itemize}
+
+\myskip
+
+The outputs are the Cumulative Distribution Function (CDF) and teh Probability Density Function (PDF) of the job execution time distribution for each task.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Implementation}
