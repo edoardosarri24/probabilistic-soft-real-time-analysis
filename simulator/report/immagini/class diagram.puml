@@ -1,0 +1,91 @@
+@startuml class diagram
+skinparam classAttributeIconSize 0
+
+' classi
+abstract class Scheduler {
+    - taskSet: Taskset
+    - resProtocol: ResourceProtocol
+    + schedule(): void <<abstract>>
+    + assignPriority(): void <<abstract>>
+}
+
+class MyClock <<final>> {
+    - currentTime: Duration
+    + getCurrentTime: void
+    + advanceTo: void
+    + advanceBy: void
+}
+
+class RMScheduler <<final>> {
+}
+
+class EDFScheduler <<final>> {
+}
+
+abstract class ResourceProtocol {
+    - protocol: ResAccessProtocol
+    + access: void
+    + prgress: void
+    + release: void
+}
+
+abstract class PCP {
+    - ceiling: Map<Resource, Integer>
+    - busyResources: List<Resource>
+}
+
+class PriorityCeilingProtocol <<final>> {
+}
+
+class NoResourceProtocol <<final>> {
+}
+
+class PriorityCeilingProtocolFaultAquireResource <<final>> {
+}
+
+class PriorityCeilingProtocolFaultSetPriority <<final>> {
+}
+
+class Resource <<final>> {
+    - blockedTasks: List<Task>
+}
+
+class Taskset <<final>> {
+    - tasks: Set<Task>
+    + purelyPeriodicCheck(): void
+}
+
+class Task <<final>> {
+    - period: Duration
+    - deadline: Duration
+    - chunks: List<Chunk>
+    - nominalPriority: int
+    - dinamicPrioriy: int
+    + execute(): Duration
+    + checkAndReset(): void
+    + purelyPeriodicCheck: void
+}
+
+class Chunk <<final>> {
+    - executionTime: Duration
+    - expectedExecutionTime: Duration
+    - resources: List<Resource>
+    + execute(): Duration
+    + reset(): void
+}
+
+' relazioni
+Scheduler <|-- RMScheduler
+Scheduler <|-- EDFScheduler
+Scheduler "*" --> "*" ResourceProtocol
+ResourceProtocol <|-- PCP
+ResourceProtocol <|-- NoResourceProtocol
+PCP <|-- PriorityCeilingProtocol
+PCP <|-- PriorityCeilingProtocolFaultAquireResource
+PCP <|-- PriorityCeilingProtocolFaultSetPriority
+Scheduler "*" --> "1" Taskset
+Taskset "1" *-- "1...*" Task
+Task "1" *-- "1...*" Chunk
+Chunk "*" -> "*" Resource
+
+@enduml
