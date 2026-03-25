@@ -9,22 +9,19 @@ import utils.sampler.ConstantSampler;
 
 import java.math.BigDecimal;
 import java.time.Duration;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
 public class TaskTest {
 
     private Task task;
-    private Chunk chunk;
 
     @Before
     public void setUP() {
-        this.chunk = new Chunk(0, new ConstantSampler(new BigDecimal(5)));
         this.task = new Task(
             10,
             10,
-            List.of(this.chunk));
+            new ConstantSampler(new BigDecimal(5)));
         MyClock.reset();
     }
 
@@ -39,7 +36,7 @@ public class TaskTest {
         Task task = new Task(
             10,
             3,
-            List.of(this.chunk));
+            new ConstantSampler(new BigDecimal(1)));
         assertThatThrownBy(() -> task.purelyPeriodicCheck())
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("Il task " + task.getId() + " non è puramente periodico: ha periodo PT0.01S e deadline PT0.003S");
@@ -52,44 +49,26 @@ public class TaskTest {
             .hasMessage("Il task " + this.task.getId() + " ha superato la deadline");
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void checkAndResetElse() {
-        List<Chunk> chunkToExectute = (List<Chunk>) ReflectionUtils.getField(this.task, "chunkToExecute");
-        assertThat(chunkToExectute)
-            .containsExactly(this.chunk);
-        Chunk newChunk = new Chunk(1, new ConstantSampler(new BigDecimal(1)));
-        chunkToExectute.add(newChunk);
-        assertThat(chunkToExectute)
-            .containsExactly(this.chunk, newChunk);
-        ReflectionUtils.setField(
-            this.task,
-            "isExecuted",
-            true);
+        Duration remainingExecutionTimeBefore = (Duration) ReflectionUtils.getField(this.task, "remainingExecutionTime");
+        assertThat(remainingExecutionTimeBefore)
+            .isEqualTo(Duration.ofMillis(5));
+            
+        ReflectionUtils.setField(this.task, "remainingExecutionTime", Duration.ZERO);
+        ReflectionUtils.setField(this.task, "isExecuted", true);
+        
         assertThat(this.task.getIsExecuted())
             .isTrue();
+            
         assertThatCode(() -> this.task.relasePeriodTask())
             .doesNotThrowAnyException();
-        chunkToExectute = (List<Chunk>) ReflectionUtils.getField(this.task, "chunkToExecute");
-        assertThat(chunkToExectute)
-            .hasSize(1)
-            .allMatch(chunk -> chunk.equals(this.chunk));
+            
+        Duration remainingExecutionTimeAfter = (Duration) ReflectionUtils.getField(this.task, "remainingExecutionTime");
+        assertThat(remainingExecutionTimeAfter)
+            .isEqualTo(Duration.ofMillis(5));
         assertThat(this.task.getIsExecuted())
             .isFalse();
-    }
-
-    @Test
-    public void constructorParent() {
-        Chunk chunk0 = new Chunk(0, new ConstantSampler(new BigDecimal(5)));
-        Chunk chunk1 = new Chunk(1, new ConstantSampler(new BigDecimal(5)));
-        Task task = new Task(
-            10,
-            10,
-            List.of(chunk0, chunk1));
-        assertThat(chunk0.getParent())
-            .isSameAs(task);
-        assertThat(chunk1.getParent())
-            .isSameAs(task);
     }
 
     @Test
@@ -97,9 +76,7 @@ public class TaskTest {
         Task task = new Task(
             10,
             10,
-            List.of(
-                new Chunk(0, new ConstantSampler(new BigDecimal(2))),
-                new Chunk(1, new ConstantSampler(new BigDecimal(3)))));
+            new ConstantSampler(new BigDecimal(5)));
         assertThat(task.utilizationFactor())
             .isEqualTo(0.5);
     }
@@ -109,7 +86,7 @@ public class TaskTest {
         Task task = new Task(
             10,
             12,
-            List.of(this.chunk));
+            new ConstantSampler(new BigDecimal(5)));
         assertThatThrownBy(() -> task.periodAndDealineCheck())
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("Il task "+ task.getId()
@@ -121,7 +98,7 @@ public class TaskTest {
         Task task = new Task(
             10,
             8,
-            List.of(this.chunk));
+            new ConstantSampler(new BigDecimal(5)));
         assertThatCode(() -> task.periodAndDealineCheck())
             .doesNotThrowAnyException();
     }
@@ -131,7 +108,7 @@ public class TaskTest {
         Task task = new Task(
             5,
             3,
-            List.of(this.chunk));
+            new ConstantSampler(new BigDecimal(1)));
         Duration output = task.nextDeadline();
         assertThat(output)
             .isEqualTo(Duration.ofMillis(3));

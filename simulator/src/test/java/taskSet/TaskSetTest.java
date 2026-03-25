@@ -1,7 +1,6 @@
 package taskSet;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,19 +18,18 @@ public class TaskSetTest {
 
     @Test
     public void notPurelyPeriodic() {
-        Chunk chunk = new Chunk(0, new ConstantSampler(new BigDecimal(0)));
         Task task0 = new Task(
             10,
             10,
-            List.of(chunk));
+            new ConstantSampler(new BigDecimal(0)));
         Task task1 = new Task(
             5,
             1,
-            List.of(chunk));
+            new ConstantSampler(new BigDecimal(0)));
         Task task2 = new Task(
             5,
             5,
-            List.of(chunk));
+            new ConstantSampler(new BigDecimal(0)));
         TaskSet taskSet = new TaskSet(Set.of(task0, task1, task2));
         assertThatThrownBy(() -> taskSet.purelyPeriodicCheck())
             .isInstanceOf(IllegalArgumentException.class)
@@ -43,19 +41,15 @@ public class TaskSetTest {
         Task task0 = new Task(
             10,
             10,
-            List.of(
-                new Chunk(0, new ConstantSampler(new BigDecimal(1))),
-                new Chunk(0, new ConstantSampler(new BigDecimal(2)))));
+            new ConstantSampler(new BigDecimal(3)));
         Task task1 = new Task(
             5,
             5,
-            List.of(new Chunk(1, new ConstantSampler(new BigDecimal(1)))));
+            new ConstantSampler(new BigDecimal(1)));
         Task task2 = new Task(
             50,
             50,
-            List.of(
-                new Chunk(2, new ConstantSampler(new BigDecimal(8))),
-                new Chunk(2, new ConstantSampler(new BigDecimal(2)))));
+            new ConstantSampler(new BigDecimal(10)));
         TaskSet taskSet = new TaskSet(Set.of(task0, task1, task2));
         assertThat(taskSet.hyperbolicBoundTest())
             .isTrue();
@@ -66,19 +60,15 @@ public class TaskSetTest {
         Task task0 = new Task(
             10,
             10,
-            List.of(
-                new Chunk(0, new ConstantSampler(new BigDecimal(2))),
-                new Chunk(0, new ConstantSampler(new BigDecimal(3)))));
+            new ConstantSampler(new BigDecimal(5)));
         Task task1 = new Task(
             5,
             5,
-            List.of(new Chunk(1, new ConstantSampler(new BigDecimal(1)))));
+            new ConstantSampler(new BigDecimal(1)));
         Task task2 = new Task(
             20,
             20,
-            List.of(
-                new Chunk(2, new ConstantSampler(new BigDecimal(8))),
-                new Chunk(2, new ConstantSampler(new BigDecimal(2)))));
+            new ConstantSampler(new BigDecimal(10)));
         TaskSet taskSet = new TaskSet(Set.of(task0, task1, task2));
         assertThat(taskSet.hyperbolicBoundTest())
             .isFalse();
@@ -89,19 +79,15 @@ public class TaskSetTest {
         Task task0 = new Task(
             10,
             10,
-            List.of(
-                new Chunk(0, new ConstantSampler(new BigDecimal(2))),
-                new Chunk(0, new ConstantSampler(new BigDecimal(3)))));
+            new ConstantSampler(new BigDecimal(5)));
         Task task1 = new Task(
             5,
             4,
-            List.of(new Chunk(1, new ConstantSampler(new BigDecimal(1)))));
+            new ConstantSampler(new BigDecimal(1)));
         Task task2 = new Task(
             20,
             20,
-            List.of(
-                new Chunk(2, new ConstantSampler(new BigDecimal(8))),
-                new Chunk(2, new ConstantSampler(new BigDecimal(2)))));
+            new ConstantSampler(new BigDecimal(10)));
         TaskSet taskSet = new TaskSet(Set.of(task0, task1, task2));
         assertThatThrownBy(() -> taskSet.hyperbolicBoundTest())
             .isInstanceOf(IllegalArgumentException.class)

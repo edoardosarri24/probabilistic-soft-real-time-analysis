@@ -12,5 +12,6 @@ fi
 # Execute the script
 cd simulator || { echo "Errore: cartella 'simulator' non trovata"; exit 1; }
 sdk use java 24.0.2-tem
+mvn test
 mvn clean compile exec:java -U
 cd ..

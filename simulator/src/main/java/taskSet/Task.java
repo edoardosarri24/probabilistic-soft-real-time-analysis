@@ -2,8 +2,9 @@ package taskSet;
 
 import java.math.BigDecimal;
 import java.time.Duration;
-import java.util.LinkedList;
-import java.util.List;
+
+import org.oristool.simulator.samplers.Sampler;
+
 import exeptions.DeadlineMissedException;
 import scheduler.Scheduler;
 import utils.MyClock;
@@ -17,29 +18,30 @@ public class Task {
     private final int id;
     private final Duration period;
     private final Duration deadline;
-    private final List<Chunk> chunks;
+    private final Sampler executionTimeSampler;
+    private Duration executionTime;
+    private Duration remainingExecutionTime;
     private int nominalPriority;
     private int dinamicPriority;
 
     private static int idCounter = 1;
-    private List<Chunk> chunkToExecute;
     private boolean isExecuted = false;
 
     // CONSTRUCTOR
     /**
-     * Constructs a new Task with the specified period, deadline, and list of chunks.
+     * Constructs a new Task with the specified period, deadline, and execution time sampler.
      *
-     * @param period   the period of the task in milliseconds
-     * @param deadline the deadline of the task in milliseconds
-     * @param chunks   the list of Chunk objects associated with this task
+     * @param period                the period of the task in milliseconds
+     * @param deadline              the deadline of the task in milliseconds
+     * @param executionTimeSampler the sampler for the execution time
      */
-    public Task(double period, double deadline, List<Chunk> chunks) {
+    public Task(double period, double deadline, Sampler executionTimeSampler) {
         this.id = idCounter++;
         this.period = SampleDuration.sample(new ConstantSampler(new BigDecimal(period)));
         this.deadline = SampleDuration.sample(new ConstantSampler(new BigDecimal(deadline)));
-        this.chunks = chunks;
-        this.chunkToExecute = new LinkedList<>(chunks);
-        this.initChunkParent();
+        this.executionTimeSampler = executionTimeSampler;
+        this.executionTime = SampleDuration.sample(executionTimeSampler);
+        this.remainingExecutionTime = this.executionTime;
     }
 
     // GETTER AND SETTER
@@ -67,17 +69,9 @@ public class Task {
         return this.id;
     }
 
-    public List<Chunk> getChunks() {
-        return this.chunks;
-    }
-
     public void initPriority(int priority) {
         this.nominalPriority = priority;
         this.dinamicPriority = priority;
-    }
-
-    public void addChunkToExecute(Chunk chunk) {
-        this.chunkToExecute.addFirst(chunk);
     }
 
     public Duration getDeadline() {
@@ -90,25 +84,21 @@ public class Task {
 
     // METHOD
     public Duration execute(Duration availableTime, Scheduler scheduler) throws DeadlineMissedException {
-        Duration remainingTime = availableTime;
-        while (remainingTime.isPositive()) {
-            if (this.chunkToExecute.isEmpty()) {
-                this.checkDeadlineMiss();
-                this.isExecuted = true;
-                MyLogger.log("<" + Utils.printCurrentTime() + ", complete " + this.toString() + ">");
-                break;
-            }
-            Chunk currentChunk = this.chunkToExecute.removeFirst();
-            Duration executedTime = currentChunk.execute(remainingTime);
-            remainingTime = remainingTime.minus(executedTime);
-            if (this.chunkToExecute.isEmpty()) {
-                this.checkDeadlineMiss();
-                this.isExecuted = true;
-                MyLogger.log("<" + Utils.printCurrentTime() + ", complete " + this.toString() + ">");
-                break;
-            }
+        if (availableTime.compareTo(this.remainingExecutionTime) < 0) {
+            this.remainingExecutionTime = this.remainingExecutionTime.minus(availableTime);
+            MyLogger.log("<" + Utils.printCurrentTime() + ", execute " + this.toString() + ">");
+            MyClock.getInstance().advanceBy(availableTime);
+            return availableTime;
+        } else {
+            Duration executedTime = this.remainingExecutionTime;
+            MyLogger.log("<" + Utils.printCurrentTime() + ", execute " + this.toString() + ">");
+            MyClock.getInstance().advanceBy(executedTime);
+            this.checkDeadlineMiss();
+            this.isExecuted = true;
+            MyLogger.log("<" + Utils.printCurrentTime() + ", complete " + this.toString() + ">");
+            this.remainingExecutionTime = Duration.ZERO;
+            return executedTime;
         }
-        return availableTime.minus(remainingTime);
     }
 
     void purelyPeriodicCheck() {
@@ -122,19 +112,13 @@ public class Task {
     public void relasePeriodTask() throws DeadlineMissedException {
         if (!this.isExecuted)
             throw new DeadlineMissedException("Il task " + this.id + " ha superato la deadline");
-        this.chunkToExecute = new LinkedList<>(this.chunks);
-        this.isExecuted = false;
+        this.reset();
         MyLogger.log("<" + Utils.printCurrentTime() + ", release " + this.toString() + ">");
-        this.chunkToExecute.forEach(Chunk::reset);
     }
 
     double utilizationFactor() {
-        long executionTime = this.chunks.stream()
-            .map(Chunk::getExecutionTime)
-            .mapToLong(Duration::toNanos)
-            .sum();
         long period = this.period.toNanos();
-        return (double) executionTime / period;
+        return (double) this.executionTime.toNanos() / period;
     }
 
     void periodAndDealineCheck() {
@@ -158,9 +142,9 @@ public class Task {
     }
 
     void reset() {
-        this.chunkToExecute = new LinkedList<>(this.chunks);
+        this.executionTime = SampleDuration.sample(executionTimeSampler);
+        this.remainingExecutionTime = this.executionTime;
         this.isExecuted = false;
-        this.chunkToExecute.forEach(Chunk::reset);
     }
 
     // OBJECT METHODS
@@ -185,10 +169,6 @@ public class Task {
     }
 
     // HELPER
-    private void initChunkParent() {
-        this.chunks.forEach(chunk -> chunk.setParent(this));
-    }
-
     private void checkDeadlineMiss() throws DeadlineMissedException {
         long numberOfPeriods = MyClock.getInstance().getCurrentTime().toNanos() / this.period.toNanos();
         if (MyClock.getInstance().getCurrentTime().toNanos() > this.period.toNanos()*numberOfPeriods+this.deadline.toNanos())
