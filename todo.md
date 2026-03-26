@@ -1,6 +1,3 @@
-- Controllo di feasibility adeguato per la schedulabilità del taskset. Metterlo nella relazione da qualche parte.
-- mettere della simulazione
-
 # Task
 - chiarire cosa e quando sono utilizzati i metodi purelyPeriodicCheck, utilizationFactor e periodAndDealineCheck.
 - il periodo non deve essere una duration ma una distribuzione.
@@ -16,6 +13,9 @@
 
 # Simulator
 - sistemare il readme in simulator/
+- documentare come utilizzare il simulatore.
+- documentare il logging.
+- documentare il rilevamento delle deadline.
 
 # codice
 - aggiugere controlli?
@@ -26,9 +26,4 @@
     In questro caso:
     - Rimuovere i metodi scheduleDataset e reset in Scheduler.
     - Modificare il MyClock.
-
-# da fare
-- rimuovi get instance
-
-# dove ero
-- pipeline
+- al momento l'istante critico della simulazione è $t=0$.

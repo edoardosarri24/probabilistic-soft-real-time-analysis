@@ -1,29 +1,48 @@
 classDiagram
-
-    %% class
     class Scheduler {
-        - taskSet: Taskset
+        <<abstract>>
+        -taskSet: TaskSet
+        +analyze() void
+        #assignPriority() void
     }
 
-    class DeadlineMonotonic {
+    class DMScheduler {
+        #assignPriority() void
     }
 
-    class Taskset {
-        - tasks: Set<Task>
+    class TaskSet {
+        -tasks: Set~Task~
     }
 
     class Task {
-        - period: Sampler
-        - deadline: Duration
-        - exectutionTime: Sampler
-        - priority: int
+        -period: Duration
+        -deadline: Duration
+        -executionTimeSampler: Sampler
+        -priority: int
+        +releaseJob(Duration releaseTime) Job
+    }
+
+    class Job {
+        -task: Task
+        -releaseTime: Duration
+        -absoluteDeadline: Duration
+        -remainingExecutionTime: Duration
+        -isCompleted: boolean
+        +execute(Duration availableTime) Duration
     }
 
     class MyClock {
-        - currentTime: Duration
+        -currentTime: Duration
+        +reset() MyClock
+        +getCurrentTime() Duration
+        +advanceTo(Duration newTime) void
+        +advanceBy(Duration delta) void
     }
 
-    %% relation
-    Scheduler  --> Taskset
-    Taskset *-- Task
-    Scheduler <|-- DeadlineMonotonic
+    %% Relations
+    Scheduler --> TaskSet
+    Scheduler o-- Job : readyJobs
+    TaskSet *-- Task
+    Task -- Job
+    Job --> Task
+    Scheduler <|-- DMScheduler

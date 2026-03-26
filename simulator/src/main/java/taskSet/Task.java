@@ -20,6 +20,11 @@ public class Task {
     private static int idCounter = 1;
 
     // Constructor
+    /**
+     * @param period Must be express in milliseconds.
+     * @param deadline Must be express in milliseconds. It's the relative deadline.
+     * @param executionTimeSampler The distribution from wich the execution time will be sampled.
+     */
     public Task(double period, double deadline, Sampler executionTimeSampler) {
         this.id = idCounter++;
         this.period = SampleDuration.sample(new ConstantSampler(new BigDecimal(period)));

@@ -31,7 +31,7 @@ public class TaskSetTest {
             5,
             5,
             new ConstantSampler(new BigDecimal(0)));
-        TaskSet taskSet = new TaskSet(Set.of(task0, task1, task2));
+        TaskSet taskSet = new TaskSet(task0, task1, task2);
         assertThatThrownBy(() -> taskSet.purelyPeriodicCheck())
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("Il task " + task1.getId() + " non è puramente periodico: ha periodo PT0.005S e deadline PT0.001S");
@@ -51,7 +51,7 @@ public class TaskSetTest {
             50,
             50,
             new ConstantSampler(new BigDecimal(10)));
-        TaskSet taskSet = new TaskSet(Set.of(task0, task1, task2));
+        TaskSet taskSet = new TaskSet(task0, task1, task2);
         assertThat(taskSet.hyperbolicBoundTest())
             .isTrue();
     }
@@ -70,7 +70,7 @@ public class TaskSetTest {
             20,
             20,
             new ConstantSampler(new BigDecimal(10)));
-        TaskSet taskSet = new TaskSet(Set.of(task0, task1, task2));
+        TaskSet taskSet = new TaskSet(task0, task1, task2);
         assertThat(taskSet.hyperbolicBoundTest())
             .isFalse();
     }
@@ -89,7 +89,7 @@ public class TaskSetTest {
             20,
             20,
             new ConstantSampler(new BigDecimal(10)));
-        TaskSet taskSet = new TaskSet(Set.of(task0, task1, task2));
+        TaskSet taskSet = new TaskSet(task0, task1, task2);
         assertThatThrownBy(() -> taskSet.hyperbolicBoundTest())
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("Il task " + task1.getId() + " non è puramente periodico: ha periodo PT0.005S e deadline PT0.004S");

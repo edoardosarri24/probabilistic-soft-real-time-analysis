@@ -1,5 +1,4 @@
 import java.math.BigDecimal;
-import java.util.Set;
 
 import org.oristool.simulator.samplers.UniformSampler;
 
@@ -23,7 +22,7 @@ public class Main {
             80,
             80,
             new UniformSampler(new BigDecimal(8), new BigDecimal(9.5)));
-        TaskSet taskSet = new TaskSet(Set.of(task1, task2, task3));
+        TaskSet taskSet = new TaskSet(task1, task2, task3);
         Scheduler rm = new DMScheduler(taskSet, 1500);
         rm.analyze();
     }

@@ -8,7 +8,7 @@ import java.time.Duration;
  */
 public class Job {
     private final Task task;
-    private final int jobId;
+    private final int id;
     private final Duration releaseTime;
     private final Duration absoluteDeadline;
     private Duration remainingExecutionTime;
@@ -16,7 +16,7 @@ public class Job {
 
     public Job(Task task, int jobId, Duration releaseTime, Duration executionTime) {
         this.task = task;
-        this.jobId = jobId;
+        this.id = jobId;
         this.releaseTime = releaseTime;
         this.absoluteDeadline = releaseTime.plus(task.getDeadline());
         this.remainingExecutionTime = executionTime;
@@ -26,8 +26,8 @@ public class Job {
         return this.task;
     }
 
-    public int getJobId() {
-        return this.jobId;
+    public int getId() {
+        return this.id;
     }
 
     public Duration getReleaseTime() {
@@ -81,7 +81,7 @@ public class Job {
     // Objects methods
     @Override
     public String toString() {
-        return task.toString() + "/" + this.jobId;
+        return task.toString() + "/" + this.id;
     }
 
     @Override

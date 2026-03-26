@@ -9,6 +9,7 @@ To test the scheduler algorithm implementation the simulator produces a file, na
 In this section we define the taskset model, i.e., how the tasks in the taskset can be define and which are their non functional charatteristics.
 From now on we suppose that:
 \begin{itemize}
+    \item We suppose to have a single core CPU.
     \item Each task is indipendent from the others. This means that there aren't shared resources among two tasks.
     \item Each task have a single elementary execution unit, i.e. each task have only one chunk.
     \item The task execution time is defined probabilistically, i.e. the the execution time of each time is sampled from some distribution; this includes also the deterministic one.
@@ -31,18 +32,22 @@ The outputs are the Cumulative Distribution Function (CDF) and teh Probability D
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}
-This kind of simulation must be totally deterministic; for this reason all timing aspects have been handle in a discret way using the \texttt{Duration} Java type. In this way we can handle the complexity of small duration with an with abstraction level.
+In Figure~\ref{fig:class_diagram} is shown the class diagram of the simulator. The following elements are the core component of the simulator.
 
-\myskip
-
-The following elements are the core component of the simulator.
 \begin{itemize}
     \item[\textbf{TaskSet}] Is a simple set of all task.
     \item[\textbf{Task}] The class \texttt{Task.java} represent a task. We can see it like the project, the static element modeling the task caracteristic: period, deadline and the exectution time; the first two are expressed by \texttt{Duration} objects, where the time must be expressed in milliseconds, while the last is a Sirio \texttt{Sampler}.
-    \item[\textbf{Job}] The class \texttt{Job.java} represent a task instance. While a Task contain only the task specifications, a Job contains the active state: its release time, its absolute deadline, the remaining execution time and the information about its completness.
+    \item[\textbf{Job}] The class \texttt{Job.java} represent a task instance. While a Task contain only the task specifications, a Job contains the active state: its release time, its absolute deadline, the remaining execution time and the information about its completness. It handle also the execution activity.
     \item[\textbf{Scheduler}] The class \texttt{Scheduler.java} represent the heart of the simulation. It handles the main structures: \textit{readyJobs}, a ready to execute job queque (i.e., a \texttt{TreeSet}) ordered by their priority; \textit{activeJobs}, maintain for each task the job that are actually in life, usefull to identifies a deadline miss; \textit{events}, a list (i.e., \texttt{LinkedList}) with all interest istant for the simulation, i.e. the multiple of all tasks period.
     \item[\textbf{DMScheduler}] Is a specialization of the general Scheduler. It handles the priority assignment. For Deadline Monotonic the priority of a task is assigned in revers ordering respect its deadline.
 \end{itemize}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/1-simulator/class diagram.pdf}
+    \caption{Simulator class diagram.}
+    \label{fig:class_diagram}
+\end{figure}
 
 \subsection{Utilies}
 Let's observe the utilities used by more classes:
@@ -53,8 +58,21 @@ Let's observe the utilities used by more classes:
 \end{itemize}
 
 \subsection{Flow}
-Let's analyse the scheduler flow.
+Let's analyse the scheduler flow. This follow the steps below:
+\begin{enumerate}
+    \item Release the first job of all tasks.
+    \item Calculate the relevant events: these are all the deadline tasks multiples.
+    \item Iterate throught all events.
+    \begin{enumerate}
+        \item Calculate the available time from now to the next event.
+        \item Distribute the available time among all ready jobs.
+        \item Advance to the next event.
+        \item Release that tasks which deadline is a divisor of the current time.
+    \end{enumerate}
+\end{enumerate}
 
 \subsection{Time}
 \label{subsec:simulator_time}
+This kind of simulation must be totally deterministic; for this reason all timing aspects have been handle in a discret way using the \texttt{Duration} Java type. In this way we can handle the complexity of small duration with an with abstraction level.
+
 We assume that the time is taken in input and returned in output in millisecond. During the execution, to obtain the maximum precision, it is elaborated in nanoseconds.

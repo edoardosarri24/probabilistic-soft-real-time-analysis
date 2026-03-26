@@ -1,4 +1,4 @@
-trace.log
+trace*.log
 .DS_Store
 target/
 report/build/

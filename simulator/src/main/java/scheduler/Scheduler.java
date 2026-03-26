@@ -30,6 +30,10 @@ public abstract class Scheduler {
     private final Duration simulationDuration;
 
     // Constructor
+    /**
+     * @param taskSet The taskset that will be schedule.
+     * @param simulationDuration Must be expressed in milliseconds.
+     */
     public Scheduler(TaskSet taskSet, double simulationDuration) {
         this.taskSet = taskSet;
         this.simulationDuration = SampleDuration.sample(new ConstantSampler(new BigDecimal(simulationDuration)));
@@ -86,14 +90,6 @@ public abstract class Scheduler {
     }
 
     // Helper
-    private List<Duration> initEvents() {
-        List<Duration> periods = new LinkedList<>();
-        for (Task task : this.taskSet.getTasks())
-            periods.add(task.getPeriod());
-        List<Duration> events = Utils.generatePeriodUpToMax(periods, this.simulationDuration);
-        return events;
-    }
-
     private void releaseFirstJobs() {
         this.readyJobs = new TreeSet<>(Comparator.comparingInt(Job::getPriority));
         for (Task task : this.taskSet.getTasks()) {
@@ -102,6 +98,14 @@ public abstract class Scheduler {
             this.addReadyJob(firstJob);
             MyLogger.log("<" + MyClock.printCurrentTime() + ", release " + firstJob.toString() + ">");
         }
+    }
+
+    private List<Duration> initEvents() {
+        List<Duration> periods = new LinkedList<>();
+        for (Task task : this.taskSet.getTasks())
+            periods.add(task.getPeriod());
+        List<Duration> events = Utils.generatePeriodUpToMax(periods, this.simulationDuration);
+        return events;
     }
 
     private void distributeAvailableTime(Duration availableTime) throws DeadlineMissedException {

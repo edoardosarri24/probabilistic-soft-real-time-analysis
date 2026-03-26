@@ -7,8 +7,8 @@ public class TaskSet {
     private final Set<Task> tasks;
 
     // Constructor
-    public TaskSet(Set<Task> tasks) {
-        this.tasks = tasks;
+    public TaskSet(Task... tasks) {
+        this.tasks = Set.of(tasks);
     }
 
     // Getter and Setter
