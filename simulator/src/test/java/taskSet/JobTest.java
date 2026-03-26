@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import sampler.ConstantSampler;
-import utils.MyClock;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -21,7 +20,6 @@ public class JobTest {
             10,
             10,
             new ConstantSampler(new BigDecimal(5)));
-        MyClock.reset();
     }
 
     @Test

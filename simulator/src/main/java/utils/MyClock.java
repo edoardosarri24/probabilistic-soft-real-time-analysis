@@ -7,41 +7,43 @@ import java.time.Duration;
 /**
  * Represents the global clock of the system.
  * <p>
- * This singleton class provides methods to access and manipulate the current global time,
+ * This class provides methods to access and manipulate the current time,
  * allowing to advance the clock to a specific time or by a given duration.
  */
 public final class MyClock {
 
-    private static MyClock INSTANCE = new MyClock();
-    private Duration currentTime = Duration.ZERO;
+    private Duration currentTime;
 
-    private MyClock() {}
-
-    public static MyClock reset() {
-        INSTANCE = new MyClock();
-        return INSTANCE;
+    public MyClock() {
+        this(Duration.ZERO);
     }
 
-    public static Duration getCurrentTime() {
-        return INSTANCE.currentTime;
+    public MyClock(Duration initialTime) {
+        this.currentTime = initialTime;
     }
 
-    public static void advanceTo(Duration newTime) {
-        INSTANCE.currentTime = newTime;
+    public Duration getCurrentTime() {
+        return this.currentTime;
     }
 
-    public static void advanceBy(Duration delta) {
+    public void advanceTo(Duration newTime) {
+        if (newTime.compareTo(currentTime) < 0)
+            throw new IllegalArgumentException("Cannot advance to a past time");
+        this.currentTime = newTime;
+    }
+
+    public void advanceBy(Duration delta) {
         if (delta.isNegative())
             throw new IllegalArgumentException("Cannot advance by negative duration");
-        INSTANCE.currentTime = INSTANCE.currentTime.plus(delta);
+        this.currentTime = this.currentTime.plus(delta);
     }
 
     /**
-    *Returns the current time as a string representing milliseconds with three decimal places.
-    * @return A string representation of the current time in milliseconds, rounded to three decimal places
-    */
-    public static String printCurrentTime() {
-        long nanos = INSTANCE.currentTime.toNanos();
+     * Returns the current time as a string representing milliseconds with three decimal places.
+     * @return A string representation of the current time in milliseconds, rounded to three decimal places
+     */
+    public String printCurrentTime() {
+        long nanos = this.currentTime.toNanos();
         BigDecimal millis = new BigDecimal(nanos).divide(BigDecimal.TEN.pow(6), 3, RoundingMode.HALF_UP);
         return "" + millis;
     }

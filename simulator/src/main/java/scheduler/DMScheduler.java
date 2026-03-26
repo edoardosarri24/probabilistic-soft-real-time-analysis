@@ -6,12 +6,14 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import taskSet.Task;
 import taskSet.TaskSet;
+import utils.MyClock;
+import utils.logger.TraceLogger;
 
 public final class DMScheduler extends Scheduler {
 
     // Constructor
-    public DMScheduler(TaskSet taskSet, double simulationDuration) {
-        super(taskSet, simulationDuration);
+    public DMScheduler(TaskSet taskSet, double simulationDuration, MyClock clock, TraceLogger logger) {
+        super(taskSet, simulationDuration, clock, logger);
         this.getTaskSet().purelyPeriodicCheck();
     }
 

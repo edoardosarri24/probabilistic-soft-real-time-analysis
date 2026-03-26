@@ -2,22 +2,17 @@ package utils;
 
 import java.time.Duration;
 import java.util.List;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.*;
 
 public class UtilsTest {
 
-    @Before
-    public void setUp() {
-        MyClock.reset();
-    }
-
     @Test
     public void durationPrinter() {
-        MyClock.advanceTo(Duration.ofMillis(5));
-        assertThat(MyClock.printCurrentTime())
+        MyClock clock = new MyClock();
+        clock.advanceTo(Duration.ofMillis(5));
+        assertThat(clock.printCurrentTime())
             .isEqualTo("5.000");
     }
 

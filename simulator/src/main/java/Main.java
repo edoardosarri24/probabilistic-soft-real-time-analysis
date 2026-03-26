@@ -7,6 +7,8 @@ import scheduler.DMScheduler;
 import scheduler.Scheduler;
 import taskSet.Task;
 import taskSet.TaskSet;
+import utils.MyClock;
+import utils.logger.MyLogger;
 
 public class Main {
     public static void main(String[] args) throws DeadlineMissedException {
@@ -23,8 +25,11 @@ public class Main {
             80,
             new UniformSampler(new BigDecimal(8), new BigDecimal(9.5)));
         TaskSet taskSet = new TaskSet(task1, task2, task3);
-        Scheduler rm = new DMScheduler(taskSet, 1500);
-        rm.analyze();
+        MyClock clock = new MyClock();
+        MyLogger logger = new MyLogger();
+        Scheduler dm = new DMScheduler(taskSet, 1500, clock, logger);
+        dm.analyze();
+        logger.close();
     }
 
 }

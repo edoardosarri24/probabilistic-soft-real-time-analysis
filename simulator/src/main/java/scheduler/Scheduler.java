@@ -17,7 +17,7 @@ import taskSet.TaskSet;
 import utils.MyClock;
 import utils.SampleDuration;
 import utils.Utils;
-import utils.logger.MyLogger;
+import utils.logger.TraceLogger;
 
 public abstract class Scheduler {
 
@@ -29,14 +29,19 @@ public abstract class Scheduler {
     private Job lastJobExecuted;
     private final Duration simulationDuration;
 
+    protected final MyClock clock;
+    protected final TraceLogger logger;
+
     // Constructor
     /**
      * @param taskSet The taskset that will be schedule.
      * @param simulationDuration Must be expressed in milliseconds.
      */
-    public Scheduler(TaskSet taskSet, double simulationDuration) {
+    public Scheduler(TaskSet taskSet, double simulationDuration, MyClock clock, TraceLogger logger) {
         this.taskSet = taskSet;
         this.simulationDuration = SampleDuration.sample(new ConstantSampler(new BigDecimal(simulationDuration)));
+        this.clock = clock;
+        this.logger = logger;
         this.assignPriority();
     }
 
@@ -62,31 +67,16 @@ public abstract class Scheduler {
      * Entry point for the analysis of the scheduler.
      */
     public final void analyze() throws DeadlineMissedException {
-        this.reset();
         this.releaseFirstJobs();
         List<Duration> events = initEvents();
         while (!events.isEmpty()) {
             Duration nextEvent = events.removeFirst();
-            Duration availableTime = nextEvent.minus(MyClock.getCurrentTime());
+            Duration availableTime = nextEvent.minus(clock.getCurrentTime());
             this.distributeAvailableTime(availableTime);
-            MyClock.advanceTo(nextEvent);
+            clock.advanceTo(nextEvent);
             this.releaseJobOfPeriodTasks();
         }
-        MyLogger.log("<" + MyClock.printCurrentTime() + ", end>\n");
-    }
-
-    public final void scheduleDataset(int trace) {
-        for (int i=0; i<trace; i++) {
-            try {
-                this.analyze();
-            } catch (DeadlineMissedException e) {
-                continue;
-            }
-        }
-    }
-
-    public void addReadyJob(Job job) {
-        this.readyJobs.add(job);
+        logger.log("<" + clock.printCurrentTime() + ", end>\n");
     }
 
     // Helper
@@ -95,8 +85,8 @@ public abstract class Scheduler {
         for (Task task : this.taskSet.getTasks()) {
             Job firstJob = task.releaseJob(Duration.ZERO);
             activeJobs.put(task, firstJob);
-            this.addReadyJob(firstJob);
-            MyLogger.log("<" + MyClock.printCurrentTime() + ", release " + firstJob.toString() + ">");
+            this.readyJobs.add(firstJob);
+            logger.log("<" + clock.printCurrentTime() + ", release " + firstJob.toString() + ">");
         }
     }
 
@@ -113,24 +103,24 @@ public abstract class Scheduler {
             Job highPriorityJob = this.readyJobs.pollFirst();
             // Preemption handling.
             if (this.lastJobIsPreempted(highPriorityJob))
-                MyLogger.log("<" + MyClock.printCurrentTime() + ", preempt " + this.lastJobExecuted.toString() + ">");
+                logger.log("<" + clock.printCurrentTime() + ", preempt " + this.lastJobExecuted.toString() + ">");
             // Execution
-            MyLogger.log("<" + MyClock.printCurrentTime() + ", execute " + highPriorityJob.toString() + ">");
+            logger.log("<" + clock.printCurrentTime() + ", execute " + highPriorityJob.toString() + ">");
             Duration timeToExecute = availableTime.compareTo(highPriorityJob.getRemainingExecutionTime()) < 0
                 ? availableTime : highPriorityJob.getRemainingExecutionTime();
             Duration executedTime = highPriorityJob.execute(timeToExecute);
-            MyClock.advanceBy(executedTime);
-            if (highPriorityJob.isDeadlineMissed(MyClock.getCurrentTime())) {
-                MyLogger.log("<" + MyClock.printCurrentTime() + ", deadlineMiss " + highPriorityJob.toString() + ">\n");
+            clock.advanceBy(executedTime);
+            if (highPriorityJob.isDeadlineMissed(clock.getCurrentTime())) {
+                logger.log("<" + clock.printCurrentTime() + ", deadlineMiss " + highPriorityJob.toString() + ">\n");
                 throw new DeadlineMissedException("Il task " + highPriorityJob.getTask().getId() + " ha superato la deadline");
             }
             if (highPriorityJob.isCompleted())
-                MyLogger.log("<" + MyClock.printCurrentTime() + ", complete " + highPriorityJob.toString() + ">");
+                logger.log("<" + clock.printCurrentTime() + ", complete " + highPriorityJob.toString() + ">");
             if (executedTime.isPositive())
                 this.lastJobExecuted = highPriorityJob;
             availableTime = availableTime.minus(executedTime);
             if (!highPriorityJob.isCompleted() && !this.blockedJobs.contains(highPriorityJob))
-                this.addReadyJob(highPriorityJob);
+                this.readyJobs.add(highPriorityJob);
         }
     }
 
@@ -141,32 +131,22 @@ public abstract class Scheduler {
     }
 
     private void releaseJobOfPeriodTasks() throws DeadlineMissedException {
-        Duration currentTime = MyClock.getCurrentTime();
+        Duration currentTime = clock.getCurrentTime();
         for (Task task : this.taskSet.getTasks()) {
             // Check if it's time to release a new job.
             if (currentTime.toNanos() % task.getPeriod().toNanos() == 0) {
                 Job activeJob = activeJobs.get(task);
                 // Deadline violation if job is not completed.
                 if (activeJob != null && !activeJob.isCompleted()) {
-                    MyLogger.log("<" + MyClock.printCurrentTime() + ", deadlineMiss " + task.toString() + ">\n");
+                    logger.log("<" + clock.printCurrentTime() + ", deadlineMiss " + task.toString() + ">\n");
                     throw new DeadlineMissedException("Il task " + task.toString() + " ha superato la deadline");
                 }
                 // Otherwise release new job.
                 Job newJob = task.releaseJob(currentTime);
                 activeJobs.put(task, newJob);
-                this.addReadyJob(newJob);
-                MyLogger.log("<" + MyClock.printCurrentTime() + ", release " + newJob.toString() + ">");
+                this.readyJobs.add(newJob);
+                logger.log("<" + clock.printCurrentTime() + ", release " + newJob.toString() + ">");
             }
-        }
-    }
-
-    private void reset() {
-        MyClock.reset();
-        this.activeJobs.clear();
-        this.lastJobExecuted = null;
-        this.assignPriority();
-        for (Task task : this.taskSet.getTasks()) {
-            task.resetJobCounter();
         }
     }
 

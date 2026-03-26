@@ -1,30 +1,46 @@
 package utils.logger;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.logging.*;
 
-public class MyLogger {
-    private static Logger logger;
+public class MyLogger implements TraceLogger {
+    private final Logger logger;
+    private FileHandler fileHandler;
 
-    static {
+    public MyLogger() {
+        this("trace.log");
+    }
+
+    public MyLogger(String fileName) {
+        this.logger = Logger.getLogger(MyLogger.class.getName() + "-" + fileName);
         try {
-            logger = Logger.getLogger(MyLogger.class.getName());
-            FileHandler fileHandler = new FileHandler("trace.log", false);
-            fileHandler.setFormatter(new MyFormatter());
-            logger.addHandler(fileHandler);
-            logger.setLevel(Level.ALL);
-
+            this.fileHandler = new FileHandler(fileName, false);
+            this.fileHandler.setFormatter(new MyFormatter());
+            this.logger.addHandler(fileHandler);
+            this.logger.setLevel(Level.ALL);
+            this.logger.setUseParentHandlers(false); // Doesn't send logs to console.
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void log(String message) {
-        logger.info(message);
+    @Override
+    public void log(String message) {
+        this.logger.info(message);
     }
 
-    public static void wrn(String message) {
-        logger.warning(message);
+    @Override
+    public void warning(String message) {
+        this.logger.warning(message);
+    }
+
+    @Override
+    public void close() {
+        if (Objects.nonNull(fileHandler)) {
+            fileHandler.close();
+            logger.removeHandler(fileHandler);
+        }
     }
 
 }

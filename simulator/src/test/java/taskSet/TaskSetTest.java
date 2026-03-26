@@ -1,21 +1,13 @@
 package taskSet;
 
 import java.math.BigDecimal;
-import java.util.Set;
-import org.junit.Before;
 import org.junit.Test;
 
 import sampler.ConstantSampler;
-import utils.MyClock;
 
 import static org.assertj.core.api.Assertions.*;
 
 public class TaskSetTest {
-
-    @Before
-    public void setUp() {
-        MyClock.reset();
-    }
 
     @Test
     public void notPurelyPeriodic() {
