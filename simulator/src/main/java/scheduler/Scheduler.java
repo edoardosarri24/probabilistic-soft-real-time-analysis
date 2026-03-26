@@ -153,6 +153,4 @@ public abstract class Scheduler {
     // Hook methods
     protected abstract void assignPriority();
 
-    public abstract boolean checkFeasibility();
-
 }

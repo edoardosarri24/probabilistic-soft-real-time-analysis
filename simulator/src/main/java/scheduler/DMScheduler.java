@@ -14,15 +14,9 @@ public final class DMScheduler extends Scheduler {
     // Constructor
     public DMScheduler(TaskSet taskSet, double simulationDuration, MyClock clock, TraceLogger logger) {
         super(taskSet, simulationDuration, clock, logger);
-        this.getTaskSet().purelyPeriodicCheck();
     }
 
     // methods
-    @Override
-    public boolean checkFeasibility() {
-        return this.getTaskSet().hyperbolicBoundTest();
-    }
-
     @Override
     protected void assignPriority() {
         List<Task> sortedByDeadline = getTaskSet().getTasks().stream()

@@ -68,30 +68,6 @@ public class Task {
         return new Job(this, ++jobCounter, releaseTime, executionTime);
     }
 
-    void purelyPeriodicCheck() {
-        if (this.period.compareTo(this.deadline) != 0)
-            throw new IllegalArgumentException(
-                "Il task " + this.id
-                + " non è puramente periodico: ha periodo " + this.period
-                + " e deadline " + this.deadline);
-    }
-
-    double utilizationFactor() {
-        // Sample a baseline execution time for utilization analysis
-        Duration sampledET = SampleDuration.sample(executionTimeSampler);
-        long period = this.period.toNanos();
-        return (double) sampledET.toNanos() / period;
-    }
-
-    void periodAndDealineCheck() {
-        if (this.period.compareTo(this.deadline) < 0)
-            throw new IllegalArgumentException(
-                "Il task " + this.id
-                + " ha periodo " + this.period
-                + " e deadline " + this.deadline
-                + ". Il periodo non può essere minore della deadline");
-    }
-
     // Objects methods
     @Override
     public String toString() {
