@@ -1,48 +1,76 @@
+
 classDiagram
     class Scheduler {
         <<abstract>>
         -taskSet: TaskSet
         +analyze() void
-        #assignPriority() void
+        #assignPriority() void*
     }
 
     class DMScheduler {
+        <<final>>
         #assignPriority() void
     }
 
     class TaskSet {
+        <<final>>
         -tasks: Set~Task~
     }
 
     class Task {
+        <<final>>
         -period: Duration
         -deadline: Duration
         -executionTimeSampler: Sampler
         -priority: int
-        +releaseJob(Duration releaseTime) Job
+        +releaseJob(Duration) Job
     }
 
     class Job {
+        <<final>>
         -task: Task
         -releaseTime: Duration
         -absoluteDeadline: Duration
-        -remainingExecutionTime: Duration
-        -isCompleted: boolean
-        +execute(Duration availableTime) Duration
     }
 
     class MyClock {
+        <<final>>
         -currentTime: Duration
-        +reset() MyClock
         +getCurrentTime() Duration
-        +advanceTo(Duration newTime) void
-        +advanceBy(Duration delta) void
+        +advanceTo(Duration) void
+        +advanceBy(Duration) void
+        +printCurrentTime() String
+    }
+
+    class TraceLogger {
+        <<interface>>
+        +log(String) void
+        +close() void
+    }
+
+    class MyLogger {
+    }
+
+    class Sampler {
+        <<interface>>
+        +getSample() BigDecimal
+    }
+
+    class ConstantSampler {
+        -value: BigDecimal
+        +getSample() BigDecimal
     }
 
     %% Relations
-    Scheduler --> TaskSet
-    Scheduler o-- Job : readyJobs
-    TaskSet *-- Task
-    Task -- Job
-    Job --> Task
+    Scheduler o-- TaskSet : taskSet
+    Scheduler o-- MyClock : clock
+    Scheduler o-- TraceLogger : logger
+    Scheduler o-- Job : readyJobs, blockedJobs
+    TaskSet *-- Task : tasks
+    Task o-- Sampler : executionTimeSampler
+    Task ..> Job : releaseJob
+    Job o-- Task : task
     Scheduler <|-- DMScheduler
+    TraceLogger <|.. MyLogger
+    Sampler <|.. ConstantSampler
+```

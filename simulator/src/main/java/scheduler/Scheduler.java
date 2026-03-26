@@ -24,13 +24,13 @@ public abstract class Scheduler {
     private final TaskSet taskSet;
 
     private TreeSet<Job> readyJobs;
-    private List<Job> blockedJobs = new LinkedList<>();
-    private Map<Task, Job> activeJobs = new HashMap<>();
+    private final List<Job> blockedJobs = new LinkedList<>();
+    private final Map<Task, Job> activeJobs = new HashMap<>();
     private Job lastJobExecuted;
     private final Duration simulationDuration;
 
-    protected final MyClock clock;
-    protected final TraceLogger logger;
+    private final MyClock clock;
+    private final TraceLogger logger;
 
     // Constructor
     /**
@@ -58,8 +58,8 @@ public abstract class Scheduler {
         return this.taskSet;
     }
 
-    protected void setReadyJobs(TreeSet<Job> readyTasks) {
-        this.readyJobs = readyTasks;
+    protected void setReadyJobs(TreeSet<Job> readyJobs) {
+        this.readyJobs = readyJobs;
     }
 
     // Methods
@@ -67,16 +67,28 @@ public abstract class Scheduler {
      * Entry point for the analysis of the scheduler.
      */
     public final void analyze() throws DeadlineMissedException {
+        this.resetState();
         this.releaseFirstJobs();
         List<Duration> events = initEvents();
         while (!events.isEmpty()) {
             Duration nextEvent = events.removeFirst();
-            Duration availableTime = nextEvent.minus(clock.getCurrentTime());
+            Duration availableTime = nextEvent.minus(this.clock.getCurrentTime());
             this.distributeAvailableTime(availableTime);
-            clock.advanceTo(nextEvent);
+            this.clock.advanceTo(nextEvent);
             this.releaseJobOfPeriodTasks();
         }
-        logger.log("<" + clock.printCurrentTime() + ", end>\n");
+        this.logger.log("<" + this.clock.printCurrentTime() + ", end>\n");
+    }
+
+    private void resetState() {
+        this.clock.advanceTo(Duration.ZERO);
+        this.activeJobs.clear();
+        this.blockedJobs.clear();
+        this.lastJobExecuted = null;
+        this.readyJobs = new TreeSet<>(Comparator.comparingInt(Job::getPriority));
+        for (Task task : this.taskSet.getTasks()) {
+            task.resetJobCounter();
+        }
     }
 
     // Helper
@@ -86,7 +98,7 @@ public abstract class Scheduler {
             Job firstJob = task.releaseJob(Duration.ZERO);
             activeJobs.put(task, firstJob);
             this.readyJobs.add(firstJob);
-            logger.log("<" + clock.printCurrentTime() + ", release " + firstJob.toString() + ">");
+            this.logger.log("<" + this.clock.printCurrentTime() + ", release " + firstJob.toString() + ">");
         }
     }
 
@@ -103,19 +115,19 @@ public abstract class Scheduler {
             Job highPriorityJob = this.readyJobs.pollFirst();
             // Preemption handling.
             if (this.lastJobIsPreempted(highPriorityJob))
-                logger.log("<" + clock.printCurrentTime() + ", preempt " + this.lastJobExecuted.toString() + ">");
+                this.logger.log("<" + this.clock.printCurrentTime() + ", preempt " + this.lastJobExecuted.toString() + ">");
             // Execution
-            logger.log("<" + clock.printCurrentTime() + ", execute " + highPriorityJob.toString() + ">");
+            this.logger.log("<" + this.clock.printCurrentTime() + ", execute " + highPriorityJob.toString() + ">");
             Duration timeToExecute = availableTime.compareTo(highPriorityJob.getRemainingExecutionTime()) < 0
                 ? availableTime : highPriorityJob.getRemainingExecutionTime();
             Duration executedTime = highPriorityJob.execute(timeToExecute);
-            clock.advanceBy(executedTime);
-            if (highPriorityJob.isDeadlineMissed(clock.getCurrentTime())) {
-                logger.log("<" + clock.printCurrentTime() + ", deadlineMiss " + highPriorityJob.toString() + ">\n");
+            this.clock.advanceBy(executedTime);
+            if (highPriorityJob.isDeadlineMissed(this.clock.getCurrentTime())) {
+                this.logger.log("<" + this.clock.printCurrentTime() + ", deadlineMiss " + highPriorityJob.toString() + ">\n");
                 throw new DeadlineMissedException("Il task " + highPriorityJob.getTask().getId() + " ha superato la deadline");
             }
             if (highPriorityJob.isCompleted())
-                logger.log("<" + clock.printCurrentTime() + ", complete " + highPriorityJob.toString() + ">");
+                this.logger.log("<" + this.clock.printCurrentTime() + ", complete " + highPriorityJob.toString() + ">");
             if (executedTime.isPositive())
                 this.lastJobExecuted = highPriorityJob;
             availableTime = availableTime.minus(executedTime);
@@ -131,21 +143,21 @@ public abstract class Scheduler {
     }
 
     private void releaseJobOfPeriodTasks() throws DeadlineMissedException {
-        Duration currentTime = clock.getCurrentTime();
+        Duration currentTime = this.clock.getCurrentTime();
         for (Task task : this.taskSet.getTasks()) {
             // Check if it's time to release a new job.
             if (currentTime.toNanos() % task.getPeriod().toNanos() == 0) {
                 Job activeJob = activeJobs.get(task);
                 // Deadline violation if job is not completed.
                 if (activeJob != null && !activeJob.isCompleted()) {
-                    logger.log("<" + clock.printCurrentTime() + ", deadlineMiss " + task.toString() + ">\n");
+                    this.logger.log("<" + this.clock.printCurrentTime() + ", deadlineMiss " + task.toString() + ">\n");
                     throw new DeadlineMissedException("Il task " + task.toString() + " ha superato la deadline");
                 }
                 // Otherwise release new job.
                 Job newJob = task.releaseJob(currentTime);
                 activeJobs.put(task, newJob);
                 this.readyJobs.add(newJob);
-                logger.log("<" + clock.printCurrentTime() + ", release " + newJob.toString() + ">");
+                this.logger.log("<" + this.clock.printCurrentTime() + ", release " + newJob.toString() + ">");
             }
         }
     }

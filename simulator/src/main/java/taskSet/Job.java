@@ -6,7 +6,7 @@ import java.time.Duration;
  * Represents a single execution instance (a job) of a {@link Task}.
  * While a Task is the project, a job maintains the dynamic state of the task's execution.
  */
-public class Job {
+public final class Job {
     private final Task task;
     private final int id;
     private final Duration releaseTime;

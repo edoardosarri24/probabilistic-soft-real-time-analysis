@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.logging.*;
 
-public class MyLogger implements TraceLogger {
+public final class MyLogger implements TraceLogger {
     private final Logger logger;
     private FileHandler fileHandler;
 
@@ -28,11 +28,6 @@ public class MyLogger implements TraceLogger {
     @Override
     public void log(String message) {
         this.logger.info(message);
-    }
-
-    @Override
-    public void warning(String message) {
-        this.logger.warning(message);
     }
 
     @Override

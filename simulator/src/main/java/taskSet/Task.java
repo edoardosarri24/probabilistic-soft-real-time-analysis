@@ -8,7 +8,7 @@ import org.oristool.simulator.samplers.Sampler;
 import sampler.ConstantSampler;
 import utils.SampleDuration;
 
-public class Task {
+public final class Task {
 
     private final int id;
     private final Duration period;

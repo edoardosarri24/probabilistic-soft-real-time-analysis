@@ -1,24 +1,19 @@
+# Simulator (prossimo)
+- documentare il rilevamento delle deadline.
+- docuemntare il fatto che il simulatore stampa gli eventi.
+
 # Task
-- chiarire cosa e quando sono utilizzati i metodi purelyPeriodicCheck, utilizationFactor e periodAndDealineCheck.
 - il periodo non deve essere una duration ma una distribuzione.
 
-# Taskset
-- copire a cosa serve e quando viene usato purelyPeriodicCheck, periodAndDealineCheck, hyperbolicBoundTest e utilizationFactor.
 
-# Scheduler
-- In DM capire cosa è e quando è usato checkFeasibility.
-
-# Sampler
-- ho implementato il constant sampler. docuementarlo nella doc e nel class diagram.
-
-# Simulator
+# simulatore (alla fine)
 - sistemare il readme in simulator/
-- documentare come utilizzare il simulatore.
-- documentare il logging.
-- documentare il rilevamento delle deadline.
+    - mettere come utilizzare il simulatore.
 
-# codice
-- aggiugere controlli?
+# time collector
+- definire
+- documentare
+- class diagram
 
 # domande
 - cosa succede se un job sfora la deadline?

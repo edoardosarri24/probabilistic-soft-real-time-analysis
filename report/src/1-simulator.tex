@@ -60,6 +60,7 @@ Let's observe the utilities used by more classes:
 \subsection{Flow}
 Let's analyse the scheduler flow. This follow the steps below:
 \begin{enumerate}
+    \item Reset the state of the whole system. This allow the client to call more and more time \texttt{analyze()}.
     \item Release the first job of all tasks.
     \item Calculate the relevant events: these are all the deadline tasks multiples.
     \item Iterate throught all events.
