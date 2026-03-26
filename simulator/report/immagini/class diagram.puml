@@ -4,16 +4,20 @@ skinparam classAttributeIconSize 0
 ' classi
 abstract class Scheduler {
     - taskSet: Taskset
-    - resProtocol: ResourceProtocol
-    + schedule(): void <<abstract>>
+    - readyTasks: TreeSet<Job>
+    - activeJobs: Map<Task, Job>
+    + schedule(): void
     + assignPriority(): void <<abstract>>
+    # executeFor(): void
 }
 
 class MyClock <<final>> {
     - currentTime: Duration
-    + getCurrentTime: void
-    + advanceTo: void
-    + advanceBy: void
+    + getInstance(): MyClock
+    + reset(): void
+    + getCurrentTime(): Duration
+    + advanceTo(): void
+    + advanceBy(): void
 }
 
 class RMScheduler <<final>> {
@@ -22,32 +26,15 @@ class RMScheduler <<final>> {
 class EDFScheduler <<final>> {
 }
 
-abstract class ResourceProtocol {
-    - protocol: ResAccessProtocol
-    + access: void
-    + prgress: void
-    + release: void
-}
-
-abstract class PCP {
-    - ceiling: Map<Resource, Integer>
-    - busyResources: List<Resource>
-}
-
-class PriorityCeilingProtocol <<final>> {
-}
-
-class NoResourceProtocol <<final>> {
-}
-
-class PriorityCeilingProtocolFaultAquireResource <<final>> {
-}
-
-class PriorityCeilingProtocolFaultSetPriority <<final>> {
-}
-
-class Resource <<final>> {
-    - blockedTasks: List<Task>
+class Job <<final>> {
+    - task: Task
+    - releaseTime: Duration
+    - absoluteDeadline: Duration
+    - remainingExecutionTime: Duration
+    - dynamicPriority: int
+    - isCompleted: boolean
+    + execute(): Duration
+    + isDeadlineMissed(): boolean
 }
 
 class Taskset <<final>> {
@@ -56,36 +43,20 @@ class Taskset <<final>> {
 }
 
 class Task <<final>> {
+    - id: int
     - period: Duration
     - deadline: Duration
-    - chunks: List<Chunk>
+    - executionTimeSampler: Sampler
     - nominalPriority: int
-    - dinamicPrioriy: int
-    + execute(): Duration
-    + checkAndReset(): void
-    + purelyPeriodicCheck: void
-}
-
-class Chunk <<final>> {
-    - executionTime: Duration
-    - expectedExecutionTime: Duration
-    - resources: List<Resource>
-    + execute(): Duration
-    + reset(): void
+    + releaseJob(): Job
 }
 
 ' relazioni
 Scheduler <|-- RMScheduler
 Scheduler <|-- EDFScheduler
-Scheduler "*" --> "*" ResourceProtocol
-ResourceProtocol <|-- PCP
-ResourceProtocol <|-- NoResourceProtocol
-PCP <|-- PriorityCeilingProtocol
-PCP <|-- PriorityCeilingProtocolFaultAquireResource
-PCP <|-- PriorityCeilingProtocolFaultSetPriority
-Scheduler "*" --> "1" Taskset
+Scheduler "1" --> "1" Taskset
+Scheduler "1" o-- "*" Job
 Taskset "1" *-- "1...*" Task
-Task "1" *-- "1...*" Chunk
-Chunk "*" -> "*" Resource
+Task "1" -- "*" Job
 
 @enduml

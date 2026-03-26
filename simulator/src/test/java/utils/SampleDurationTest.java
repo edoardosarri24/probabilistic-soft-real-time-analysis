@@ -8,8 +8,6 @@ import java.time.Duration;
 import org.junit.Test;
 import org.oristool.simulator.samplers.UniformSampler;
 
-import utils.sampler.SampleDuration;
-
 public class SampleDurationTest {
 
     @Test

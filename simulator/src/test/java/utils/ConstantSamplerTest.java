@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 
 import org.junit.Test;
 
-import utils.sampler.ConstantSampler;
+import sampler.ConstantSampler;
 
 public class ConstantSamplerTest {
 

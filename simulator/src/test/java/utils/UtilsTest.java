@@ -16,8 +16,8 @@ public class UtilsTest {
 
     @Test
     public void durationPrinter() {
-        MyClock.getInstance().advanceTo(Duration.ofMillis(5));
-        assertThat(Utils.printCurrentTime())
+        MyClock.advanceTo(Duration.ofMillis(5));
+        assertThat(MyClock.printCurrentTime())
             .isEqualTo("5.000");
     }
 

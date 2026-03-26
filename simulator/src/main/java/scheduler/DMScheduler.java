@@ -9,13 +9,13 @@ import taskSet.TaskSet;
 
 public final class DMScheduler extends Scheduler {
 
-    // CONSTRUCTOR
+    // Constructor
     public DMScheduler(TaskSet taskSet, double simulationDuration) {
         super(taskSet, simulationDuration);
         this.getTaskSet().purelyPeriodicCheck();
     }
 
-    // METHOD
+    // methods
     @Override
     public boolean checkFeasibility() {
         return this.getTaskSet().hyperbolicBoundTest();
@@ -29,14 +29,9 @@ public final class DMScheduler extends Scheduler {
         IntStream.range(0, sortedByDeadline.size())
             .forEach(i -> {
                 Task task = sortedByDeadline.get(i);
-                task.initPriority(i+1);
+                task.setPriority(i+1);
             }
         );
-    }
-
-    @Override
-    public void addReadyTask(Task task) {
-        this.getReadyTasks().add(task);
     }
 
 }

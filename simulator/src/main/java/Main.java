@@ -25,7 +25,7 @@ public class Main {
             new UniformSampler(new BigDecimal(8), new BigDecimal(9.5)));
         TaskSet taskSet = new TaskSet(Set.of(task1, task2, task3));
         Scheduler rm = new DMScheduler(taskSet, 1500);
-        rm.scheduleDataset(2);
+        rm.analyze();
     }
 
 }

@@ -5,27 +5,21 @@ In questo capitolo analizziamo la struttura del progetto, partendo dai suoi comp
 \section{Componenti}
 
 \subsection{Task}
-Un task è definito da: un insieme di Chunk; una deadline; una priorità nominale e dinamica; un pattern di rilascio.
+Un task è il template statico del sistema. È definito da: una deadline; un periodo; un sampler per l'execution tempo; una priorità nominale.
 
 Non ci interessa definire un activation time perché vogliamo considerare il caso pessimo: l'activation time sarà uguale per tutti i task e coinciderà con l'istante iniziale.
 
-\subsection{Chunk}
-Un chunk, cioè una computazione atomica del task. È definito da: una distribuzione del tempo di esecuzione previsto e un tempo di esecuzione effettivo; un'eventuale richiesta di risorse da usare in mutua esclusione (da acquisire prima dell'esecuzione e rilasciare subito dopo).
+\subsection{Job}
+Un job rappresenta una singola istanza di esecuzione di un task. È l'entità dinamica che mantiene lo stato durante la simulazione. È definito da: il riferimento al task padre; il tempo di rilascio; la deadline assoluta; il tempo di esecuzione rimanente; la priorità dinamica.
 
 \subsection{Taskset}
 È un insieme di task. È l'oggetto principale gestito dallo scheduler.
-
-\subsection{Risorse}
-Sono le risorse da utilizzare in mutua esclusione. Ogni risorsa è gestita da un semaforo binario, quindi può essere posseduta da un solo task alla volta.
 
 \subsection{CPU}
 È l'unità di elaborazione. Supponiamo essere unica.
 
 \subsection{Scheduler}
-È il componente che assegna un task al processore. Sono stati implementati Rate Monotonic (RM) e Earliest Deadline First (EDF).
-
-\subsection{Protocollo di accesso alle risorse}
-È il meccanismo che garantisce la mutua esclusione di una risorsa. È stato implementato Priority Ceiling Protocol (PCP).
+È il componente che assegna un job al processore e gestisce l'avanzamento del tempo e il logging. Sono stati implementati Rate Monotonic (RM) e Earliest Deadline First (EDF).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Class diagram}

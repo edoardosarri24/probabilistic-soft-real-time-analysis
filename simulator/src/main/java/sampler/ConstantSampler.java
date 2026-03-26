@@ -1,4 +1,4 @@
-package utils.sampler;
+package sampler;
 
 import java.math.BigDecimal;
 

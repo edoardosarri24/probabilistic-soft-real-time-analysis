@@ -1,21 +1,26 @@
 @startuml sequence diagram
 
 participant Client
-Scheduler -> Scheduler : assignPriority
+participant Scheduler
+participant Job
+participant Task
+participant MyClock
+
 Client -> Scheduler : schedule
 Scheduler -> Scheduler : reset
 Scheduler -> MyClock : reset
 Scheduler -> Scheduler : initStructures
-Scheduler -> Scheduler : realeaseAllTasks
+Scheduler -> Task : releaseJob
+Task -> Job : new Job
+Scheduler -> Scheduler : releaseAllTasks
 
 loop there is event
-Scheduler -> Task : execute
-Task -> ResourcesProtocol : access
-Task -> ResourcesProtocol : progress
-Task -> Chunk : execute
-Task -> ResourcesProtocol : release
-Scheduler -> MyClock : advanceTo
-Scheduler -> Task : relasePeriodTasks
+Scheduler -> Scheduler : executeFor
+Scheduler -> Job : execute
+Scheduler -> MyClock : advanceBy
+Scheduler -> Scheduler : releasePeriodTasks
+Scheduler -> Task : releaseJob
+Task -> Job : new Job
 end
 
 Scheduler --> Client : trace.log

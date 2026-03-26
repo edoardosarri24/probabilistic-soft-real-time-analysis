@@ -15,13 +15,13 @@ Il primo taskset complesso, mostrato in Figura~\ref{fig:dataset1} è composto da
 Considerando la lunghezza delle tracce generate dalla simulazione, non si è potuto inserire il file \texttt{trace.log} in questo documento. Nel repository su GitHub è presente una cartella \texttt{output}, nella quale si può comunque osservare il risultato nel file \href{https://github.com/edoardosarri24/real-time-scheduling-simulator/blob/master/output/traceEDF.log}{\texttt{traceEDF.log}}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Datset RM}
-Il secondo taskset complesso, mostrato in Figura~\ref{fig:datasetRM}, è pensato per avere cinque task con due risorse condivise e per essere schedulato da Rate Monotonic sotto Priority Ceiling Protocol. Oltre alla stocasticità del tempo di esecuzione di ogni chunk, è stato inserito il fault a livello di Chunk per cui un chunk può non acquisire le risorse da usare con una probabilità del 20\%.
+\section{Dataset RM}
+Il secondo taskset complesso, mostrato in Figura~\ref{fig:datasetRM}, è composto da cinque task ed è schedulato tramite Rate Monotonic. Per introdurre la stocasticità ed aumentare la complessità della simulazione si campiona l'execution time di ciascun job da una distribuzione uniforme.
 
 \begin{figure}[htbp]
 \includegraphics[width=.5\textwidth]{immagini/datasetRM.pdf}
 \centering
-\caption{Taskset schedulato con RM con risorse condivise sotto PCP}
+\caption{Taskset schedulato con RM}
 \label{fig:datasetRM}
 
 \end{figure}

@@ -1,5 +1,7 @@
 package utils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Duration;
 
 /**
@@ -15,27 +17,33 @@ public final class MyClock {
 
     private MyClock() {}
 
-    public static MyClock getInstance() {
-        return INSTANCE;
-    }
-
     public static MyClock reset() {
         INSTANCE = new MyClock();
         return INSTANCE;
     }
 
-    public Duration getCurrentTime() {
-        return this.currentTime;
+    public static Duration getCurrentTime() {
+        return INSTANCE.currentTime;
     }
 
-    public void advanceTo(Duration newTime) {
-        this.currentTime = newTime;
+    public static void advanceTo(Duration newTime) {
+        INSTANCE.currentTime = newTime;
     }
 
-    public void advanceBy(Duration delta) {
+    public static void advanceBy(Duration delta) {
         if (delta.isNegative())
             throw new IllegalArgumentException("Cannot advance by negative duration");
-        this.currentTime = this.currentTime.plus(delta);
+        INSTANCE.currentTime = INSTANCE.currentTime.plus(delta);
+    }
+
+    /**
+    *Returns the current time as a string representing milliseconds with three decimal places.
+    * @return A string representation of the current time in milliseconds, rounded to three decimal places
+    */
+    public static String printCurrentTime() {
+        long nanos = INSTANCE.currentTime.toNanos();
+        BigDecimal millis = new BigDecimal(nanos).divide(BigDecimal.TEN.pow(6), 3, RoundingMode.HALF_UP);
+        return "" + millis;
     }
 
 }

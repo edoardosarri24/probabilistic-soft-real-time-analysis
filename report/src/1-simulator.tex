@@ -1,6 +1,8 @@
 \chapter{Simulator}
 The simulator objective is to have a instrument to validate our ides and results. In particoular we want obtain sperimentally for each task, the distribution of job execution time.
 
+To test the scheduler algorithm implementation the simulator produces a file, names \textit{trace.log}, containing a sequence of \textit{<time, event>}, where  \textit{event} can be: the release of a job, the execution of a job, the completation of a job and the task preemprion. This phase allow us also to discover a deadline violation and the task that is responces of this violation; a violation implies the abort of whole simulation.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Taskset Model}
 \label{sec:task_model}
@@ -29,3 +31,30 @@ The outputs are the Cumulative Distribution Function (CDF) and teh Probability D
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}
+This kind of simulation must be totally deterministic; for this reason all timing aspects have been handle in a discret way using the \texttt{Duration} Java type. In this way we can handle the complexity of small duration with an with abstraction level.
+
+\myskip
+
+The following elements are the core component of the simulator.
+\begin{itemize}
+    \item[\textbf{TaskSet}] Is a simple set of all task.
+    \item[\textbf{Task}] The class \texttt{Task.java} represent a task. We can see it like the project, the static element modeling the task caracteristic: period, deadline and the exectution time; the first two are expressed by \texttt{Duration} objects, where the time must be expressed in milliseconds, while the last is a Sirio \texttt{Sampler}.
+    \item[\textbf{Job}] The class \texttt{Job.java} represent a task instance. While a Task contain only the task specifications, a Job contains the active state: its release time, its absolute deadline, the remaining execution time and the information about its completness.
+    \item[\textbf{Scheduler}] The class \texttt{Scheduler.java} represent the heart of the simulation. It handles the main structures: \textit{readyJobs}, a ready to execute job queque (i.e., a \texttt{TreeSet}) ordered by their priority; \textit{activeJobs}, maintain for each task the job that are actually in life, usefull to identifies a deadline miss; \textit{events}, a list (i.e., \texttt{LinkedList}) with all interest istant for the simulation, i.e. the multiple of all tasks period.
+    \item[\textbf{DMScheduler}] Is a specialization of the general Scheduler. It handles the priority assignment. For Deadline Monotonic the priority of a task is assigned in revers ordering respect its deadline.
+\end{itemize}
+
+\subsection{Utilies}
+Let's observe the utilities used by more classes:
+\begin{itemize}
+    \item [\textbf{SampleDuration}] This class is usefull to obtain a Duration object given a Sirio distribution. This duration represent time in nanoseconds as described in Section~\ref{subsec:simulator_time}.
+    \item [\textbf{MyLogger}] Is a helper class that abracts the logging operation with a personalized format.
+    \item [\textbf{MyClock}] Represents the global clock of the system. Implements the method to go at specified time, to go foreward in time by a specified duration and to print the current time.
+\end{itemize}
+
+\subsection{Flow}
+Let's analyse the scheduler flow.
+
+\subsection{Time}
+\label{subsec:simulator_time}
+We assume that the time is taken in input and returned in output in millisecond. During the execution, to obtain the maximum precision, it is elaborated in nanoseconds.

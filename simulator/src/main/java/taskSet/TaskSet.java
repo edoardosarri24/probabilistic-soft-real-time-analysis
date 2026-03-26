@@ -6,17 +6,17 @@ public class TaskSet {
 
     private final Set<Task> tasks;
 
-    // CONSTRUCTOR
+    // Constructor
     public TaskSet(Set<Task> tasks) {
         this.tasks = tasks;
     }
 
-    // GETTER AND SETTER
+    // Getter and Setter
     public Set<Task> getTasks() {
         return this.tasks;
     }
 
-    // METHODS
+    // Methods
     public void purelyPeriodicCheck() {
         for (Task task : this.tasks)
             task.purelyPeriodicCheck();
@@ -39,10 +39,6 @@ public class TaskSet {
         return this.tasks.stream()
             .mapToDouble(Task::utilizationFactor)
             .sum();
-    }
-
-    public void reset() {
-        this.tasks.forEach(Task::reset);
     }
 
 }

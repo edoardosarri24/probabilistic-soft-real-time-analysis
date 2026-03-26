@@ -2,13 +2,11 @@ package taskSet;
 
 import org.junit.Before;
 import org.junit.Test;
-import exeptions.DeadlineMissedException;
-import helper.ReflectionUtils;
+
+import sampler.ConstantSampler;
 import utils.MyClock;
-import utils.sampler.ConstantSampler;
 
 import java.math.BigDecimal;
-import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -43,35 +41,6 @@ public class TaskTest {
     }
 
     @Test
-    public void checkAndResetIf() {
-        assertThatThrownBy(() -> this.task.relasePeriodTask())
-            .isInstanceOf(DeadlineMissedException.class)
-            .hasMessage("Il task " + this.task.getId() + " ha superato la deadline");
-    }
-
-    @Test
-    public void checkAndResetElse() {
-        Duration remainingExecutionTimeBefore = (Duration) ReflectionUtils.getField(this.task, "remainingExecutionTime");
-        assertThat(remainingExecutionTimeBefore)
-            .isEqualTo(Duration.ofMillis(5));
-            
-        ReflectionUtils.setField(this.task, "remainingExecutionTime", Duration.ZERO);
-        ReflectionUtils.setField(this.task, "isExecuted", true);
-        
-        assertThat(this.task.getIsExecuted())
-            .isTrue();
-            
-        assertThatCode(() -> this.task.relasePeriodTask())
-            .doesNotThrowAnyException();
-            
-        Duration remainingExecutionTimeAfter = (Duration) ReflectionUtils.getField(this.task, "remainingExecutionTime");
-        assertThat(remainingExecutionTimeAfter)
-            .isEqualTo(Duration.ofMillis(5));
-        assertThat(this.task.getIsExecuted())
-            .isFalse();
-    }
-
-    @Test
     public void utilizationFactor() {
         Task task = new Task(
             10,
@@ -102,40 +71,4 @@ public class TaskTest {
         assertThatCode(() -> task.periodAndDealineCheck())
             .doesNotThrowAnyException();
     }
-
-    @Test
-    public void nextDeadline() {
-        Task task = new Task(
-            5,
-            3,
-            new ConstantSampler(new BigDecimal(1)));
-        Duration output = task.nextDeadline();
-        assertThat(output)
-            .isEqualTo(Duration.ofMillis(3));
-        MyClock.getInstance().advanceTo(Duration.ofMillis(2));
-        output = task.nextDeadline();
-        assertThat(output)
-            .isEqualTo(Duration.ofMillis(3));
-        MyClock.getInstance().advanceTo(Duration.ofMillis(3));
-        output = task.nextDeadline();
-        assertThat(output)
-            .isEqualTo(Duration.ofMillis(8));
-        MyClock.getInstance().advanceTo(Duration.ofMillis(5));
-        output = task.nextDeadline();
-        assertThat(output)
-            .isEqualTo(Duration.ofMillis(8));
-        MyClock.getInstance().advanceTo(Duration.ofMillis(6));
-        output = task.nextDeadline();
-        assertThat(output)
-            .isEqualTo(Duration.ofMillis(8));
-        MyClock.getInstance().advanceTo(Duration.ofMillis(8));
-        output = task.nextDeadline();
-        assertThat(output)
-            .isEqualTo(Duration.ofMillis(13));
-        MyClock.getInstance().advanceTo(Duration.ofMillis(9));
-        output = task.nextDeadline();
-        assertThat(output)
-            .isEqualTo(Duration.ofMillis(13));
-    }
-
 }

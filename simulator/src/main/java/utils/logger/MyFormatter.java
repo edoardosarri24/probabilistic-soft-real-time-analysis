@@ -6,12 +6,11 @@ import java.util.logging.LogRecord;
 public class MyFormatter extends Formatter {
 
     @Override
-public String format(LogRecord record) {
-    return String.format(
-        "[%s] %s%n",
-        record.getLevel().getName(),
-        record.getMessage()
-    );
-}
+    public String format(LogRecord record) {
+        return String.format(
+            "[%s] %s%n",
+            record.getLevel().getName(),
+            record.getMessage());
+    }
 
 }
