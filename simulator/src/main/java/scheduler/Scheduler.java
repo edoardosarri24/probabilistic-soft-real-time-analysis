@@ -37,10 +37,10 @@ public abstract class Scheduler {
      * @param taskSet The taskset that will be schedule.
      * @param simulationDuration Must be expressed in milliseconds.
      */
-    public Scheduler(TaskSet taskSet, double simulationDuration, MyClock clock, TraceLogger logger) {
+    public Scheduler(TaskSet taskSet, double simulationDuration, TraceLogger logger) {
         this.taskSet = taskSet;
         this.simulationDuration = SampleDuration.sample(new ConstantSampler(new BigDecimal(simulationDuration)));
-        this.clock = clock;
+        this.clock = new MyClock();
         this.logger = logger;
         this.assignPriority();
     }

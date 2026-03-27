@@ -1,11 +1,8 @@
 # generale
-- file .gemini
-
-# prossimo
-- docuemta bene con to_be_docuemnted
+- file .gemini / .agent
 
 # Task
-- il periodo non deve essere una duration ma una distribuzione. gestire eventi: sono periodi
+- il periodo non deve essere una duration ma una distribuzione. gestire eventi: sono periodi.
 
 # simulatore (alla fine)
 - sistemare il readme in simulator/
@@ -15,6 +12,14 @@
 - definire
 - documentare
 - class diagram
+
+# definizione taskset
+Configurazione task con json o yaml
+
+# no logging (prossimo)
+
+# test
+test con task peamente peridici e sporadici.
 
 # domande
 - cosa succede se un job sfora la deadline?
