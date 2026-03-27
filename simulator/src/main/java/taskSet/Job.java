@@ -74,8 +74,8 @@ public final class Job {
      * @return True if the deadline is missed.
      */
     public boolean isDeadlineMissed(Duration currentTime) {
-        // A deadline is missed if the current time is beyond the absolute deadline and the job has not completed.
-        return !isCompleted && currentTime.compareTo(absoluteDeadline) > 0;
+        // A deadline is missed if the current time reaches or exceeds the absolute deadline and the job has not completed.
+        return !isCompleted && currentTime.compareTo(absoluteDeadline) >= 0;
     }
 
     // Objects methods

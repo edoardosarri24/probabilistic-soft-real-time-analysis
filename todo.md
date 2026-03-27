@@ -1,10 +1,11 @@
-# Simulator (prossimo)
-- documentare il rilevamento delle deadline.
-- docuemntare il fatto che il simulatore stampa gli eventi.
+# generale
+- file .gemini
+
+# prossimo
+- docuemta bene con to_be_docuemnted
 
 # Task
-- il periodo non deve essere una duration ma una distribuzione.
-
+- il periodo non deve essere una duration ma una distribuzione. gestire eventi: sono periodi
 
 # simulatore (alla fine)
 - sistemare il readme in simulator/

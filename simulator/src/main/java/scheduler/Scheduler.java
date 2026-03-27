@@ -75,6 +75,7 @@ public abstract class Scheduler {
             Duration availableTime = nextEvent.minus(this.clock.getCurrentTime());
             this.distributeAvailableTime(availableTime);
             this.clock.advanceTo(nextEvent);
+            this.checkDeadlines();
             this.releaseJobOfPeriodTasks();
         }
         this.logger.log("<" + this.clock.printCurrentTime() + ", end>\n");
@@ -122,10 +123,7 @@ public abstract class Scheduler {
                 ? availableTime : highPriorityJob.getRemainingExecutionTime();
             Duration executedTime = highPriorityJob.execute(timeToExecute);
             this.clock.advanceBy(executedTime);
-            if (highPriorityJob.isDeadlineMissed(this.clock.getCurrentTime())) {
-                this.logger.log("<" + this.clock.printCurrentTime() + ", deadlineMiss " + highPriorityJob.toString() + ">\n");
-                throw new DeadlineMissedException("Il task " + highPriorityJob.getTask().getId() + " ha superato la deadline");
-            }
+            this.checkDeadlines();
             if (highPriorityJob.isCompleted())
                 this.logger.log("<" + this.clock.printCurrentTime() + ", complete " + highPriorityJob.toString() + ">");
             if (executedTime.isPositive())
@@ -133,6 +131,15 @@ public abstract class Scheduler {
             availableTime = availableTime.minus(executedTime);
             if (!highPriorityJob.isCompleted() && !this.blockedJobs.contains(highPriorityJob))
                 this.readyJobs.add(highPriorityJob);
+        }
+    }
+
+    private void checkDeadlines() throws DeadlineMissedException {
+        for (Job job : activeJobs.values()) {
+            if (job.isDeadlineMissed(this.clock.getCurrentTime())) {
+                this.logger.log("<" + this.clock.printCurrentTime() + ", deadlineMiss " + job.toString() + ">\n");
+                throw new DeadlineMissedException("Il task " + job.toString() + " ha superato la deadline");
+            }
         }
     }
 
@@ -145,15 +152,7 @@ public abstract class Scheduler {
     private void releaseJobOfPeriodTasks() throws DeadlineMissedException {
         Duration currentTime = this.clock.getCurrentTime();
         for (Task task : this.taskSet.getTasks()) {
-            // Check if it's time to release a new job.
             if (currentTime.toNanos() % task.getPeriod().toNanos() == 0) {
-                Job activeJob = activeJobs.get(task);
-                // Deadline violation if job is not completed.
-                if (activeJob != null && !activeJob.isCompleted()) {
-                    this.logger.log("<" + this.clock.printCurrentTime() + ", deadlineMiss " + task.toString() + ">\n");
-                    throw new DeadlineMissedException("Il task " + task.toString() + " ha superato la deadline");
-                }
-                // Otherwise release new job.
                 Job newJob = task.releaseJob(currentTime);
                 activeJobs.put(task, newJob);
                 this.readyJobs.add(newJob);

@@ -1,0 +1,28 @@
+stateDiagram-v2
+    [*] --> ResetSystem
+    ResetSystem --> ReleaseInitialJobs
+    ReleaseInitialJobs --> CalculateEvents
+
+    state EventIteration {
+        [*] --> CheckMoreEvents
+        state MoreEventsCheck<<choice>>
+        CheckMoreEvents --> MoreEventsCheck
+
+        MoreEventsCheck --> CalculateAvailableTime: true
+        MoreEventsCheck --> [*]: false
+
+        CalculateAvailableTime --> DistributeTime
+        DistributeTime --> AdvanceClock : Distribute time to ready jobs (by priority)
+        AdvanceClock --> CheckDeadline
+
+        state DeadlineCheck<<choice>>
+        CheckDeadline --> DeadlineCheck
+
+        DeadlineCheck --> ThrowException: Deadline Missed
+        DeadlineCheck --> ReleaseTasks: Deadline Ok
+
+        ReleaseTasks --> CheckMoreEvents
+    }
+
+    CalculateEvents --> EventIteration
+    ThrowException --> [*]
