@@ -3,68 +3,85 @@ The simulator general objective is to have a instrument to validate our ideas an
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Taskset Model}
-\label{sec:task_model}
+\label{sec:simulator_task_model}
 In this section we define the taskset model, i.e., how the tasks in the taskset can be defined and which are their non functional characteristics.
 From now on we suppose that:
 \begin{itemize}
-    \item We suppose to have a single core CPU.
+    \item We suppose to have a single core CPU, which implies that we are working with a concurrent problob.
     \item Each task is independent from the others. This means that there aren't shared resources among two tasks.
     \item Each task have a single elementary execution unit, i.e. each task have only one chunk.
-    \item The task execution time is defined probabilistically, i.e. the execution time of each task is sampled from some distribution; this includes also the deterministic one.
-    \item The jobs execution time are i.i.d. (i.e., independent and identically distributed). This means that only one distribution that represents the job execution time pattern of a given task. Maybe at the end we will move towards a model in which we can define a relation between job execution time.
-    \item Task can be both periodic and sporadic (i.e. the releases between two consecutive job of the same task are separated from a minimum inter-arrival time). This releasing time is defined in a probabilistic way by some distribution.
+    \item The task execution time is defined probabilistically, i.e. the execution time of each job of a task is sampled from some distribution. These distribution can include also the deterministic one.
+    \item The jobs execution time are i.i.d. (i.e., independent and identically distributed). This means that only one distribution represents the job execution time pattern of a given task.
+    \item Task can be both periodic and sporadic (i.e. the releases between two consecutive job of the same task are separated from a minimum inter-arrival time). For the sporadic task, each job releasing time can be sampled from some distribution.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Input and Output}
 The simulator input are the following:
 \begin{itemize}
-    \item A fixed priority scheduling algorithm.
-    \item The taskset characterized from the assumptions in Section~\ref{sec:task_model}.
+    \item A fixed priority scheduling algorithm. As we'll see in Section5\ref{sec:simulator_implementation} the scheduling algorithm implemented is Deadline Monotonic: we can handle periodic and aperiodic tasks with a fixed priority.
+    \item The taskset, characterized from the assumptions in Section~\ref{sec:simulator_task_model}.
     \item The duration of the simulation.
+    \item The type of logging. By default no logging are performed.
 \end{itemize}
 
-\myskip
+\subsection{Logging}
+To test the scheduler algorithm implementation and to have an evidence of the system behaviour, the simulator can produces a file, named \textit{trace.log}, containing a sequence of \textit{<time, event>}, where \textit{event} can be: the release of a job, the execution and the completition of a job, the task preemption and the deadline miss event.
 
-The outputs are the Cumulative Distribution Function (CDF) and the Probability Density Function (PDF) of the job execution time distribution for each task.
+\subsection{Deadline Miss}
+The system has obviusually the capabilities to identifies a deadline miss by a task and can also identifies the job that is responsable of this violation. A violation implies the abort of whole simulation.
 
-\myskip
+This check is implemented by a single function (i.e., \texttt{checkDeadlines()} defined in \texttt{Scheduler.java}) to have a single poit of truth that called after each time advancement or each relevant event.
 
-To test the scheduler algorithm implementation, the simulator produces a file, named \textit{trace.log}, containing a sequence of \textit{<time, event>}, where  \textit{event} can be: the release of a job, the execution of a job, the completion of a job and the task preemption.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Time}
+\label{subsec:simulator_time}
+This kind of simulation must be totally deterministic; for this reason all timing aspects have been handle in a discrete way using the \texttt{Duration} Java type. In this way we can handle the complexity of small duration with a high abstraction level.
+
+We assume that the time is taken in input and returned in output in millisecond. During the execution, to obtain the maximum precision, it's elaborated in nanoseconds.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}
-In Figure~\ref{fig:class_diagram} is shown the class diagram of the simulator. The following elements are the core component of the simulator.
+\label{sec:simulator_implementation}
+In Figure~\ref{fig:simulator_class_diagram} is shown the class diagram of the simulator. In the following we present the core entities that compose the system.
 
 \begin{itemize}
+    \item [\textbf{Client}] Is the Main of the Java systems. It is responsable to allocate the taskset and the scheduler and call \texttt{analyse()} on the scheduler.
     \item[\textbf{TaskSet}] Is a simple set of all task.
-    \item[\textbf{Task}] The class \texttt{Task.java} represent a task. We can see it like the project, the static element modeling the task characteristic: period, deadline and the execution time; the first two are expressed by \texttt{Duration} objects, where the time must be expressed in milliseconds, while the last is a Sirio \texttt{Sampler}. It also maintains an internal \texttt{jobCounter} to uniquely identify its jobs.
-    \item[\textbf{Job}] The class \texttt{Job.java} represent a task instance. While a Task contain only the task specifications, a Job contains the active state: its release time, its absolute deadline, the remaining execution time and the information about its completeness. It handle also the execution activity.
-    \item[\textbf{Scheduler}] The class \texttt{Scheduler.java} represent the heart of the simulation. It handles the main structures: \textit{readyJobs}, a ready to execute job queue (i.e., a \texttt{TreeSet}) ordered by their priority; \textit{activeJobs}, maintain for each task the job that are actually in life, useful to identify a deadline miss; \textit{events}, a list with all interest instants for the simulation generated by the \texttt{Utils} class. It also manages \textit{blockedJobs} for future extensions.
-    \item[\textbf{DMScheduler}] Is a specialization of the general Scheduler. It handles the priority assignment. For Deadline Monotonic the priority of a task is assigned in reverse ordering respect its deadline.
+    \item[\textbf{Task}] Represent a task. It model only the static specification of the task: the period, the execution time and the deadline; the first two are a Sirio \texttt{Sampler} that represent the distribution from wich they sample the true duration; the last is a \texttt{Duration} objects, where the time must be expressed in milliseconds. Internally it also maintains a \texttt{jobCounter} to uniquely identify its jobs.
+    \item[\textbf{Job}] Represent a task instance. While a Task contain only the task specifications, a Job contains the active state: the absolute deadline, the remaining execution time, the information about its completeness and the time of completition. It has a method to handle the simulation of its execution.
+    \item[\textbf{Scheduler}] Represent the heart of the simulation, that use the taskset for the scheduling simulation. It's responsable to initilizate the system clock with a \texttt{MyClock} object.
+    \item[\textbf{DMScheduler}] Is the specialization of the \texttt{Scheduler} that implement the priority assignment of Deadline Monotonic scheduling algorithm.
+    \item[\textbf{Event}] Is the abstract class the represent the relevant event of the system; each event is defined by the time of its occurence . The idea is that the time can go forware untill it reach an instance of this class. The two implementation are: \texttt{ReleaseEvent} that modeling the job release event; \texttt{DeadlineEvent} that modeling the reaching of the job deadline.
 \end{itemize}
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[max width=\textwidth, max height=0.85\textheight, keepaspectratio]{images/1-simulator/class diagram.pdf}
+    \includegraphics[max width=\textwidth, max height=0.85\textheight, keepaspectratio]{images/1-simulator/class_diagram.pdf}
     \caption{Simulator Class Diagram.}
-    \label{fig:class_diagram}
+    \label{fig:simulator_class_diagram}
 \end{figure}
 
 \subsection{Utilities}
-Let's observe the utilities used by more classes:
+if we observe the Figure~\ref{fig:simulator_class_diagram} we have to describe the systems utilities.
 \begin{itemize}
-    \item [\textbf{SampleDuration}] This class is useful to obtain a Duration object given a Sirio distribution. This duration represent time in nanoseconds as described in Section~\ref{subsec:simulator_time}.
-    \item [\textbf{ConstantSampler}] A specialization of the Sirio \texttt{Sampler} interface that always returns a constant value, used for deterministic parameters like deadlines.
-    \item [\textbf{TraceLogger}] An interface that abstracts the logging operations, implemented by \texttt{MyLogger}.
-    \item [\textbf{MyLogger}] Is a helper class that abstracts the logging operation with a personalized format, writing to a file named \textit{trace.log}.
+    \item [\textbf{ConstantSampler}] A specialization of the Sirio \texttt{Sampler} interface that always returns a constant value, used for deterministic parameters.
     \item [\textbf{MyClock}] Represents the global clock of the system. Implements the method to go at specified time, to go forward in time by a specified duration and to print the current time.
-    \item [\textbf{Utils}] Provides static methods like \texttt{generatePeriodUpToMax} to calculate all relevant simulation events.
-    \item [\textbf{DeadlineMissedException}] A custom exception thrown when a task exceeds its deadline, interrupting the simulation.
+    \item [\textbf{TraceLogger}] An interface that abstracts the logging operations.
+    \item [\textbf{MyLogger}] Implementation of \texttt{TraceLogger} that is responsable to log in a file named \textit{trace.log} with a personalized format.
+    \item [\textbf{DeadlineMissedException}] A custom exception thrown when a task's job exceeds its deadline.
 \end{itemize}
 
+
+
+
+
+
+
+
 \subsection{Flow}
-Let's analyse, thanks also to the Figure~\ref{fig:activity_diagram},the scheduler flow. This follow the steps below:
+Let's analyse, thanks also to the Figure~\ref{fig:simulator_activity_diagram},the scheduler flow. This follow the steps below:
 \begin{enumerate}
     \item Reset the state of the whole system. This allow the client to call more and more time \texttt{analyze()}.
     \item Release the first job of all tasks.
@@ -82,17 +99,5 @@ Let's analyse, thanks also to the Figure~\ref{fig:activity_diagram},the schedule
     \centering
     \includegraphics[max width=\textwidth, max height=0.85\textheight, keepaspectratio]{images/1-simulator/activity_diagram.pdf}
     \caption{Simulator Activity Diagram.}
-    \label{fig:activity_diagram}
+    \label{fig:simulator_activity_diagram}
 \end{figure}
-
-\subsection{Time}
-\label{subsec:simulator_time}
-This kind of simulation must be totally deterministic; for this reason all timing aspects have been handle in a discrete way using the \texttt{Duration} Java type. In this way we can handle the complexity of small duration with a high abstraction level.
-
-We assume that the time is taken in input and returned in output in millisecond. During the execution, to obtain the maximum precision, it is elaborated in nanoseconds.
-
-\myskip
-
-Related to timing, the system has obviusually the capabilities to identifies a deadline miss by a task and can also identifies the job that is responsable of this violation. This check is implemented by a single function (i.e., we have a single poit of truth) called after each time advancement: this allow us to identifies both the violation during the job execution and during the its subspention.
-
-A violation implies the abort of whole simulation.

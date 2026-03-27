@@ -1,16 +1,5 @@
-# Evoluzione del Simulatore: Da Deterministico a Stocastico
-
-Questo documento descrive in dettaglio la trasformazione del simulatore da un modello a intervalli fissi (determinismo) a un sistema stocastico basato su **Discrete Event Simulation (DES)**.
-
----
 
 ## 1. Modello dei Dati: Task e Job
-
-L'introduzione della stocasticità ha richiesto un passaggio da entità statiche a oggetti capaci di mantenere uno stato dinamico complesso.
-
-### Task.java (Il Progetto)
-- **Periodo Stocastico**: Il periodo non è più una costante ma un `Sampler`. Ogni intervallo tra due rilasci successivi viene campionato indipendentemente, permettendo di simulare jitter o variazioni periodiche.
-- **Job Counter**: Introdotto un contatore per distinguere le diverse istanze di esecuzione. Ogni job prodotto da un task riceve un ID univoco (es. "Task 1/1", "Task 1/2").
 
 ### Job.java (L'Istanza di Esecuzione)
 - **Timeline Dinamica**: Ogni Job nasce con un `releaseTime` (l'istante attuale del simulatore) e una `absoluteDeadline` calcolata come `releaseTime + task.getDeadline()`.

@@ -1,0 +1,108 @@
+classDiagram
+
+    %% Scheduler
+    class Scheduler {
+        <<abstract>>
+        - taskSet : TaskSet
+        + analyze() : void
+        # assignPriority() : void
+    }
+
+    class DMScheduler {
+        <<final>>
+        # assignPriority() : void
+    }
+
+    %% TaskSet
+    class TaskSet {
+        <<final>>
+        - tasks : Set~Task~
+    }
+
+    class Task {
+        <<final>>
+        - periodSampler : Sampler
+        - deadline : Duration
+        - executionTimeSampler : Sampler
+        - priority : int
+        + sampleNextPeriod() : Duration
+        + releaseJob(Duration releaseTime) : Job
+    }
+
+    class Job {
+        <<final>>
+        - task : Task
+        - absoluteDeadline : Duration
+        + execute(Duration durationAvailable) : Duration
+        + isDeadlineMissed(Duration currentTime) : boolean
+    }
+
+    %% Event
+    class Event {
+        <<abstract>>
+        - time : Duration
+    }
+
+    class ReleaseEvent {
+        <<final>>
+        - task : Task
+    }
+
+    class DeadlineEvent {
+        <<final>>
+        -job : Job
+    }
+
+    %% Utils
+    class MyClock {
+        <<final>>
+        - currentTime : Duration
+        + advanceTo(Duration newTime) : void
+        + advanceBy(Duration delta) : void
+        + printCurrentTime() : String
+    }
+
+    class TraceLogger {
+        <<interface>>
+        + log(String message) : void
+        + close() : void
+    }
+
+    class MyLogger {
+        <<final>>
+        + log(String message) : void
+        + close() : void
+    }
+
+    class Sampler {
+        <<interface>>
+        +getSample() : BigDecimal
+    }
+
+    class ConstantSampler {
+        <<final>>
+        - value : BigDecimal
+        + getSample() : BigDecimal
+    }
+
+    %% Relationships
+    Client --> Scheduler : analyse()
+    %% Scheduler
+    Scheduler <|-- DMScheduler
+    Scheduler --> MyClock
+    Scheduler --> TraceLogger
+    Scheduler o-- TaskSet
+    Scheduler o-- Event : eventQueue
+    Scheduler ..> DeadlineMissedException : throws
+    %% TaskSet
+    TaskSet *-- Task
+    Job o-- Task
+    Task o-- Sampler : periodSampler
+    Task o-- Sampler : executionTimeSampler
+    Task ..> Job : releaseJob
+    %% Event
+    Event <|-- ReleaseEvent
+    Event <|-- DeadlineEvent
+    %% Utils
+    TraceLogger <|.. MyLogger
+    Sampler <|.. ConstantSampler

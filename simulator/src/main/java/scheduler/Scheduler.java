@@ -81,9 +81,8 @@ public abstract class Scheduler {
             // Collect all events at the same time to process them in batch
             List<Event> currentEvents = new LinkedList<>();
             currentEvents.add(event);
-            while (!eventQueue.isEmpty() && eventQueue.peek().getTime().equals(nextEventTime)) {
+            while (!eventQueue.isEmpty() && eventQueue.peek().getTime().equals(nextEventTime))
                 currentEvents.add(eventQueue.poll());
-            }
 
             // Check deadlines for all active jobs at this time point
             this.checkDeadlines();

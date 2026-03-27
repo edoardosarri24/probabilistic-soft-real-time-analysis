@@ -3,6 +3,7 @@ package event;
 import java.time.Duration;
 
 public abstract class Event implements Comparable<Event> {
+
     private final Duration time;
 
     public Event(Duration time) {
