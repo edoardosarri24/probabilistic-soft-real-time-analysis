@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import taskSet.Task;
 import taskSet.TaskSet;
-import utils.logger.TraceLogger;
+import utils.log.TraceLogger;
 
 public final class DMScheduler extends Scheduler {
 

@@ -11,11 +11,6 @@ public final class ConstantSampler implements Sampler {
 
     private final BigDecimal value;
 
-    /**
-     * Creates a constant sampler with the specified value.
-     *
-     * @param value the constant value to return
-     */
     public ConstantSampler(BigDecimal value) {
         this.value = value;
     }

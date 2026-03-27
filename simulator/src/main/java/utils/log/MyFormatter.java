@@ -1,4 +1,4 @@
-package utils.logger;
+package utils.log;
 
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;

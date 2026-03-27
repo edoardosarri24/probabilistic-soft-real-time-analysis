@@ -1,4 +1,4 @@
-package utils.logger;
+package utils.log;
 
 import java.io.IOException;
 import java.util.Objects;

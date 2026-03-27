@@ -1,39 +1,29 @@
 package taskSet;
 
 import java.time.Duration;
+import java.util.Objects;
 
 /**
- * Represents a single execution instance (a job) of a {@link Task}.
- * While a Task is the project, a job maintains the dynamic state of the task's execution.
+ * While a {@link Task} is the project, a job maintains the dynamic state of a single task's execution.
  */
 public final class Job {
-    private final Task task;
+
     private final int id;
-    private final Duration releaseTime;
+    private final Task task;
     private final Duration absoluteDeadline;
     private Duration remainingExecutionTime;
     private boolean isCompleted = false;
+    private Duration completionTime = null;
 
+    // Constructor
     public Job(Task task, int jobId, Duration releaseTime, Duration executionTime) {
         this.task = task;
         this.id = jobId;
-        this.releaseTime = releaseTime;
         this.absoluteDeadline = releaseTime.plus(task.getDeadline());
         this.remainingExecutionTime = executionTime;
     }
 
-    public Task getTask() {
-        return this.task;
-    }
-
-    public int getId() {
-        return this.id;
-    }
-
-    public Duration getReleaseTime() {
-        return this.releaseTime;
-    }
-
+    // Getter and setter.
     public Duration getAbsoluteDeadline() {
         return this.absoluteDeadline;
     }
@@ -50,9 +40,38 @@ public final class Job {
         return this.isCompleted;
     }
 
+    /**
+     * @param completionTime The absolute time when the job finished.
+     */
+    public void setCompletionTime(Duration completionTime) {
+        this.completionTime = completionTime;
+    }
+
+    // Objects methods
+    @Override
+    public String toString() {
+        return task.toString() + "/" + this.id;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || this.getClass() != obj.getClass())
+            return false;
+        Job job = (Job) obj;
+        return this.task.equals(job.task) && this.id == job.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(task, id);
+    }
+
     // Methods
     /**
-     * Executes the job for the specified duration.
+     * Executes the job for the specified duration. Reminder: Is the {@Scheduler} that is responsable
+     * to set the completionTime if the job has finished.
      * @param durationAvailable The duration to execute.
      * @return The actual duration executed, that might be less than requested if job completes.
      */
@@ -74,28 +93,13 @@ public final class Job {
      * @return True if the deadline is missed.
      */
     public boolean isDeadlineMissed(Duration currentTime) {
-        // A deadline is missed if the current time reaches or exceeds the absolute deadline and the job has not completed.
-        return !isCompleted && currentTime.compareTo(absoluteDeadline) >= 0;
+        // Deadline miss if it not completed and currentTime reached deadline.
+        if (!isCompleted && currentTime.compareTo(this.absoluteDeadline) >= 0)
+            return true;
+        // If job is completed, check if it finished after or before the deadline.
+        if (isCompleted && Objects.nonNull(completionTime) && completionTime.compareTo(this.absoluteDeadline) > 0)
+            return true;
+        return false;
     }
 
-    // Objects methods
-    @Override
-    public String toString() {
-        return task.toString() + "/" + this.id;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Job job = (Job) obj;
-        return task.equals(job.task) && releaseTime.equals(job.releaseTime);
-    }
-
-    @Override
-    public int hashCode() {
-        return task.hashCode()
-            + releaseTime.hashCode()
-            + absoluteDeadline.hashCode();
-    }
 }

@@ -2,6 +2,7 @@ package taskSet;
 
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.util.Objects;
 
 import org.oristool.simulator.samplers.Sampler;
 
@@ -11,38 +12,34 @@ import utils.SampleDuration;
 public final class Task {
 
     private final int id;
-    private final Duration period;
+    private final Sampler periodSampler;
     private final Duration deadline;
     private final Sampler executionTimeSampler;
     private int priority;
-    private int jobCounter = 0;
+    private int jobCounter = 1;
 
     private static int idCounter = 1;
 
     // Constructor
     /**
-     * @param period Must be express in milliseconds.
+     * @param periodSampler The distribution from which the period will be sampled.
      * @param deadline Must be express in milliseconds. It's the relative deadline.
-     * @param executionTimeSampler The distribution from wich the execution time will be sampled.
+     * @param executionTimeSampler The distribution from which the execution time will be sampled.
      */
-    public Task(double period, double deadline, Sampler executionTimeSampler) {
+    public Task(Sampler periodSampler, double deadline, Sampler executionTimeSampler) {
         this.id = idCounter++;
-        this.period = SampleDuration.sample(new ConstantSampler(new BigDecimal(period)));
+        this.periodSampler = periodSampler;
         this.deadline = SampleDuration.sample(new ConstantSampler(new BigDecimal(deadline)));
         this.executionTimeSampler = executionTimeSampler;
     }
 
     // Getter and setter
-    public Duration getPeriod() {
-        return this.period;
+    public Duration sampleNextPeriod() {
+        return SampleDuration.sample(this.periodSampler);
     }
 
     public int getPriority() {
         return this.priority;
-    }
-
-    public int getId() {
-        return this.id;
     }
 
     public void setPriority(int priority) {
@@ -54,18 +51,7 @@ public final class Task {
     }
 
     public void resetJobCounter() {
-        this.jobCounter = 0;
-    }
-
-    // Methods
-    /**
-     * Creates a new Job for this task at the given release time.
-     * @param releaseTime the time at which the job is released
-     * @return a new Job instance
-     */
-    public Job releaseJob(Duration releaseTime) {
-        Duration executionTime = SampleDuration.sample(executionTimeSampler);
-        return new Job(this, ++jobCounter, releaseTime, executionTime);
+        this.jobCounter = 1;
     }
 
     // Objects methods
@@ -80,13 +66,24 @@ public final class Task {
             return true;
         if (obj == null || getClass() != obj.getClass())
             return false;
-        Task other = (Task) obj;
-        return this.id == other.id;
+        Task task = (Task) obj;
+        return this.id == task.id;
     }
 
     @Override
     public int hashCode() {
-        return this.id;
+        return Objects.hash(this.id);
+    }
+
+    // Methods
+    /**
+     * Creates a new Job for this task.
+     * @param releaseTime The time at which the job is released.
+     * @return A new Job instance.
+     */
+    public Job releaseJob(Duration releaseTime) {
+        Duration executionTime = SampleDuration.sample(executionTimeSampler);
+        return new Job(this, jobCounter++, releaseTime, executionTime);
     }
 
 }

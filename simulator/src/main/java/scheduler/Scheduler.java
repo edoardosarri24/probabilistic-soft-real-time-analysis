@@ -7,8 +7,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.TreeSet;
 
+import event.DeadlineEvent;
+import event.Event;
+import event.ReleaseEvent;
 import exeptions.DeadlineMissedException;
 import sampler.ConstantSampler;
 import taskSet.Job;
@@ -16,8 +20,7 @@ import taskSet.Task;
 import taskSet.TaskSet;
 import utils.MyClock;
 import utils.SampleDuration;
-import utils.Utils;
-import utils.logger.TraceLogger;
+import utils.log.TraceLogger;
 
 public abstract class Scheduler {
 
@@ -31,6 +34,8 @@ public abstract class Scheduler {
 
     private final MyClock clock;
     private final TraceLogger logger;
+
+    private final PriorityQueue<Event> eventQueue = new PriorityQueue<>();
 
     // Constructor
     /**
@@ -46,14 +51,6 @@ public abstract class Scheduler {
     }
 
     // Getter and setter
-    public void blockJob(Job job) {
-        this.blockedJobs.add(job);
-    }
-
-    public void unblockJob(Job job) {
-        this.blockedJobs.remove(job);
-    }
-
     public TaskSet getTaskSet() {
         return this.taskSet;
     }
@@ -68,15 +65,43 @@ public abstract class Scheduler {
      */
     public final void analyze() throws DeadlineMissedException {
         this.resetState();
-        this.releaseFirstJobs();
-        List<Duration> events = initEvents();
-        while (!events.isEmpty()) {
-            Duration nextEvent = events.removeFirst();
-            Duration availableTime = nextEvent.minus(this.clock.getCurrentTime());
+        this.scheduleFirstReleases();
+        // Iterate over all events.
+        while (!eventQueue.isEmpty()) {
+            Event event = eventQueue.poll();
+            Duration nextEventTime = event.getTime();
+            // Check if we exceed the simulation duration.
+            if (nextEventTime.compareTo(this.simulationDuration) > 0)
+                break;
+            // Distribute available time over ready jobs.
+            Duration availableTime = nextEventTime.minus(this.clock.getCurrentTime());
             this.distributeAvailableTime(availableTime);
-            this.clock.advanceTo(nextEvent);
+            this.clock.advanceTo(nextEventTime);
+
+            // Collect all events at the same time to process them in batch
+            List<Event> currentEvents = new LinkedList<>();
+            currentEvents.add(event);
+            while (!eventQueue.isEmpty() && eventQueue.peek().getTime().equals(nextEventTime)) {
+                currentEvents.add(eventQueue.poll());
+            }
+
+            // Check deadlines for all active jobs at this time point
             this.checkDeadlines();
-            this.releaseJobOfPeriodTasks();
+
+            // Process releases
+            for (Event e : currentEvents) {
+                if (e instanceof ReleaseEvent) {
+                    this.releaseJob(((ReleaseEvent) e).getTask());
+                }
+                // DeadlineEvents are just marker points for checkDeadlines(), 
+                // no extra action needed here.
+            }
+        }
+        // Execute the last ready jobs.
+        if (this.clock.getCurrentTime().compareTo(this.simulationDuration) < 0) {
+            this.distributeAvailableTime(this.simulationDuration.minus(this.clock.getCurrentTime()));
+            this.clock.advanceTo(this.simulationDuration);
+            this.checkDeadlines();
         }
         this.logger.log("<" + this.clock.printCurrentTime() + ", end>\n");
     }
@@ -87,28 +112,33 @@ public abstract class Scheduler {
         this.blockedJobs.clear();
         this.lastJobExecuted = null;
         this.readyJobs = new TreeSet<>(Comparator.comparingInt(Job::getPriority));
+        this.eventQueue.clear();
         for (Task task : this.taskSet.getTasks()) {
             task.resetJobCounter();
         }
     }
 
     // Helper
-    private void releaseFirstJobs() {
-        this.readyJobs = new TreeSet<>(Comparator.comparingInt(Job::getPriority));
-        for (Task task : this.taskSet.getTasks()) {
-            Job firstJob = task.releaseJob(Duration.ZERO);
-            activeJobs.put(task, firstJob);
-            this.readyJobs.add(firstJob);
-            this.logger.log("<" + this.clock.printCurrentTime() + ", release " + firstJob.toString() + ">");
-        }
+    private void scheduleFirstReleases() {
+        for (Task task : this.taskSet.getTasks())
+            eventQueue.add(new ReleaseEvent(Duration.ZERO, task));
     }
 
-    private List<Duration> initEvents() {
-        List<Duration> periods = new LinkedList<>();
-        for (Task task : this.taskSet.getTasks())
-            periods.add(task.getPeriod());
-        List<Duration> events = Utils.generatePeriodUpToMax(periods, this.simulationDuration);
-        return events;
+    private void releaseJob(Task task) {
+        // First release new job
+        Job newJob = task.releaseJob(this.clock.getCurrentTime());
+        activeJobs.put(task, newJob);
+        this.readyJobs.add(newJob);
+        this.logger.log("<" + this.clock.printCurrentTime() + ", release " + newJob.toString() + ">");
+
+        // Schedule deadline event for this job
+        eventQueue.add(new DeadlineEvent(newJob.getAbsoluteDeadline(), newJob));
+
+        // Than schedule new releases
+        Duration nextPeriod = task.sampleNextPeriod();
+        Duration nextReleaseTime = this.clock.getCurrentTime().plus(nextPeriod);
+        if (nextReleaseTime.compareTo(this.simulationDuration) <= 0)
+            eventQueue.add(new ReleaseEvent(nextReleaseTime, task));
     }
 
     private void distributeAvailableTime(Duration availableTime) throws DeadlineMissedException {
@@ -123,9 +153,14 @@ public abstract class Scheduler {
                 ? availableTime : highPriorityJob.getRemainingExecutionTime();
             Duration executedTime = highPriorityJob.execute(timeToExecute);
             this.clock.advanceBy(executedTime);
-            this.checkDeadlines();
-            if (highPriorityJob.isCompleted())
+            
+            if (highPriorityJob.isCompleted()) {
+                highPriorityJob.setCompletionTime(this.clock.getCurrentTime());
                 this.logger.log("<" + this.clock.printCurrentTime() + ", complete " + highPriorityJob.toString() + ">");
+            }
+
+            this.checkDeadlines();
+            
             if (executedTime.isPositive())
                 this.lastJobExecuted = highPriorityJob;
             availableTime = availableTime.minus(executedTime);
@@ -147,18 +182,6 @@ public abstract class Scheduler {
         return this.lastJobExecuted!=null
                 && !this.lastJobExecuted.equals(currentJob)
                 && !this.lastJobExecuted.isCompleted();
-    }
-
-    private void releaseJobOfPeriodTasks() throws DeadlineMissedException {
-        Duration currentTime = this.clock.getCurrentTime();
-        for (Task task : this.taskSet.getTasks()) {
-            if (currentTime.toNanos() % task.getPeriod().toNanos() == 0) {
-                Job newJob = task.releaseJob(currentTime);
-                activeJobs.put(task, newJob);
-                this.readyJobs.add(newJob);
-                this.logger.log("<" + this.clock.printCurrentTime() + ", release " + newJob.toString() + ">");
-            }
-        }
     }
 
     // Hook methods

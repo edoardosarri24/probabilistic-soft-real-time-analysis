@@ -14,18 +14,17 @@ public final class MyClock {
 
     private Duration currentTime;
 
+    // Constructor.
     public MyClock() {
-        this(Duration.ZERO);
+        this.currentTime = Duration.ZERO;
     }
 
-    public MyClock(Duration initialTime) {
-        this.currentTime = initialTime;
-    }
-
+    // Getter and setter.
     public Duration getCurrentTime() {
         return this.currentTime;
     }
 
+    // Methods.
     public void advanceTo(Duration newTime) {
         if (newTime.compareTo(currentTime) < 0)
             throw new IllegalArgumentException("Cannot advance to a past time");
@@ -39,7 +38,6 @@ public final class MyClock {
     }
 
     /**
-     * Returns the current time as a string representing milliseconds with three decimal places.
      * @return A string representation of the current time in milliseconds, rounded to three decimal places
      */
     public String printCurrentTime() {
