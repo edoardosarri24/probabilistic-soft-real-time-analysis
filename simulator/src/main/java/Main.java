@@ -5,7 +5,7 @@ import org.oristool.simulator.samplers.UniformSampler;
 import exeptions.DeadlineMissedException;
 import sampler.ConstantSampler;
 import scheduler.DMScheduler;
-import scheduler.Scheduler;
+import scheduler.FixedPriorityScheduler;
 import taskSet.Task;
 import taskSet.TaskSet;
 import utils.log.MyLogger;
@@ -26,7 +26,7 @@ public class Main {
             new UniformSampler(new BigDecimal(50), new BigDecimal(70)));
         TaskSet taskSet = new TaskSet(task1, task2, task3);
         MyLogger logger = new MyLogger();
-        Scheduler dm = new DMScheduler(taskSet, 1500, logger);
+        FixedPriorityScheduler dm = new DMScheduler(taskSet, 1500, logger);
         try {
             dm.analyze();
         } catch (DeadlineMissedException e) {

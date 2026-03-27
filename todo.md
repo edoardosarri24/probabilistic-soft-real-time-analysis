@@ -1,17 +1,14 @@
 # to do
 - file .gemini / .agent
-- verificare che tutti i campi e getter e setter dellos cheduler siano utilizzati.
 - capire il flow dello scheduler.
 - documentare il flow dello scheduler.
-- distribuzioni dei tempi di esecuzione del job dei task.
+- distribuzioni dei tempi di esecuzione del job dei task. forse in python? chiamare lo script python dal main java.
 - test con task peamente peridici e sporadici.
 
 # valutare
-- direi che la classe scheduler è buona solo per scheduiling a priorità fissa. magari astraiamo.
 - se due task hanno la stessa priorità allora il treeset dellos cheduelr che gestisce i job ne terrà solo uno.
 - controllare che la deadline sia sempre più piccola del periodo.
 - gestire il fatto di poter avere più task nei periodi futuri che non hanno completato in quello precedente? oppure se un task supera la deadline non abortire la simulazione ma eliminare il task.
-- durata della simulazione nel clock?
 
 # se c'è tempo
 - no logging.

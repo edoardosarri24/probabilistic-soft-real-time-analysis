@@ -8,7 +8,7 @@ import taskSet.Task;
 import taskSet.TaskSet;
 import utils.log.TraceLogger;
 
-public final class DMScheduler extends Scheduler {
+public final class DMScheduler extends FixedPriorityScheduler {
 
     // Constructor
     public DMScheduler(TaskSet taskSet, double simulationDuration, TraceLogger logger) {

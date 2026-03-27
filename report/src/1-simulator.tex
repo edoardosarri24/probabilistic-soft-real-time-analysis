@@ -10,6 +10,7 @@ From now on we suppose that:
     \item We suppose to have a single core CPU, which implies that we are working with a concurrent problob.
     \item Each task is independent from the others. This means that there aren't shared resources among two tasks.
     \item Each task have a single elementary execution unit, i.e. each task have only one chunk.
+    \item The deadline og each task is known at priory.
     \item The task execution time is defined probabilistically, i.e. the execution time of each job of a task is sampled from some distribution. These distribution can include also the deterministic one.
     \item The jobs execution time are i.i.d. (i.e., independent and identically distributed). This means that only one distribution represents the job execution time pattern of a given task.
     \item Task can be both periodic and sporadic (i.e. the releases between two consecutive job of the same task are separated from a minimum inter-arrival time). For the sporadic task, each job releasing time can be sampled from some distribution.
@@ -51,7 +52,8 @@ In Figure~\ref{fig:simulator_class_diagram} is shown the class diagram of the si
     \item[\textbf{TaskSet}] Is a simple set of all task.
     \item[\textbf{Task}] Represent a task. It model only the static specification of the task: the period, the execution time and the deadline; the first two are a Sirio \texttt{Sampler} that represent the distribution from wich they sample the true duration; the last is a \texttt{Duration} objects, where the time must be expressed in milliseconds. Internally it also maintains a \texttt{jobCounter} to uniquely identify its jobs.
     \item[\textbf{Job}] Represent a task instance. While a Task contain only the task specifications, a Job contains the active state: the absolute deadline, the remaining execution time, the information about its completeness and the time of completition. It has a method to handle the simulation of its execution.
-    \item[\textbf{Scheduler}] Represent the heart of the simulation, that use the taskset for the scheduling simulation. It's responsable to initilizate the system clock with a \texttt{MyClock} object.
+    \item[\textbf{Scheduler}] Represent the heart of the simulation, that use the taskset for the scheduling simulation. It's responsable to initilizate the system clock with a \texttt{MyClock} object and handle the system logging.
+    \item[\textbf{FixedPriorityScheduler}] Represent the abstraction for all fixed priority scheduling algorithms. All its subclass must only impement the assign priority method.
     \item[\textbf{DMScheduler}] Is the specialization of the \texttt{Scheduler} that implement the priority assignment of Deadline Monotonic scheduling algorithm.
     \item[\textbf{Event}] Is the abstract class the represent the relevant event of the system; each event is defined by the time of its occurence . The idea is that the time can go forware untill it reach an instance of this class. The two implementation are: \texttt{ReleaseEvent} that modeling the job release event; \texttt{DeadlineEvent} that modeling the reaching of the job deadline.
 \end{itemize}

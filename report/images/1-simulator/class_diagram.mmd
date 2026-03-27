@@ -4,6 +4,14 @@ classDiagram
     class Scheduler {
         <<abstract>>
         - taskSet : TaskSet
+        - clock : MyClock
+        - simulationDuration : Duration
+        - logger : TraceLogger
+        + analyze() : void
+    }
+
+    class FixedPriorityScheduler {
+        <<abstract>>
         + analyze() : void
         # assignPriority() : void
     }
@@ -88,11 +96,12 @@ classDiagram
     %% Relationships
     Client --> Scheduler : analyse()
     %% Scheduler
-    Scheduler <|-- DMScheduler
+    Scheduler <|-- FixedPriorityScheduler
+    FixedPriorityScheduler <|-- DMScheduler
     Scheduler --> MyClock
     Scheduler --> TraceLogger
-    Scheduler o-- TaskSet
-    Scheduler o-- Event : eventQueue
+    FixedPriorityScheduler o-- TaskSet
+    FixedPriorityScheduler o-- Event : eventQueue
     Scheduler ..> DeadlineMissedException : throws
     %% TaskSet
     TaskSet *-- Task
