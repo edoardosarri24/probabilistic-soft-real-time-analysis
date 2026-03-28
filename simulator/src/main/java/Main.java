@@ -1,13 +1,14 @@
 import java.math.BigDecimal;
-
 import org.oristool.simulator.samplers.UniformSampler;
 
 import exeptions.DeadlineMissedException;
 import sampler.ConstantSampler;
 import scheduler.DMScheduler;
-import scheduler.FixedPriorityScheduler;
+import scheduler.Scheduler;
 import taskSet.Task;
 import taskSet.TaskSet;
+import utils.MyUtils;
+import utils.TaskExecutionTimeCollector;
 import utils.log.TraceLogger;
 
 public class Main {
@@ -25,13 +26,15 @@ public class Main {
             80,
             new UniformSampler(new BigDecimal(10), new BigDecimal(15)));
         TaskSet taskSet = new TaskSet(task1, task2, task3);
-        TraceLogger logger = new TraceLogger();
-        FixedPriorityScheduler dm = new DMScheduler(taskSet, 1500, logger);
+        Scheduler dm = new DMScheduler(
+            taskSet,
+            1500,
+            new TraceLogger());
         try {
-            dm.analyze();
+            TaskExecutionTimeCollector dataSimulation = dm.analyze();
+            MyUtils.callPythonExtractor(dataSimulation);
         } catch (DeadlineMissedException e) {
             e.printStackTrace();
         }
     }
-
 }

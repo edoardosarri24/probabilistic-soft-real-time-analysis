@@ -34,6 +34,10 @@ public final class Task {
     }
 
     // Getter and setter
+    public int getId() {
+        return this.id;
+    }
+
     public Duration sampleNextPeriod() {
         return SampleDuration.sample(this.periodSampler);
     }

@@ -22,4 +22,7 @@ public final class TaskExecutionTimeCollector {
         this.taskExecutionTime.clear();
     }
 
+    public Map<Task, List<Duration>> getTaskExecutionTime() {
+        return java.util.Collections.unmodifiableMap(this.taskExecutionTime);
+    }
 }

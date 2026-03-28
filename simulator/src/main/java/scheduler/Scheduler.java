@@ -52,10 +52,12 @@ public abstract class Scheduler {
     // Methods
     /**
      * Entry point for the analysis of a scheduler.
+     * @return The all task execution time sampled during the simulation.
      */
-    public final void analyze() throws DeadlineMissedException {
+    public final TaskExecutionTimeCollector analyze() throws DeadlineMissedException {
         try {
             this.analyzeForSubClasses();
+            return this.taskExecutionTimeCollector;
         } finally {
             this.logger.close();
         }
