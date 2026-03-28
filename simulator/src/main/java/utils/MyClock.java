@@ -37,6 +37,10 @@ public final class MyClock {
         this.currentTime = this.currentTime.plus(delta);
     }
 
+    public void reset() {
+        this.currentTime = Duration.ZERO;
+    }
+
     /**
      * @return A string representation of the current time in milliseconds, rounded to three decimal places
      */

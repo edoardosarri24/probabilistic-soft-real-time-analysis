@@ -52,7 +52,7 @@ In Figure~\ref{fig:simulator_class_diagram} is shown the class diagram of the si
     \item[\textbf{TaskSet}] Is a simple set of all task.
     \item[\textbf{Task}] Represent a task. It model only the static specification of the task: the period, the execution time and the deadline; the first two are a Sirio \texttt{Sampler} that represent the distribution from wich they sample the true duration; the last is a \texttt{Duration} objects, where the time must be expressed in milliseconds. Internally it also maintains a \texttt{jobCounter} to uniquely identify its jobs.
     \item[\textbf{Job}] Represent a task instance. While a Task contain only the task specifications, a Job contains the active state: the absolute deadline, the remaining execution time, the information about its completeness and the time of completition. It has a method to handle the simulation of its execution.
-    \item[\textbf{Scheduler}] Represent the heart of the simulation, that use the taskset for the scheduling simulation. It's responsable to initilizate the system clock with a \texttt{MyClock} object and handle the system logging.
+    \item[\textbf{Scheduler}] Represent the heart of the simulation, that use the taskset for the scheduling simulation. It's responsable to initilizate the system clock with a \texttt{MyClock} object and handle the system logging and the duration of simulation.
     \item[\textbf{FixedPriorityScheduler}] Represent the abstraction for all fixed priority scheduling algorithms. All its subclass must only impement the assign priority method.
     \item[\textbf{DMScheduler}] Is the specialization of the \texttt{Scheduler} that implement the priority assignment of Deadline Monotonic scheduling algorithm.
     \item[\textbf{Event}] Is the abstract class the represent the relevant event of the system; each event is defined by the time of its occurence . The idea is that the time can go forware untill it reach an instance of this class. The two implementation are: \texttt{ReleaseEvent} that modeling the job release event; \texttt{DeadlineEvent} that modeling the reaching of the job deadline.
@@ -75,26 +75,27 @@ if we observe the Figure~\ref{fig:simulator_class_diagram} we have to describe t
     \item [\textbf{DeadlineMissedException}] A custom exception thrown when a task's job exceeds its deadline.
 \end{itemize}
 
-
-
-
-
-
-
-
 \subsection{Flow}
 Let's analyse, thanks also to the Figure~\ref{fig:simulator_activity_diagram},the scheduler flow. This follow the steps below:
 \begin{enumerate}
-    \item Reset the state of the whole system. This allow the client to call more and more time \texttt{analyze()}.
+    \item Reset the state of the whole system. This allow the client (i.e., the \texttt{Main.java}) to call more and more time \texttt{analyze()} to obstain consecutive scheduling.
     \item Release the first job of all tasks.
-    \item Calculate the relevant events: these are all the multiples of tasks periods up to the simulation duration.
-    \item Iterate through all events.
+    \item Iterate through all events untill we found a next event with time higher than the simulation duration.
     \begin{enumerate}
-        \item Calculate the available time from now to the next event.
+        \item Take and remove the first event from the event queue and calculate the available time from now to this current event.
         \item Distribute the available time among all ready jobs according to their priority.
-        \item Advance to the next event.
-        \item Release those tasks whose period matches the current time. The release of the new job is the moment when it sampling its execution time.
+        \begin{enumerate}
+            \item Take the highest priority job from the ready jobs queque.
+            \item Evaluete if the last job executed must be preempted by this new highest priority job.
+            \item Give to the job the available time that it can exploit and execute the job.
+            \item Advace with the time clock by the real job execution time and check for deadline miss.
+            \item Calculate the new available time.
+            \item If the job hasn't finished its work we insert another time in the ready job list for the next iteration.
+        \end{enumerate}
+        \item Carry the logical clock current time to the our event time. Then check the deadline miss for all acrive jobs; with this we ensure that the symulator state is correct and we can go on.
+        \item Consider all event that have the same time of our current event. We have to deal with them all toogher. For these events that represent a new release, we release a new job of related task. The release behaviour is: create a new job and add it to all related structures; add the its deadline event to the event queue; add the new release task time to the event queque.
     \end{enumerate}
+    \item It the current time is less lower than the simulation duation execute the simulation for the remaining time.
 \end{enumerate}
 
 \begin{figure}[htbp]

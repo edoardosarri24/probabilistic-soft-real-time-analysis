@@ -1,9 +1,10 @@
 # to do
-- file .gemini / .agent
+- task bloccati non ci dovrebbero mai essere, rimuovere cose?
 - capire il flow dello scheduler.
 - documentare il flow dello scheduler.
 - distribuzioni dei tempi di esecuzione del job dei task. forse in python? chiamare lo script python dal main java.
 - test con task peamente peridici e sporadici.
+- Controlli su parametri passati
 
 # valutare
 - se due task hanno la stessa priorità allora il treeset dellos cheduelr che gestisce i job ne terrà solo uno.
