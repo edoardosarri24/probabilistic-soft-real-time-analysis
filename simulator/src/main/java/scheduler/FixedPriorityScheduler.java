@@ -22,7 +22,6 @@ import utils.log.TraceLogger;
 public abstract class FixedPriorityScheduler extends Scheduler  {
 
     private final TreeSet<Job> readyJobs = new TreeSet<>(Comparator.comparingInt(Job::getPriority));
-    private final List<Job> blockedJobs = new LinkedList<>();
     private final Map<Task, Job> activeJobs = new HashMap<>();
     private final PriorityQueue<Event> eventQueue = new PriorityQueue<>();
     private Job lastJobExecuted;
@@ -80,7 +79,6 @@ public abstract class FixedPriorityScheduler extends Scheduler  {
     private void resetState() {
         this.getClock().reset();
         this.activeJobs.clear();
-        this.blockedJobs.clear();
         this.lastJobExecuted = null;
         this.readyJobs.clear();
         this.eventQueue.clear();
@@ -114,7 +112,7 @@ public abstract class FixedPriorityScheduler extends Scheduler  {
             if (executedTime.isPositive())
                 this.lastJobExecuted = highPriorityJob;
             // If the job hasn't finished its execution we will consider it again.
-            if (!highPriorityJob.isCompleted() && !this.blockedJobs.contains(highPriorityJob))
+            if (!highPriorityJob.isCompleted())
                 this.readyJobs.add(highPriorityJob);
         }
     }

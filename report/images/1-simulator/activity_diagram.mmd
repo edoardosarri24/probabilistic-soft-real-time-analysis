@@ -1,28 +1,36 @@
 stateDiagram-v2
-    [*] --> ResetSystem
-    ResetSystem --> ReleaseInitialJobs
-    ReleaseInitialJobs --> CalculateEvents
+    [*] --> Initialization
 
-    state EventIteration {
-        [*] --> CheckMoreEvents
-        state MoreEventsCheck<<choice>>
-        CheckMoreEvents --> MoreEventsCheck
-
-        MoreEventsCheck --> CalculateAvailableTime: true
-        MoreEventsCheck --> [*]: false
-
-        CalculateAvailableTime --> DistributeTime
-        DistributeTime --> AdvanceClock : Distribute time to ready jobs (by priority)
-        AdvanceClock --> CheckDeadline
-
-        state DeadlineCheck<<choice>>
-        CheckDeadline --> DeadlineCheck
-
-        DeadlineCheck --> ThrowException: Deadline Missed
-        DeadlineCheck --> ReleaseTasks: Deadline Ok
-
-        ReleaseTasks --> CheckMoreEvents
+    state Initialization {
+        ResetSystem: Reset global state.
+        ReleaseFirstJobs: Release the first jobs for each task.
+        ResetSystem --> ReleaseFirstJobs
     }
 
-    CalculateEvents --> EventIteration
-    ThrowException --> [*]
+    state "Event Loop" as EventLoop {
+
+        CheckNextEventTime : Check if we are still within the simulation duration.
+        state NextEventTimeCheck <<choice>>
+        AvailableTime: Calculate available time from now to next event.
+        DistributeTime: Distribute available time among ready tasks.
+        AdvaceTime : Advance time to the next event.
+        CheckDeadline : Check deadline miss.
+        state DeadlineCheck <<choice>>
+        ReleaseJob : Release new job for the task has completed their periods.
+
+        [*] --> TakeNextEvent
+        TakeNextEvent --> CheckNextEventTime
+        CheckNextEventTime --> NextEventTimeCheck
+        NextEventTimeCheck --> [*] : Simulation Ended
+        NextEventTimeCheck --> AvailableTime : Continue
+        AvailableTime --> DistributeTime
+        DistributeTime --> AdvaceTime
+        AdvaceTime --> CheckDeadline
+        CheckDeadline --> DeadlineCheck
+        DeadlineCheck --> ReleaseJob : State Ok
+        ReleaseJob --> TakeNextEvent
+    }
+
+    Initialization --> EventLoop
+    DeadlineCheck --> [*] : Deadline Missed
+    EventLoop --> [*]

@@ -1,7 +1,4 @@
 # to do
-- task bloccati non ci dovrebbero mai essere, rimuovere cose?
-- capire il flow dello scheduler.
-- documentare il flow dello scheduler.
 - distribuzioni dei tempi di esecuzione del job dei task. forse in python? chiamare lo script python dal main java.
 - test con task peamente peridici e sporadici.
 - Controlli su parametri passati
