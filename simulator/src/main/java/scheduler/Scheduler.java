@@ -7,6 +7,7 @@ import exeptions.DeadlineMissedException;
 import sampler.ConstantSampler;
 import taskSet.TaskSet;
 import utils.MyClock;
+import utils.MyUtils;
 import utils.SampleDuration;
 import utils.TaskExecutionTimeCollector;
 import utils.log.MyLogger;
@@ -22,9 +23,10 @@ public abstract class Scheduler {
 
     // Constructor
     public Scheduler(TaskSet taskSet, double simulationDuration, MyLogger logger) {
-        this.taskSet = taskSet;
-        this.simulationDuration = SampleDuration.sample(new ConstantSampler(new BigDecimal(simulationDuration)));
-        this.logger = logger;
+        this.taskSet = MyUtils.requireNonNull(taskSet, "taskSet");
+        this.simulationDuration = SampleDuration.sample(
+            new ConstantSampler(new BigDecimal(MyUtils.requireNonNegative(simulationDuration, "simulationDuration"))));
+        this.logger = MyUtils.requireNonNull(logger, "logger");
     }
 
     // Getter and setter

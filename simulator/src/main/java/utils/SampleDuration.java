@@ -10,6 +10,7 @@ public class SampleDuration {
      * It's usefull to abstract the Duration and milliseconds/nanoseconds relation.
      */
     public static Duration sample(Sampler sampler) {
+        MyUtils.requireNonNull(sampler, "sampler");
         BigDecimal sample = sampler.getSample();
         sample = sample.multiply(BigDecimal.TEN.pow(6));
         return Duration.ofNanos(sample.longValue());

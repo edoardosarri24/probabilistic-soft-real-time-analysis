@@ -2,6 +2,7 @@ package event;
 
 import java.time.Duration;
 import taskSet.Task;
+import utils.MyUtils;
 
 public final class ReleaseEvent extends Event {
 
@@ -9,7 +10,7 @@ public final class ReleaseEvent extends Event {
 
     public ReleaseEvent(Duration time, Task task) {
         super(time);
-        this.task = task;
+        this.task = MyUtils.requireNonNull(task, "task");
     }
 
     public Task getTask() {

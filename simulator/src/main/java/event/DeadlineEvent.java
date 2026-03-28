@@ -2,6 +2,7 @@ package event;
 
 import java.time.Duration;
 import taskSet.Job;
+import utils.MyUtils;
 
 public final class DeadlineEvent extends Event {
 
@@ -9,7 +10,7 @@ public final class DeadlineEvent extends Event {
 
     public DeadlineEvent(Duration time, Job job) {
         super(time);
-        this.job = job;
+        this.job = MyUtils.requireNonNull(job, "job");
     }
 
     public Job getJob() {

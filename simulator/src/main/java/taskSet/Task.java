@@ -7,6 +7,7 @@ import java.util.Objects;
 import org.oristool.simulator.samplers.Sampler;
 
 import sampler.ConstantSampler;
+import utils.MyUtils;
 import utils.SampleDuration;
 
 public final class Task {
@@ -28,9 +29,10 @@ public final class Task {
      */
     public Task(Sampler periodSampler, double deadline, Sampler executionTimeSampler) {
         this.id = idCounter++;
-        this.periodSampler = periodSampler;
-        this.deadline = SampleDuration.sample(new ConstantSampler(new BigDecimal(deadline)));
-        this.executionTimeSampler = executionTimeSampler;
+        this.periodSampler = MyUtils.requireNonNull(periodSampler, "periodSampler");
+        this.deadline = SampleDuration.sample(
+            new ConstantSampler(new BigDecimal(MyUtils.requireNonNegative(deadline, "deadline"))));
+        this.executionTimeSampler = MyUtils.requireNonNull(executionTimeSampler, "executionTimeSampler");
     }
 
     // Getter and setter

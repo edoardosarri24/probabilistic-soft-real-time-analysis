@@ -3,6 +3,8 @@ package taskSet;
 import java.time.Duration;
 import java.util.Objects;
 
+import utils.MyUtils;
+
 /**
  * While a {@link Task} is the project, a job maintains the dynamic state of a single task's execution.
  */
@@ -18,11 +20,11 @@ public final class Job {
 
     // Constructor
     public Job(Task task, int jobId, Duration releaseTime, Duration executionTime) {
-        this.task = task;
-        this.id = jobId;
-        this.absoluteDeadline = releaseTime.plus(task.getDeadline());
+        this.task = MyUtils.requireNonNull(task, "task");
+        this.id = (int) MyUtils.requirePositive(jobId, "jobId");
+        this.absoluteDeadline = MyUtils.requireNonNegative(releaseTime, "releaseTime").plus(task.getDeadline());
+        this.executionTime = MyUtils.requireNonNegative(executionTime, "executionTime");
         this.remainingExecutionTime = executionTime;
-        this.executionTime = executionTime;
     }
 
     // Getter and setter.

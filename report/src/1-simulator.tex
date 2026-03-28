@@ -119,7 +119,7 @@ Since the main objective of the whole system is produce the distribution of the 
 \subsection{Java}
 The Java \texttt{Main} create a \texttt{ProcessBuilder} to execute directly the Python script and also redirect the console and the bash: now Python have the fully controll.
 
-Once the simulator have produce the data, they are memorized in a \texttt{Map} object. Starting from this map we use the \textit{Jackson} library to trasfer in a Pipe the data in an efficient way without write any new code; the transfer is made through the Python script standard input, to avoid the generation of temporary file that dirty the project file system.
+Once the simulator have produce the data, they are memorized in a \texttt{Map} object. Starting from this map, we use the \textit{Jackson} library to map data in a Json file and trasfer them through a Pipe in an efficient way without write any new code; the transfer is made through the Python script standard input, to avoid the generation of temporary file that dirty the project file system.
 
 \subsection{Python}
 Once Python have read the whole data, it convert the Json file in a dictionary. At this point is very simple obtain the distribution of the execution time of all task.
