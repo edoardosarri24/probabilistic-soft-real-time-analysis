@@ -1,7 +1,8 @@
 \chapter{Simulator}
-The simulator general objective is to have a instrument to validate our ideas and results in a experimental way.
+The simulator general objective is to have a instrument to validate our ideas and results in a experimental way. In particular we want obtain experimentally for each task, the distribution of job execution time.
 
-In particular we want obtain experimentally for each task, the distribution of job execution time.
+This kind of simulation must be totally deterministic; for this reason all timing aspects have been handle in a discrete way using the \texttt{Duration} Java type. In this way we can handle the complexity of small duration with a high abstraction level. We assume that the time is taken in input and returned in output in millisecond. During the execution, to obtain the maximum precision, it's elaborated in nanoseconds.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Taskset Model}
@@ -36,14 +37,6 @@ The system has obviusually the capabilities to identifies a deadline miss by a t
 
 \subsection{Output - Distribution}
 During the simulation the system retrives all execution time sampled by all tasks using the \texttt{TaskExecutionTimeCollector} class. These data are send to a Python script that is the only responsable to deal with them. The final output is a distribution of execution time for each task.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Time}
-\label{subsec:simulator_time}
-This kind of simulation must be totally deterministic; for this reason all timing aspects have been handle in a discrete way using the \texttt{Duration} Java type. In this way we can handle the complexity of small duration with a high abstraction level.
-
-We assume that the time is taken in input and returned in output in millisecond. During the execution, to obtain the maximum precision, it's elaborated in nanoseconds.
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}
@@ -112,7 +105,7 @@ Let's analyse, thanks also to the Figure~\ref{fig:simulator_activity_diagram},th
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Python distribution extraction}
+\section{Distribution Extraction}
 \label{sec:simulator_distribution_extraction}
 Since the main objective of the whole system is produce the distribution of the tasks execution time, the python script lunch is made in \texttt{Main.java}, immediately after the generation of the simulation data. This avoid us to jump from a Java system to a Python script: we have to run only the simultor system.
 

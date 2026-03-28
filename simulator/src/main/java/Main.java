@@ -30,7 +30,7 @@ public class Main {
         TaskSet taskSet = new TaskSet(task1, task2, task3);
         Scheduler dm = new DMScheduler(
             taskSet,
-            100000,
+            5000000,
             new TraceLogger());
         try {
             TaskExecutionTimeCollector dataSimulation = dm.analyze();
