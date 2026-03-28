@@ -1,7 +1,5 @@
 # to do
 - test con task peamente peridici e sporadici.
-- Controlli su parametri passati
-- sistemare il readme in simulator/ per dire come usarlo.
 
 # valutare
 - se due task hanno la stessa priorità allora il treeset dellos cheduelr che gestisce i job ne terrà solo uno.
@@ -9,7 +7,7 @@
 - gestire il fatto di poter avere più task nei periodi futuri che non hanno completato in quello precedente? oppure se un task supera la deadline non abortire la simulazione ma eliminare il task.
 
 # se c'è tempo
-- Configurazione taskset con json o yaml
+- Configurazione taskset con json o yaml.
 
 # domande
 - cosa succede se un job sfora la deadline? al momento si abortisce la simulazione.
