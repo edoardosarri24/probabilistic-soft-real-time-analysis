@@ -12,6 +12,7 @@ public final class Job {
     private final Task task;
     private final Duration absoluteDeadline;
     private Duration remainingExecutionTime;
+    private Duration executionTime;
     private boolean isCompleted = false;
     private Duration completionTime = null;
 
@@ -21,6 +22,7 @@ public final class Job {
         this.id = jobId;
         this.absoluteDeadline = releaseTime.plus(task.getDeadline());
         this.remainingExecutionTime = executionTime;
+        this.executionTime = executionTime;
     }
 
     // Getter and setter.
@@ -38,6 +40,9 @@ public final class Job {
 
     public boolean isCompleted() {
         return this.isCompleted;
+    }
+    public Duration getExecutionTime() {
+        return this.executionTime;
     }
 
     /**

@@ -82,8 +82,9 @@ public final class Task {
      * @return A new Job instance.
      */
     public Job releaseJob(Duration releaseTime) {
-        Duration executionTime = SampleDuration.sample(executionTimeSampler);
-        return new Job(this, jobCounter++, releaseTime, executionTime);
+        Duration jobExecutionTime = SampleDuration.sample(executionTimeSampler);
+        Job newJob = new Job(this, jobCounter++, releaseTime, jobExecutionTime);
+        return newJob;
     }
 
 }

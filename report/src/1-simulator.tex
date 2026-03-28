@@ -1,5 +1,7 @@
 \chapter{Simulator}
-The simulator general objective is to have a instrument to validate our ideas and results in a experimental way. In particular we want obtain experimentally for each task, the distribution of job execution time.
+The simulator general objective is to have a instrument to validate our ideas and results in a experimental way.
+
+In particular we want obtain experimentally for each task, the distribution of job execution time.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Taskset Model}
@@ -26,13 +28,14 @@ The simulator input are the following:
     \item The type of logging. By default no logging are performed.
 \end{itemize}
 
-\subsection{Logging}
+\subsection{Output - Logging}
 To test the scheduler algorithm implementation and to have an evidence of the system behaviour, the simulator can produces a file, named \textit{trace.log}, containing a sequence of \textit{<time, event>}, where \textit{event} can be: the release of a job, the execution and the completition of a job, the task preemption and the deadline miss event.
 
-\subsection{Deadline Miss}
+\subsection{Output - Deadline Miss}
 The system has obviusually the capabilities to identifies a deadline miss by a task and can also identifies the job that is responsable of this violation. A violation implies the abort of whole simulation.
 
-This check is implemented by a single function (i.e., \texttt{checkDeadlines()} defined in \texttt{Scheduler.java}) to have a single poit of truth that called after each time advancement or each relevant event.
+\subsection{Output - Distribution}
+During the simulation the system retrives all execution time sampled by all tasks using the \texttt{TaskExecutionTimeCollector} class.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Time}
@@ -74,6 +77,7 @@ if we observe the Figure~\ref{fig:simulator_class_diagram} we have to describe t
     \item [\textbf{TraceLogger}] Implementation of \texttt{TraceLogger} that is responsable to log in a file named \textit{trace.log} with a personalized format.
     \item [\textbf{NoLogger}] Implementation of \texttt{TraceLogger} that doesn't perform any logging operation. It's the deafult logger if Main pass no logger.
     \item [\textbf{DeadlineMissedException}] A custom exception thrown when a task's job exceeds its deadline.
+    \item [\textbf{TaskExecutionTimeCollector}] Is te collector of all execution time of all tasks.
 \end{itemize}
 
 \subsection{Flow}
@@ -94,7 +98,7 @@ Let's analyse, thanks also to the Figure~\ref{fig:simulator_activity_diagram},th
             \item If the job hasn't finished its work we insert another time in the ready job list for the next iteration.
         \end{enumerate}
         \item Carry the logical clock current time to the our event time. Then check the deadline miss for all acrive jobs; with this we ensure that the symulator state is correct and we can go on.
-        \item Consider all event that have the same time of our current event. We have to deal with them all toogher. For these events that represent a new release, we release a new job of related task. The release behaviour is: create a new job and add it to all related structures; add the its deadline event to the event queue; add the new release task time to the event queque.
+        \item Consider all event that have the same time of our current event. We have to deal with them all toogher. For these events that represent a new release, we release a new job of related task. The release behaviour is: create a new job and add it to all related structures; trace the job execution time; add the its deadline event to the event queue; add the new release task time to the event queque.
     \end{enumerate}
     \item It the current time is less lower than the simulation duation execute the simulation for the remaining time.
 \end{enumerate}

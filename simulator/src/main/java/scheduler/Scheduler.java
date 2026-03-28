@@ -8,6 +8,7 @@ import sampler.ConstantSampler;
 import taskSet.TaskSet;
 import utils.MyClock;
 import utils.SampleDuration;
+import utils.TaskExecutionTimeCollector;
 import utils.log.MyLogger;
 
 public abstract class Scheduler {
@@ -16,6 +17,8 @@ public abstract class Scheduler {
     private final Duration simulationDuration;
     private final MyClock clock = new MyClock();
     private final MyLogger logger;
+    private final TaskExecutionTimeCollector taskExecutionTimeCollector = new TaskExecutionTimeCollector();
+
 
     // Constructor
     public Scheduler(TaskSet taskSet, double simulationDuration, MyLogger logger) {
@@ -39,6 +42,10 @@ public abstract class Scheduler {
 
     protected Duration getSimulationDuration() {
         return this.simulationDuration;
+    }
+
+    protected TaskExecutionTimeCollector getTaskExecutionTimeCollector() {
+        return this.taskExecutionTimeCollector;
     }
 
 

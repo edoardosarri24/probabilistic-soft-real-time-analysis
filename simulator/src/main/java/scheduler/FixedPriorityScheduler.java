@@ -82,6 +82,7 @@ public abstract class FixedPriorityScheduler extends Scheduler  {
         this.lastJobExecuted = null;
         this.readyJobs.clear();
         this.eventQueue.clear();
+        this.getTaskExecutionTimeCollector().clear();
         for (Task task : this.getTaskSet().getTasks()) {
             task.resetJobCounter();
         }
@@ -136,8 +137,9 @@ public abstract class FixedPriorityScheduler extends Scheduler  {
     }
 
     private void releaseJob(Task task) {
-        // First release new job
+        // First release new job and trace its execution time.
         Job newJob = task.releaseJob(this.getClock().getCurrentTime());
+        this.getTaskExecutionTimeCollector().add(task, newJob.getExecutionTime());
         activeJobs.put(task, newJob);
         this.readyJobs.add(newJob);
         this.getLogger().log("<" + this.getClock().printCurrentTime() + ", release " + newJob.toString() + ">");

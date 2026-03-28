@@ -23,7 +23,7 @@ public class Main {
         Task task3 = new Task(
             new ConstantSampler(new BigDecimal(80)),
             80,
-            new UniformSampler(new BigDecimal(50), new BigDecimal(70)));
+            new UniformSampler(new BigDecimal(10), new BigDecimal(15)));
         TaskSet taskSet = new TaskSet(task1, task2, task3);
         TraceLogger logger = new TraceLogger();
         FixedPriorityScheduler dm = new DMScheduler(taskSet, 1500, logger);

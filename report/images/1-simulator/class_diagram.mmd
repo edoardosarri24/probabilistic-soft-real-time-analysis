@@ -101,6 +101,11 @@ classDiagram
         + getSample() : BigDecimal
     }
 
+    class TaskExecutionTimeCollector{
+        <<final>>
+        - taskExecutionTime : Map~Task,List~
+    }
+
     %% Relationships
     Client --> Scheduler : analyse()
     %% Scheduler
@@ -108,6 +113,7 @@ classDiagram
     FixedPriorityScheduler <|-- DMScheduler
     Scheduler --> MyClock
     Scheduler --> MyLogger
+    Scheduler --> TaskExecutionTimeCollector
     FixedPriorityScheduler o-- TaskSet
     FixedPriorityScheduler o-- Event : eventQueue
     Scheduler ..> DeadlineMissedException : throws
