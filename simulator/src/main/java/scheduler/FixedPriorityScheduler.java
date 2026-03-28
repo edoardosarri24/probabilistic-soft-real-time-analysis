@@ -17,7 +17,7 @@ import exeptions.DeadlineMissedException;
 import taskSet.Job;
 import taskSet.Task;
 import taskSet.TaskSet;
-import utils.log.TraceLogger;
+import utils.log.MyLogger;
 
 public abstract class FixedPriorityScheduler extends Scheduler  {
 
@@ -31,14 +31,14 @@ public abstract class FixedPriorityScheduler extends Scheduler  {
      * @param taskSet The taskset that will be schedule.
      * @param simulationDuration Must be expressed in milliseconds.
      */
-    public FixedPriorityScheduler(TaskSet taskSet, double simulationDuration, TraceLogger logger) {
+    public FixedPriorityScheduler(TaskSet taskSet, double simulationDuration, MyLogger logger) {
         super(taskSet, simulationDuration, logger);
         this.assignPriority();
     }
 
     // Methods
     @Override
-    public final void analyze() throws DeadlineMissedException {
+    protected final void analyzeForSubClasses() throws DeadlineMissedException {
         this.resetState();
         this.scheduleFirstReleases();
         // Iterate over all events.

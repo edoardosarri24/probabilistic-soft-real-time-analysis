@@ -70,8 +70,9 @@ if we observe the Figure~\ref{fig:simulator_class_diagram} we have to describe t
 \begin{itemize}
     \item [\textbf{ConstantSampler}] A specialization of the Sirio \texttt{Sampler} interface that always returns a constant value, used for deterministic parameters.
     \item [\textbf{MyClock}] Represents the global clock of the system. Implements the method to go at specified time, to go forward in time by a specified duration and to print the current time.
-    \item [\textbf{TraceLogger}] An interface that abstracts the logging operations.
-    \item [\textbf{MyLogger}] Implementation of \texttt{TraceLogger} that is responsable to log in a file named \textit{trace.log} with a personalized format.
+    \item [\textbf{MyLogger}] An interface that abstracts the logging operations.
+    \item [\textbf{TraceLogger}] Implementation of \texttt{TraceLogger} that is responsable to log in a file named \textit{trace.log} with a personalized format.
+    \item [\textbf{NoLogger}] Implementation of \texttt{TraceLogger} that doesn't perform any logging operation. It's the deafult logger if Main pass no logger.
     \item [\textbf{DeadlineMissedException}] A custom exception thrown when a task's job exceeds its deadline.
 \end{itemize}
 

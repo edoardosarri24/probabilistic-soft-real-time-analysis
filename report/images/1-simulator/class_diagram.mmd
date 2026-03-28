@@ -61,6 +61,25 @@ classDiagram
         -job : Job
     }
 
+    %% Logger
+    class MyLogger {
+        <<interface>>
+        + log(String message) : void
+        + close() : void
+    }
+
+    class TraceLogger {
+        <<final>>
+        + log(String message) : void
+        + close() : void
+    }
+
+    class NoLogger {
+        <<final>>
+        + log(String message) : void
+        + close() : void
+    }
+
     %% Utils
     class MyClock {
         <<final>>
@@ -69,18 +88,6 @@ classDiagram
         + advanceBy(Duration delta) : void
         + printCurrentTime() : String
         + reset() : void
-    }
-
-    class TraceLogger {
-        <<interface>>
-        + log(String message) : void
-        + close() : void
-    }
-
-    class MyLogger {
-        <<final>>
-        + log(String message) : void
-        + close() : void
     }
 
     class Sampler {
@@ -100,7 +107,7 @@ classDiagram
     Scheduler <|-- FixedPriorityScheduler
     FixedPriorityScheduler <|-- DMScheduler
     Scheduler --> MyClock
-    Scheduler --> TraceLogger
+    Scheduler --> MyLogger
     FixedPriorityScheduler o-- TaskSet
     FixedPriorityScheduler o-- Event : eventQueue
     Scheduler ..> DeadlineMissedException : throws
@@ -113,6 +120,9 @@ classDiagram
     %% Event
     Event <|-- ReleaseEvent
     Event <|-- DeadlineEvent
+    %% Logger
+    MyLogger <|.. TraceLogger
+    MyLogger <|.. NoLogger
+
     %% Utils
-    TraceLogger <|.. MyLogger
     Sampler <|.. ConstantSampler

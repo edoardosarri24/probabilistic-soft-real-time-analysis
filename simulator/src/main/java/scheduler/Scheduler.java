@@ -8,17 +8,17 @@ import sampler.ConstantSampler;
 import taskSet.TaskSet;
 import utils.MyClock;
 import utils.SampleDuration;
-import utils.log.TraceLogger;
+import utils.log.MyLogger;
 
 public abstract class Scheduler {
 
     private final TaskSet taskSet;
     private final Duration simulationDuration;
     private final MyClock clock = new MyClock();
-    private final TraceLogger logger;
+    private final MyLogger logger;
 
     // Constructor
-    public Scheduler(TaskSet taskSet, double simulationDuration, TraceLogger logger) {
+    public Scheduler(TaskSet taskSet, double simulationDuration, MyLogger logger) {
         this.taskSet = taskSet;
         this.simulationDuration = SampleDuration.sample(new ConstantSampler(new BigDecimal(simulationDuration)));
         this.logger = logger;
@@ -33,7 +33,7 @@ public abstract class Scheduler {
         return this.clock;
     }
 
-    protected TraceLogger getLogger() {
+    protected MyLogger getLogger() {
         return this.logger;
     }
 
@@ -46,6 +46,14 @@ public abstract class Scheduler {
     /**
      * Entry point for the analysis of a scheduler.
      */
-    public abstract void analyze() throws DeadlineMissedException;
+    public final void analyze() throws DeadlineMissedException {
+        try {
+            this.analyzeForSubClasses();
+        } finally {
+            this.logger.close();
+        }
+    }
+
+    protected abstract void analyzeForSubClasses() throws DeadlineMissedException;
 
 }

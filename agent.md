@@ -26,7 +26,7 @@ The simulator follows a DES approach, jumping between critical time points (Even
     - `DMScheduler`: Implementation of the Deadline Monotonic scheduling policy.
 - **Utilities:**
     - `MyClock`: Tracks absolute simulation time using `java.time.Duration`.
-    - `TraceLogger`: Custom logging for simulation traces.
+    - `MyLogger`: Custom logging for simulation traces.
 
 ## Building and Running
 

@@ -8,7 +8,7 @@ import scheduler.DMScheduler;
 import scheduler.FixedPriorityScheduler;
 import taskSet.Task;
 import taskSet.TaskSet;
-import utils.log.MyLogger;
+import utils.log.TraceLogger;
 
 public class Main {
     public static void main(String[] args) {
@@ -25,14 +25,13 @@ public class Main {
             80,
             new UniformSampler(new BigDecimal(50), new BigDecimal(70)));
         TaskSet taskSet = new TaskSet(task1, task2, task3);
-        MyLogger logger = new MyLogger();
+        TraceLogger logger = new TraceLogger();
         FixedPriorityScheduler dm = new DMScheduler(taskSet, 1500, logger);
         try {
             dm.analyze();
         } catch (DeadlineMissedException e) {
             e.printStackTrace();
         }
-        logger.close();
     }
 
 }
