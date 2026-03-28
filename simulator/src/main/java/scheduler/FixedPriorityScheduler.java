@@ -21,8 +21,12 @@ import utils.log.MyLogger;
 
 public abstract class FixedPriorityScheduler extends Scheduler  {
 
-    private final TreeSet<Job> readyJobs = new TreeSet<>(Comparator.comparingInt(Job::getPriority));
-    private final Map<Task, Job> activeJobs = new HashMap<>();
+    private final TreeSet<Job> readyJobs = new TreeSet<>(
+        Comparator.comparingInt(Job::getPriority)
+            .thenComparingInt(job -> job.getTask().getId())
+            .thenComparingInt(Job::getId)
+    );
+    private final List<Job> activeJobs = new LinkedList<>();
     private final PriorityQueue<Event> eventQueue = new PriorityQueue<>();
     private Job lastJobExecuted;
 
@@ -103,6 +107,7 @@ public abstract class FixedPriorityScheduler extends Scheduler  {
             Duration executedTime = highPriorityJob.execute(availableTime);
             if (highPriorityJob.isCompleted()) {
                 highPriorityJob.setCompletionTime(this.getClock().getCurrentTime());
+                this.activeJobs.remove(highPriorityJob);
                 this.getLogger().log("<" + this.getClock().printCurrentTime() + ", complete " + highPriorityJob.toString() + ">");
             }
             // Advance clock, check deadlines and define the new available time.
@@ -129,7 +134,7 @@ public abstract class FixedPriorityScheduler extends Scheduler  {
      * Check the deadlines miss for all active jobs.
      */
     private void checkDeadlines() throws DeadlineMissedException {
-        for (Job job : activeJobs.values())
+        for (Job job : activeJobs)
             if (job.isDeadlineMissed(this.getClock().getCurrentTime())) {
                 this.getLogger().log("<" + this.getClock().printCurrentTime() + ", deadlineMiss " + job.toString() + ">\n");
                 throw new DeadlineMissedException("Il task " + job.toString() + " ha superato la deadline");
@@ -140,7 +145,7 @@ public abstract class FixedPriorityScheduler extends Scheduler  {
         // First release new job and trace its execution time.
         Job newJob = task.releaseJob(this.getClock().getCurrentTime());
         this.getTaskExecutionTimeCollector().add(task, newJob.getExecutionTime());
-        activeJobs.put(task, newJob);
+        activeJobs.add(newJob);
         this.readyJobs.add(newJob);
         this.getLogger().log("<" + this.getClock().printCurrentTime() + ", release " + newJob.toString() + ">");
         // Schedule deadline event for this job

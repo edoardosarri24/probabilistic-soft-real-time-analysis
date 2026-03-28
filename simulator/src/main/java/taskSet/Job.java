@@ -27,7 +27,14 @@ public final class Job {
         this.remainingExecutionTime = executionTime;
     }
 
-    // Getter and setter.
+    public int getId() {
+        return this.id;
+    }
+
+    public Task getTask() {
+        return this.task;
+    }
+
     public Duration getAbsoluteDeadline() {
         return this.absoluteDeadline;
     }
