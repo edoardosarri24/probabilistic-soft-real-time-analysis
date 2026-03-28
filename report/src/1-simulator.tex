@@ -64,7 +64,7 @@ In Figure~\ref{fig:simulator_class_diagram} is shown the class diagram of the si
 \subsection{Utilities}
 If we observe Figure~\ref{fig:simulator_class_diagram} we have to describe the system utilities.
 \begin{itemize}
-    \item [\textbf{ConstantSampler}] A specialization of the Sirio \texttt{Sampler} interface that always returns a constant value, used for deterministic parameters.
+    \item [\textbf{DeterministicSampler}] A specialization of the Sirio \texttt{Sampler} interface that always returns a constant value, used for deterministic parameters.
     \item [\textbf{MyClock}] Represents the global clock of the system. Implements the method to go at a specified time, to go forward in time by a specified duration and to print the current time.
     \item [\textbf{MyLogger}] An interface that abstracts the logging operations.
     \item [\textbf{TraceLogger}] Implementation of \texttt{MyLogger} that is responsible for logging in a file named \textit{trace.log} with a personalized format.
@@ -109,7 +109,7 @@ Let's analyze, thanks also to Figure~\ref{fig:simulator_activity_diagram}, the s
 The simulator tests are divided into two categories: the deterministic system test and the stochastic test.
 
 \subsection{System Test}
-This kind of test always uses the \texttt{ConstantSampler}. The objective is to verify the correct behavior of the simulator system.
+This kind of test always uses the \texttt{DeterministicSampler}. The objective is to verify the correct behavior of the simulator system.
 
 The scenarios that were tested are: single task execution; properties of the DM scheduling; task preemption; overload of the system, i.e. execution of a taskset with a load factor greater than 1; multiple consecutive calls of \texttt{analyze()} produce the same result; semantic validation of the traces; numerical stability with $10^6$ jobs released.
 

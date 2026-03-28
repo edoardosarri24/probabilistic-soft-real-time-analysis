@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.Duration;
 
 import exeptions.DeadlineMissedException;
-import sampler.ConstantSampler;
+import sampler.DeterministicSampler;
 import taskSet.TaskSet;
 import utils.MyClock;
 import utils.MyUtils;
@@ -25,7 +25,7 @@ public abstract class Scheduler {
     public Scheduler(TaskSet taskSet, double simulationDuration, MyLogger logger) {
         this.taskSet = MyUtils.requireNonNull(taskSet, "taskSet");
         this.simulationDuration = SampleDuration.sample(
-            new ConstantSampler(new BigDecimal(MyUtils.requireNonNegative(simulationDuration, "simulationDuration"))));
+            new DeterministicSampler(new BigDecimal(MyUtils.requireNonNegative(simulationDuration, "simulationDuration"))));
         this.logger = MyUtils.requireNonNull(logger, "logger");
     }
 

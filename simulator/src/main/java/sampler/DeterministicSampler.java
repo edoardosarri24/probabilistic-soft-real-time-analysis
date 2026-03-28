@@ -8,11 +8,11 @@ import utils.MyUtils;
 /**
  * Sampler that always returns a constant value.
  */
-public final class ConstantSampler implements Sampler {
+public final class DeterministicSampler implements Sampler {
 
     private final BigDecimal value;
 
-    public ConstantSampler(BigDecimal value) {
+    public DeterministicSampler(BigDecimal value) {
         this.value = MyUtils.requireNonNull(value, "value");
     }
 

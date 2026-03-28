@@ -95,7 +95,7 @@ classDiagram
         +getSample() : BigDecimal
     }
 
-    class ConstantSampler {
+    class DeterministicSampler {
         <<final>>
         - value : BigDecimal
         + getSample() : BigDecimal
@@ -131,4 +131,4 @@ classDiagram
     MyLogger <|.. NoLogger
 
     %% Utils
-    Sampler <|.. ConstantSampler
+    Sampler <|.. DeterministicSampler

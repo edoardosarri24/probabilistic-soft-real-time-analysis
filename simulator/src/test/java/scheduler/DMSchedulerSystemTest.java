@@ -12,7 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import exeptions.DeadlineMissedException;
-import sampler.ConstantSampler;
+import sampler.DeterministicSampler;
 import taskSet.Task;
 import taskSet.TaskSet;
 import utils.log.NoLogger;
@@ -22,7 +22,7 @@ class DMSchedulerSystemTest {
     @Test
     @DisplayName("Scenario 1: Single task should complete all jobs without missing deadlines")
     void singleTaskShouldCompleteSuccessfully() throws DeadlineMissedException {
-        Task t1 = new Task(new ConstantSampler(new BigDecimal(10)), 10.0, new ConstantSampler(new BigDecimal(4)));
+        Task t1 = new Task(new DeterministicSampler(new BigDecimal(10)), 10.0, new DeterministicSampler(new BigDecimal(4)));
         TaskSet taskSet = new TaskSet(t1);
         
         DMScheduler scheduler = new DMScheduler(taskSet, 50.0, new NoLogger());
@@ -36,8 +36,8 @@ class DMSchedulerSystemTest {
     @Test
     @DisplayName("Scenario 2: T1 (High Priority) should preempt T2 (Low Priority)")
     void dmShouldHandlePreemptionCorrectly() throws DeadlineMissedException {
-        Task t1 = new Task(new ConstantSampler(new BigDecimal(10)), 5.0, new ConstantSampler(new BigDecimal(2)));
-        Task t2 = new Task(new ConstantSampler(new BigDecimal(20)), 15.0, new ConstantSampler(new BigDecimal(10)));
+        Task t1 = new Task(new DeterministicSampler(new BigDecimal(10)), 5.0, new DeterministicSampler(new BigDecimal(2)));
+        Task t2 = new Task(new DeterministicSampler(new BigDecimal(20)), 15.0, new DeterministicSampler(new BigDecimal(10)));
         TaskSet taskSet = new TaskSet(t1, t2);
         
         DMScheduler scheduler = new DMScheduler(taskSet, 25.0, new NoLogger());
@@ -49,8 +49,8 @@ class DMSchedulerSystemTest {
     @Test
     @DisplayName("Scenario 3: Overload should trigger DeadlineMissedException")
     void overloadShouldThrowException() {
-        Task t1 = new Task(new ConstantSampler(new BigDecimal(10)), 10.0, new ConstantSampler(new BigDecimal(6)));
-        Task t2 = new Task(new ConstantSampler(new BigDecimal(10)), 10.0, new ConstantSampler(new BigDecimal(5)));
+        Task t1 = new Task(new DeterministicSampler(new BigDecimal(10)), 10.0, new DeterministicSampler(new BigDecimal(6)));
+        Task t2 = new Task(new DeterministicSampler(new BigDecimal(10)), 10.0, new DeterministicSampler(new BigDecimal(5)));
         TaskSet taskSet = new TaskSet(t1, t2);
         
         DMScheduler scheduler = new DMScheduler(taskSet, 50.0, new NoLogger());
@@ -60,7 +60,7 @@ class DMSchedulerSystemTest {
     @Test
     @DisplayName("Idempotency: Running analyze() twice on the same scheduler should yield identical results")
     void analyzeShouldBeIdempotent() throws DeadlineMissedException {
-        Task t1 = new Task(new ConstantSampler(new BigDecimal(10)), 10.0, new ConstantSampler(new BigDecimal(4)));
+        Task t1 = new Task(new DeterministicSampler(new BigDecimal(10)), 10.0, new DeterministicSampler(new BigDecimal(4)));
         TaskSet taskSet = new TaskSet(t1);
         DMScheduler scheduler = new DMScheduler(taskSet, 30.0, new NoLogger());
 
@@ -81,7 +81,7 @@ class DMSchedulerSystemTest {
     @Test
     @DisplayName("Boundary: Job completing exactly at deadline should be a success")
     void jobCompletingAtDeadlineShouldSuccess() throws DeadlineMissedException {
-        Task t1 = new Task(new ConstantSampler(new BigDecimal(20)), 10.0, new ConstantSampler(new BigDecimal(10)));
+        Task t1 = new Task(new DeterministicSampler(new BigDecimal(20)), 10.0, new DeterministicSampler(new BigDecimal(10)));
         TaskSet taskSet = new TaskSet(t1);
         DMScheduler scheduler = new DMScheduler(taskSet, 20.0, new NoLogger());
 
@@ -91,7 +91,7 @@ class DMSchedulerSystemTest {
     @Test
     @DisplayName("Boundary: Task with zero execution time should complete instantly")
     void zeroExecutionTimeTaskShouldWork() throws DeadlineMissedException {
-        Task t1 = new Task(new ConstantSampler(new BigDecimal(10)), 10.0, new ConstantSampler(new BigDecimal(0)));
+        Task t1 = new Task(new DeterministicSampler(new BigDecimal(10)), 10.0, new DeterministicSampler(new BigDecimal(0)));
         TaskSet taskSet = new TaskSet(t1);
         DMScheduler scheduler = new DMScheduler(taskSet, 20.0, new NoLogger());
 
@@ -105,7 +105,7 @@ class DMSchedulerSystemTest {
     void longScaleSimulationShouldHaveZeroDrift() throws DeadlineMissedException {
         // Period: 0.123456 ms = 123456 ns
         BigDecimal periodValue = new BigDecimal("0.123456");
-        Task t1 = new Task(new ConstantSampler(periodValue), 1.0, new ConstantSampler(new BigDecimal("0.01")));
+        Task t1 = new Task(new DeterministicSampler(periodValue), 1.0, new DeterministicSampler(new BigDecimal("0.01")));
         TaskSet taskSet = new TaskSet(t1);
         
         // Simulate for 1,000,000 periods
@@ -134,9 +134,9 @@ class DMSchedulerSystemTest {
         // T1: P=15, D=15, C=2
         // T2: P=30, D=30, C=20 (Increased from 10 to ensure it's still running at t=45)
         // T3: P=100, D=100, C=50
-        Task t1 = new Task(new ConstantSampler(new BigDecimal(15)), 15.0, new ConstantSampler(new BigDecimal(2)));
-        Task t2 = new Task(new ConstantSampler(new BigDecimal(30)), 30.0, new ConstantSampler(new BigDecimal(20)));
-        Task t3 = new Task(new ConstantSampler(new BigDecimal(100)), 100.0, new ConstantSampler(new BigDecimal(50)));
+        Task t1 = new Task(new DeterministicSampler(new BigDecimal(15)), 15.0, new DeterministicSampler(new BigDecimal(2)));
+        Task t2 = new Task(new DeterministicSampler(new BigDecimal(30)), 30.0, new DeterministicSampler(new BigDecimal(20)));
+        Task t3 = new Task(new DeterministicSampler(new BigDecimal(100)), 100.0, new DeterministicSampler(new BigDecimal(50)));
         
         TaskSet taskSet = new TaskSet(t1, t2, t3);
         DMScheduler scheduler = new DMScheduler(taskSet, 60.0, customLogger);
