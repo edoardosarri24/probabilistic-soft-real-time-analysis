@@ -1,4 +1,6 @@
 import java.math.BigDecimal;
+
+import org.oristool.simulator.samplers.ExponentialSampler;
 import org.oristool.simulator.samplers.UniformSampler;
 
 import exeptions.DeadlineMissedException;
@@ -16,19 +18,19 @@ public class Main {
         Task task1 = new Task(
             new ConstantSampler(new BigDecimal(35)),
             35,
-            new UniformSampler(new BigDecimal(3.5), new BigDecimal(4.5)));
+            new UniformSampler(new BigDecimal(3), new BigDecimal(9)));
         Task task2 = new Task(
             new ConstantSampler(new BigDecimal(50)),
             50,
-            new UniformSampler(new BigDecimal(9), new BigDecimal(11)));
+            new UniformSampler(new BigDecimal(3), new BigDecimal(15)));
         Task task3 = new Task(
             new ConstantSampler(new BigDecimal(80)),
             80,
-            new UniformSampler(new BigDecimal(10), new BigDecimal(15)));
+            new ExponentialSampler(new BigDecimal(10)));
         TaskSet taskSet = new TaskSet(task1, task2, task3);
         Scheduler dm = new DMScheduler(
             taskSet,
-            1500,
+            100000,
             new TraceLogger());
         try {
             TaskExecutionTimeCollector dataSimulation = dm.analyze();

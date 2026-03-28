@@ -1,6 +1,9 @@
 package utils.log;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.logging.*;
 
@@ -11,12 +14,16 @@ public final class TraceLogger implements MyLogger {
 
     // Constructor
     public TraceLogger() {
-        this("trace.log");
+        this("results/trace.log");
     }
 
     public TraceLogger(String fileName) {
         this.logger = Logger.getLogger(TraceLogger.class.getName() + "-" + fileName);
         try {
+            // Ensure parent directory exists
+            Path logPath = Paths.get(fileName);
+            if (logPath.getParent() != null)
+                Files.createDirectories(logPath.getParent());
             this.fileHandler = new FileHandler(fileName, false);
             this.fileHandler.setFormatter(new Formatter() {
                 @Override
@@ -31,6 +38,7 @@ public final class TraceLogger implements MyLogger {
             this.logger.setLevel(Level.ALL);
             this.logger.setUseParentHandlers(false); // Doesn't send logs to console.
         } catch (IOException e) {
+            System.err.println("Error initializing TraceLogger: " + e.getMessage());
             e.printStackTrace();
         }
     }

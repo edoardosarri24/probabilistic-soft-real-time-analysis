@@ -35,7 +35,7 @@ To test the scheduler algorithm implementation and to have an evidence of the sy
 The system has obviusually the capabilities to identifies a deadline miss by a task and can also identifies the job that is responsable of this violation. A violation implies the abort of whole simulation.
 
 \subsection{Output - Distribution}
-During the simulation the system retrives all execution time sampled by all tasks using the \texttt{TaskExecutionTimeCollector} class.
+During the simulation the system retrives all execution time sampled by all tasks using the \texttt{TaskExecutionTimeCollector} class. These data are send to a Python script that is the only responsable to deal with them. The final output is a distribution of execution time for each task.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Time}
@@ -58,7 +58,7 @@ In Figure~\ref{fig:simulator_class_diagram} is shown the class diagram of the si
     \item[\textbf{Scheduler}] Represent the heart of the simulation, that use the taskset for the scheduling simulation. It's responsable to initilizate the system clock with a \texttt{MyClock} object and handle the system logging and the duration of simulation.
     \item[\textbf{FixedPriorityScheduler}] Represent the abstraction for all fixed priority scheduling algorithms. All its subclass must only impement the assign priority method.
     \item[\textbf{DMScheduler}] Is the specialization of the \texttt{Scheduler} that implement the priority assignment of Deadline Monotonic scheduling algorithm.
-    \item[\textbf{Event}] Is the abstract class the represent the relevant event of the system; each event is defined by the time of its occurence . The idea is that the time can go forware untill it reach an instance of this class. The two implementation are: \texttt{ReleaseEvent} that modeling the job release event; \texttt{DeadlineEvent} that modeling the reaching of the job deadline.
+    \item[\textbf{Event}] Is the abstract class the represent the relevant event of the system; each event is defined by the time of its occurence. The idea is that the time can go forware untill it reach an instance of this class. The two implementation are: \texttt{ReleaseEvent} that modeling the job release event; \texttt{DeadlineEvent} that modeling the reaching of the job deadline.
 \end{itemize}
 
 \begin{figure}[htbp]
@@ -83,6 +83,7 @@ if we observe the Figure~\ref{fig:simulator_class_diagram} we have to describe t
 \subsection{Flow}
 Let's analyse, thanks also to the Figure~\ref{fig:simulator_activity_diagram},the scheduler flow. This follow the steps below:
 \begin{enumerate}
+    \item Assign priority according to the schedulng algorithm policy.
     \item Reset the state of the whole system. This allow the client (i.e., the \texttt{Main.java}) to call more and more time \texttt{analyze()} to obstain consecutive scheduling.
     \item Release the first job of all tasks.
     \item Iterate through all events untill we found a next event with time higher than the simulation duration.
@@ -109,3 +110,16 @@ Let's analyse, thanks also to the Figure~\ref{fig:simulator_activity_diagram},th
     \caption{Simulator Activity Diagram.}
     \label{fig:simulator_activity_diagram}
 \end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Python distribution extraction}
+\label{sec:simulator_distribution_extraction}
+Since the main objective of the whole system is produce the distribution of the tasks execution time, the python script lunch is made in \texttt{Main.java}, immediately after the generation of the simulation data. This avoid us to jump from a Java system to a Python script: we have to run only the simultor system.
+
+\subsection{Java}
+The Java \texttt{Main} create a \texttt{ProcessBuilder} to execute directly the Python script and also redirect the console and the bash: now Python have the fully controll.
+
+Once the simulator have produce the data, they are memorized in a \texttt{Map} object. Starting from this map we use the \textit{Jackson} library to trasfer in a Pipe the data in an efficient way without write any new code; the transfer is made through the Python script standard input, to avoid the generation of temporary file that dirty the project file system.
+
+\subsection{Python}
+Once Python have read the whole data, it convert the Json file in a dictionary. At this point is very simple obtain the distribution of the execution time of all task.

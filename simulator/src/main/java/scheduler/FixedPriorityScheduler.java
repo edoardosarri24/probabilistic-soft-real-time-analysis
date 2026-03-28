@@ -33,12 +33,12 @@ public abstract class FixedPriorityScheduler extends Scheduler  {
      */
     public FixedPriorityScheduler(TaskSet taskSet, double simulationDuration, MyLogger logger) {
         super(taskSet, simulationDuration, logger);
-        this.assignPriority();
     }
 
     // Methods
     @Override
     protected final void analyzeForSubClasses() throws DeadlineMissedException {
+        this.assignPriority();
         this.resetState();
         this.scheduleFirstReleases();
         // Iterate over all events.

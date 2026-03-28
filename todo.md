@@ -1,8 +1,7 @@
 # to do
-- distribuzioni dei tempi di esecuzione del job dei task. forse in python? chiamare lo script python dal main java.
 - test con task peamente peridici e sporadici.
 - Controlli su parametri passati
-- controllo costruttori scheduler
+- sistemare il readme in simulator/ per dire come usarlo.
 
 # valutare
 - se due task hanno la stessa priorità allora il treeset dellos cheduelr che gestisce i job ne terrà solo uno.
@@ -11,9 +10,6 @@
 
 # se c'è tempo
 - Configurazione taskset con json o yaml
-
-# alla fine
-- sistemare il readme in simulator/
 
 # domande
 - cosa succede se un job sfora la deadline? al momento si abortisce la simulazione.

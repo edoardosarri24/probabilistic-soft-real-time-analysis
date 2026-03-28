@@ -1,41 +1,57 @@
+# /// script
+# dependencies = [
+#   "seaborn",
+#   "matplotlib",
+#   "pandas",
+#   "numpy",
+# ]
+# ///
+
 import sys
 import json
+import seaborn as sns
+import matplotlib.pyplot as plt
+from pathlib import Path
 
-def main():
-    # Legge i dati da stdin
-    input_data = sys.stdin.read()
-    
-    if not input_data:
-        print("Nessun dato ricevuto dallo script Python.")
-        return
-
+def read_data():
+    raw_input = sys.stdin.read().strip()
+    if not raw_input:
+        print("No data received.")
+        sys.exit(1)
     try:
-        # Carica il JSON
-        data = json.loads(input_data)
-        
-        print("\n=== Risultati Simulazione (Python Extractor) ===")
-        for task_id, durations in data.items():
-            if not durations:
-                print(f"Task {task_id}: Nessuna esecuzione registrata.")
-                continue
-                
-            avg = sum(durations) / len(durations)
-            min_val = min(durations)
-            max_val = max(durations)
-            
-            print(f"\nTask {task_id}:")
-            print(f"  - Esecuzioni: {len(durations)}")
-            print(f"  - Media:      {avg:.3f} ms")
-            print(f"  - Min:        {min_val:.3f} ms")
-            print(f"  - Max:        {max_val:.3f} ms")
-            # Stampa i primi 5 valori se disponibili
-            sample = durations[:5]
-            print(f"  - Primi 5 campioni: {sample}")
-            
+        return json.loads(raw_input)
     except json.JSONDecodeError as e:
-        print(f"Errore nella decodifica dei dati JSON: {e}")
-        print("Dati ricevuti:")
-        print(input_data)
+        print(f"Error in Json decoding: {e}")
+        sys.exit(1)
+
+def plot_distributions(data):
+    """
+    Produces PDF and CDF plots for each task's execution time distribution.
+    """
+    def plot_task_distribution(task_id, execution_times):
+        if not execution_times:
+            return
+        # Figure setup.
+        fig, (pdf, cdf) = plt.subplots(1, 2, figsize=(14, 6))
+        fig.suptitle(f"Task {task_id} - Execution Time Distribution", fontsize=16)
+        # PDF
+        sns.histplot(execution_times, ax=pdf, stat="density", color="skyblue")
+        pdf.set(title="Probability Density Function (PDF)", xlabel="Execution Time (ms)", ylabel="Density")
+        # CDF
+        sns.ecdfplot(execution_times, ax=cdf, color="orange", linewidth=2)
+        cdf.set(title="Cumulative Distribution Function (CDF)", xlabel="Execution Time (ms)", ylabel="Cumulative Probability")
+        # Layout
+        plt.tight_layout(rect=[0, 0.03, 1, 0.97])
+        plt.savefig(output_dir / f"task_{task_id}.pdf")
+        plt.close(fig)
+
+    # Declarative execution of plotting.
+    sns.set_theme(style="whitegrid")
+    output_dir = Path("results/distribution")
+    output_dir.mkdir(parents=True, exist_ok=True)
+    list(map(lambda item: plot_task_distribution(*item), data.items()))
 
 if __name__ == "__main__":
-    main()
+    data = read_data()
+    plot_distributions(data)
+    sys.exit(0)

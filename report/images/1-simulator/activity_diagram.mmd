@@ -2,8 +2,10 @@ stateDiagram-v2
     [*] --> Initialization
 
     state Initialization {
+        AssingPiority: Assign priority according to the algorithm policy.
         ResetSystem: Reset global state.
         ReleaseFirstJobs: Release the first jobs for each task.
+        AssingPiority --> ResetSystem
         ResetSystem --> ReleaseFirstJobs
     }
 
