@@ -24,7 +24,8 @@ public final class DMScheduler extends FixedPriorityScheduler {
     @Override
     protected void assignPriority() {
         List<Task> sortedByDeadline = getTaskSet().getTasks().stream()
-            .sorted(Comparator.comparing(Task::getDeadline))
+            .sorted(Comparator.comparing(Task::getDeadline)
+            .thenComparingInt(Task::getId))
             .collect(Collectors.toList());
         IntStream.range(0, sortedByDeadline.size())
             .forEach(i -> {
