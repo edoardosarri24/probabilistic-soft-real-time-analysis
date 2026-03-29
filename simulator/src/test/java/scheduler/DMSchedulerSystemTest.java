@@ -1,5 +1,6 @@
 package scheduler;
 
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -57,6 +58,7 @@ class DMSchedulerSystemTest {
         assertThrows(DeadlineMissedException.class, scheduler::analyze);
     }
 
+    @SuppressWarnings("null")
     @Test
     @DisplayName("Idempotency: Running analyze() twice on the same scheduler should yield identical results")
     void analyzeShouldBeIdempotent() throws DeadlineMissedException {
@@ -175,7 +177,7 @@ class DMSchedulerSystemTest {
     @Test
     @DisplayName("Offset: Task with firstReleaseTime > 0 should not start before its offset")
     void taskShouldRespectFirstReleaseTime() throws DeadlineMissedException {
-        Task t1 = new Task(new DeterministicSampler(new BigDecimal(10)), 10.0, new DeterministicSampler(new BigDecimal(4)), 15.0);
+        Task t1 = new Task(new DeterministicSampler(new BigDecimal(10)), 10.0, new DeterministicSampler(new BigDecimal(4)), new DeterministicSampler(new BigDecimal(15)));
         TaskSet taskSet = new TaskSet(t1);
         
         DMScheduler scheduler = new DMScheduler(taskSet, 30.0, new NoLogger());
@@ -192,8 +194,8 @@ class DMSchedulerSystemTest {
     void tasksWithDifferentFirstReleaseTimesShouldScheduleCorrectly() throws DeadlineMissedException {
         // T1: P=20, D=20, C=5, Offset=0
         // T2: P=10, D=10, C=4, Offset=7
-        Task t1 = new Task(new DeterministicSampler(new BigDecimal(20)), 20.0, new DeterministicSampler(new BigDecimal(5)), 0.0);
-        Task t2 = new Task(new DeterministicSampler(new BigDecimal(10)), 10.0, new DeterministicSampler(new BigDecimal(4)), 7.0);
+        Task t1 = new Task(new DeterministicSampler(new BigDecimal(20)), 20.0, new DeterministicSampler(new BigDecimal(5)), new DeterministicSampler(new BigDecimal(0)));
+        Task t2 = new Task(new DeterministicSampler(new BigDecimal(10)), 10.0, new DeterministicSampler(new BigDecimal(4)), new DeterministicSampler(new BigDecimal(7)));
         TaskSet taskSet = new TaskSet(t1, t2);
         
         DMScheduler scheduler = new DMScheduler(taskSet, 30.0, new NoLogger());

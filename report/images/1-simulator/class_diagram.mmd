@@ -81,16 +81,7 @@ classDiagram
         + close() : void
     }
 
-    %% Utils
-    class MyClock {
-        <<final>>
-        - currentTime : Duration
-        + advanceTo(Duration newTime) : void
-        + advanceBy(Duration delta) : void
-        + printCurrentTime() : String
-        + reset() : void
-    }
-
+    %% Sampler
     class Sampler {
         <<interface>>
         +getSample() : BigDecimal
@@ -100,6 +91,23 @@ classDiagram
         <<final>>
         - value : BigDecimal
         + getSample() : BigDecimal
+    }
+
+    class DiscreteChoiceSampler {
+        <<final>>
+        - values : List~BigDecimal~
+        - probabilities : List~Double~
+        + getSample() : BigDecimal
+    }
+
+    %% Utils
+    class MyClock {
+        <<final>>
+        - currentTime : Duration
+        + advanceTo(Duration newTime) : void
+        + advanceBy(Duration delta) : void
+        + printCurrentTime() : String
+        + reset() : void
     }
 
     class TaskExecutionTimeCollector{
@@ -131,5 +139,6 @@ classDiagram
     MyLogger <|.. TraceLogger
     MyLogger <|.. NoLogger
 
-    %% Utils
+    %% Sampler
     Sampler <|.. DeterministicSampler
+    Sampler <|.. DiscreteChoiceSampler

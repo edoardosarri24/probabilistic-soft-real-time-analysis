@@ -7,7 +7,7 @@ This project is a **Discrete Event Simulator (DES)** designed for **Probabilisti
 ### Main Technologies
 - **Language:** Java 24
 - **Build Tool:** Maven
-- **Core Library:** [Sirio](https://github.com/oris-tool/sirio) (used for samplers/distributions)
+- **Core Library:** [Sirio Sampler](https://github.com/oris-tool/sirio/tree/master/sirio/src/main/java/org/oristool/simulator/samplers) used for samplers/distributions.
 - **Documentation:** LaTeX (located in the `report/` directory)
 
 ### Architecture
