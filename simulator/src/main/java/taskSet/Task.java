@@ -16,6 +16,7 @@ public final class Task {
     private final Sampler periodSampler;
     private final Duration deadline;
     private final Sampler executionTimeSampler;
+    private final Duration firstReleaseTime;
     private int priority;
     private int jobCounter = 1;
 
@@ -28,11 +29,22 @@ public final class Task {
      * @param executionTimeSampler The distribution from which the execution time will be sampled.
      */
     public Task(Sampler periodSampler, double deadline, Sampler executionTimeSampler) {
+        this(periodSampler, deadline, executionTimeSampler, new DeterministicSampler(BigDecimal.ZERO));
+    }
+
+    /**
+     * @param periodSampler The distribution from which the period will be sampled.
+     * @param deadline Must be express in milliseconds. It's the relative deadline.
+     * @param executionTimeSampler The distribution from which the execution time will be sampled.
+     * @param firstReleaseTimeSample It's the distribution from which the first job release time will be sampled.
+     */
+    public Task(Sampler periodSampler, double deadline, Sampler executionTimeSampler, Sampler firstReleaseTimeSample) {
         this.id = idCounter++;
         this.periodSampler = MyUtils.requireNonNull(periodSampler, "periodSampler");
         this.deadline = SampleDuration.sample(
             new DeterministicSampler(new BigDecimal(MyUtils.requireNonNegative(deadline, "deadline"))));
         this.executionTimeSampler = MyUtils.requireNonNull(executionTimeSampler, "executionTimeSampler");
+        this.firstReleaseTime = SampleDuration.sample(MyUtils.requireNonNull(firstReleaseTimeSample, "firstReleaseTimeSample"));
     }
 
     // Getter and setter
@@ -54,6 +66,10 @@ public final class Task {
 
     public Duration getDeadline() {
         return this.deadline;
+    }
+
+    public Duration getFirstReleaseTime() {
+        return this.firstReleaseTime;
     }
 
     public void resetJobCounter() {

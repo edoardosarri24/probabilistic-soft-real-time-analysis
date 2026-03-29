@@ -171,4 +171,38 @@ class DMSchedulerSystemTest {
         assertThat(completeT1Index).isLessThan(resumeT2Index);
         assertThat(resumeT2Index).isNotEqualTo(-1);
     }
+
+    @Test
+    @DisplayName("Offset: Task with firstReleaseTime > 0 should not start before its offset")
+    void taskShouldRespectFirstReleaseTime() throws DeadlineMissedException {
+        Task t1 = new Task(new DeterministicSampler(new BigDecimal(10)), 10.0, new DeterministicSampler(new BigDecimal(4)), 15.0);
+        TaskSet taskSet = new TaskSet(t1);
+        
+        DMScheduler scheduler = new DMScheduler(taskSet, 30.0, new NoLogger());
+        scheduler.analyze();
+
+        Map<Task, java.util.List<Duration>> executionTimes = scheduler.getTaskExecutionTimeCollector().getTaskExecutionTime();
+        // Releases at 15, 25. 
+        assertThat(executionTimes.get(t1)).hasSize(2);
+        assertThat(scheduler.getClock().getCurrentTime()).isEqualTo(Duration.ofMillis(30));
+    }
+
+    @Test
+    @DisplayName("Offset: Tasks with different firstReleaseTime schedule correctly")
+    void tasksWithDifferentFirstReleaseTimesShouldScheduleCorrectly() throws DeadlineMissedException {
+        // T1: P=20, D=20, C=5, Offset=0
+        // T2: P=10, D=10, C=4, Offset=7
+        Task t1 = new Task(new DeterministicSampler(new BigDecimal(20)), 20.0, new DeterministicSampler(new BigDecimal(5)), 0.0);
+        Task t2 = new Task(new DeterministicSampler(new BigDecimal(10)), 10.0, new DeterministicSampler(new BigDecimal(4)), 7.0);
+        TaskSet taskSet = new TaskSet(t1, t2);
+        
+        DMScheduler scheduler = new DMScheduler(taskSet, 30.0, new NoLogger());
+        scheduler.analyze();
+
+        Map<Task, java.util.List<Duration>> executionTimes = scheduler.getTaskExecutionTimeCollector().getTaskExecutionTime();
+        // T1 released at 0, 20
+        assertThat(executionTimes.get(t1)).hasSize(2);
+        // T2 released at 7, 17, 27
+        assertThat(executionTimes.get(t2)).hasSize(3);
+    }
 }

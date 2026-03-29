@@ -2,10 +2,8 @@ package scheduler;
 
 import java.time.Duration;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.PriorityQueue;
 import java.util.TreeSet;
@@ -94,7 +92,7 @@ public abstract class FixedPriorityScheduler extends Scheduler  {
 
     private void scheduleFirstReleases() {
         for (Task task : this.getTaskSet().getTasks())
-            eventQueue.add(new ReleaseEvent(Duration.ZERO, task));
+            eventQueue.add(new ReleaseEvent(task.getFirstReleaseTime(), task));
     }
 
     private void distributeAvailableTime(Duration availableTime) throws DeadlineMissedException {

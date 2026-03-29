@@ -1,5 +1,6 @@
 # simulator
 - al momento l'istante critico della simulazione è $t=0$. implementare un qualcosa che mi permetta di sportare l'istante critico dei task.
+- Choice sampler
 
 ### se c'è tempo
 - Configurazione taskset con json o yaml.

@@ -11,12 +11,16 @@ In this section we define the taskset model, i.e., how the tasks in the taskset 
 From now on we assume that:
 \begin{itemize}
     \item We assume we have a single core CPU, which implies that we are working with a concurrent problem.
-    \item Each task is independent of the others. This means that there aren't shared resources among two tasks.
-    \item Each task has a single elementary execution unit, i.e. each task has only one chunk.
-    \item The deadline of each task is known a priori.
-    \item The task execution time is defined probabilistically, i.e. the execution time of each job of a task is sampled from some distribution. These distributions can include also the deterministic ones.
+    \item For tasks:
+    \begin{itemize}
+        \item Each task is independent of the others. This means that there aren't shared resources among two tasks.
+        \item Tasks can be both periodic and sporadic (i.e. the releases between two consecutive jobs of the same task are separated by a minimum inter-arrival time). For the sporadic task, each job release time can be sampled from some distribution.
+        \item Each task has a single elementary execution unit, i.e. each task has only one chunk.
+        \item The task execution time is defined probabilistically, i.e. the execution time of each job of a task is sampled from some distribution. These distributions can include also the deterministic ones.
+        \item The deadline of each task is known a priori.
+        \item The first release time is by deafult at time 0, but it ca be sampled from some distribution as well.
+    \end{itemize}
     \item The job execution times are i.i.d. (i.e., independent and identically distributed). This means that only one distribution represents the job execution time pattern of a given task.
-    \item Tasks can be both periodic and sporadic (i.e. the releases between two consecutive jobs of the same task are separated by a minimum inter-arrival time). For the sporadic task, each job release time can be sampled from some distribution.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
