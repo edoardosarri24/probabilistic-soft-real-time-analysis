@@ -3,7 +3,7 @@ classDiagram
 
     class BernsteinOperator {
         <<static>>
-        + fromFunction(Function f, int n, double supportMin, double supportMax) BernsteinPolynomial
+        + fromFunction(Function f, int n) BernsteinPolynomial
     }
 
     %% Domain classes
@@ -11,25 +11,26 @@ classDiagram
         <<final>>
         - double[] coefficients
         - BernsteinBasis basis
-        - double supportMin
-        - double supportMax
         + evaluate(double x) double
-        + derivative() BernsteinPolynomial
-        + getCoefficients() double[]
     }
 
     class BernsteinBasis {
-        <<interface>>
+        <<abstract>>
         + eval(int i, int n, double x) double
+        # clamp(double x) double
     }
 
     class StandardBernsteinBasis {
         <<final>>
+        - double supportMin = 0.0
+        - double supportMax = 1.0
+        # clamp(double x) double
     }
 
     class ExponentialBernsteinBasis {
         <<final>>
         - double lambda
+        # clamp(double x) double
     }
 
     %% Relations

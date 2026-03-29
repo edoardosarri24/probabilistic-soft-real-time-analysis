@@ -1,6 +1,6 @@
-package bernstein;
+package domainModel;
 
-import java.util.Arrays;
+import domainModel.basis.BernsteinBasis;
 
 /**
  * Represents a Bernstein polynomial B_n(x) = sum_{i=0}^n c_i * b_{i,n}(x)
@@ -9,14 +9,10 @@ public class BernsteinPolynomial {
 
     private final double[] coefficients;
     private final BernsteinBasis basis;
-    private final double supportMin;
-    private final double supportMax;
 
-    public BernsteinPolynomial(double[] coefficients, BernsteinBasis basis, double supportMin, double supportMax) {
+    public BernsteinPolynomial(double[] coefficients, BernsteinBasis basis) {
         this.coefficients = coefficients.clone();
         this.basis = basis;
-        this.supportMin = supportMin;
-        this.supportMax = supportMax;
     }
 
     /**
@@ -37,24 +33,4 @@ public class BernsteinPolynomial {
         return null;
     }
 
-    public double[] getCoefficients() {
-        return coefficients.clone();
-    }
-
-    public BernsteinBasis getBasis() {
-        return basis;
-    }
-
-    public double getSupportMin() {
-        return supportMin;
-    }
-
-    public double getSupportMax() {
-        return supportMax;
-    }
-
-    public int getDegree() {
-        return coefficients.length - 1;
-    }
-    
 }

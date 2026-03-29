@@ -1,0 +1,27 @@
+\section{Test e Scenari di Bernstein}
+
+In questa sezione vengono descritti i test implementati per il modulo \texttt{bernstein}, volti a garantire la correttezza matematica delle basi di Bernstein e delle utility di calcolo.
+
+\subsection{StandardBernsteinBasisTest}
+I test per le basi di Bernstein standard verificano le proprietà fondamentali dei polinomi di Bernstein in un intervallo $[a, b]$:
+\begin{itemize}
+    \item \textbf{Valori Noti (\texttt{knownValues}):} Verifica che per $n=1$ e $n=2$ i valori calcolati in punti specifici (come gli estremi $0$ e $1$ e il punto medio $0.5$) corrispondano ai valori teorici attesi.
+    \item \textbf{Partizione dell'Unità (\texttt{partitionOfUnity}):} Conferma che la somma di tutte le funzioni di base in un punto qualsiasi dell'intervallo sia esattamente $1$ e che ogni singolo valore sia non negativo.
+    \item \textbf{Intervallo Invalido (\texttt{invalidInterval}):} Assicura che venga sollevata un'eccezione (\texttt{IllegalArgumentException}) se l'estremo superiore dell'intervallo è minore di quello inferiore.
+\end{itemize}
+
+\subsection{ExponentialBernsteinBasisTest}
+Questi test riguardano le basi di Bernstein esponenziali, utilizzate per approssimazioni su domini semi-infiniti $[0, \infty)$:
+\begin{itemize}
+    \item \textbf{Valori Noti (\texttt{knownValues}):} Verifica il comportamento ai limiti: a $x=0$ solo la prima base ($i=0$) deve essere $1$, mentre per $x$ molto grandi l'ultima base ($i=n$) deve tendere a $1$.
+    \item \textbf{Partizione dell'Unità (\texttt{partitionOfUnity}):} Valida la proprietà di partizione dell'unità e la non negatività su vari punti del dominio $[0, 20]$.
+    \item \textbf{Lambda Invalido (\texttt{invalidLambda}):} Verifica che il parametro di decadimento $\lambda$ sia strettamente positivo.
+\end{itemize}
+
+\subsection{MyMathTest}
+Vengono testate le funzioni matematiche di supporto, in particolare il calcolo dei coefficienti binomiali:
+\begin{itemize}
+    \item \textbf{Valori Piccoli (\texttt{binomialCoefficient\_smallValues}):} Correttezza del calcolo per piccoli valori di $n$ e $k$.
+    \item \textbf{Grandi Valori (\texttt{binomialCoefficient\_largeValues}):} Utilizzo di \texttt{BigInteger} per gestire coefficienti che superano il limite dei tipi primitivi (es. $\binom{100}{50}$).
+    \item \textbf{Casi Limite (\texttt{binomialCoefficient\_edgeCases}):} Gestione dei casi in cui $k > n$ o $k < 0$, che devono restituire $0$.
+\end{itemize}
