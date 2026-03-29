@@ -1,5 +1,5 @@
-# GEMINI.md - Simulator
-The project is located in `simulator` folder.
+# Simulator
+The project is located in `simulator` folder. The related documentation is in `report/src/1-simulator.tex` file.
 
 ## Project Overview
 This project is a **Discrete Event Simulator (DES)** designed for **Probabilistic Soft Real-time Analysis**. It simulates the execution of a set of tasks with stochastic parameters (e.g., execution times and periods) to evaluate their timing behavior under different scheduling policies.
@@ -63,3 +63,6 @@ If you need to execute a different class (e.g., for specific tests or alternativ
 
 ## Usage
 To modify the simulation scenario, update the `Main.java` file by defining new `Task` objects with different samplers and adjusting the `simulationDuration` passed to the scheduler.
+
+# Bernstein
+The project is located in `bernstein` folder. The related documentation is in `report/src/2-bernstein.tex` file.

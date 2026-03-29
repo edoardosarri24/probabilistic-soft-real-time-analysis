@@ -1,0 +1,27 @@
+classDiagram
+
+    class BernsteinOperator {
+        - int order
+        - double x
+        + double[] computeWeights(Function source)
+    }
+
+    class BernsteinBasis {
+        <<abstract>>
+        - int n
+        - int i
+        + compute(double x) double
+    }
+
+    class BernsteinBasisNormal {
+        <<final>>
+    }
+
+    class BernsteinBasisExponential {
+        - double lambda
+        <<final>>
+    }
+
+    BernsteinOperator --> BernsteinBasis
+    BernsteinBasis <|-- BernsteinBasisNormal
+    BernsteinBasis <|-- BernsteinBasisExponential
