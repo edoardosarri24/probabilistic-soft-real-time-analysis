@@ -1,1 +1,83 @@
-\chapter{Bernstein Library}
+\chapter{Bernstein Polynomials Library}
+
+\section{Documentazione Libreria Bernstein}
+
+Questa libreria fornisce strumenti per la rappresentazione, valutazione e manipolazione analitica dei polinomi di Bernstein. È progettata per essere utilizzata nell'approssimazione di funzioni di distribuzione (CDF e PDF) in contesti Real-Time.
+
+\subsection{Architettura Core}
+
+\subsubsection{1. BernsteinBasis (Interfaccia)}
+Definisce il contratto per il calcolo delle funzioni di base $b_{i,n}(x)$.
+\begin{itemize}
+    \item \textbf{Metodi}:
+    \begin{itemize}
+        \item \texttt{double eval(int i, int n, double x)}: Valuta l'i-esima funzione di base di grado $n$ nel punto $x$. Tipicamente $x \in [0, 1]$.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{2. StandardBernsteinBasis}
+Implementazione della base classica basata sui polinomi di Bernstein: $b_{i,n}(x) = \binom{n}{i} x^i (1-x)^{n-i}$.
+\begin{itemize}
+    \item \textbf{Responsabilità}: Calcolo efficiente dei termini polinomiali utilizzando coefficienti binomiali pre-calcolati.
+\end{itemize}
+
+\subsubsection{3. ExponentialBernsteinBasis}
+Implementazione della base di Bernstein esponenziale, utile per approssimare distribuzioni con supporto infinito.
+\begin{itemize}
+    \item \textbf{Campi}:
+    \begin{itemize}
+        \item \texttt{lambda}: Parametro di decadimento esponenziale.
+    \end{itemize}
+    \item \textbf{Metodi}:
+    \begin{itemize}
+        \item \texttt{getLambda()}: Restituisce il valore di lambda utilizzato.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Rappresentazione dei Dati}
+
+\subsubsection{4. BernsteinPolynomial}
+Rappresenta un polinomio di Bernstein completo definito come combinazione lineare delle funzioni di base: $B_n(x) = \sum_{i=0}^n c_i \cdot b_{i,n}(x)$.
+\begin{itemize}
+    \item \textbf{Campi}:
+    \begin{itemize}
+        \item \texttt{coefficients}: Array dei pesi $c_i$.
+        \item \texttt{basis}: Riferimento alla base utilizzata (\texttt{Standard} o \texttt{Exponential}).
+        \item \texttt{supportMin} / \texttt{supportMax}: Definiscono l'intervallo reale $[a, b]$ su cui è definito il polinomio.
+    \end{itemize}
+    \item \textbf{Metodi}:
+    \begin{itemize}
+        \item \texttt{evaluate(double x)}: Calcola il valore del polinomio in $x$. Gestisce internamente la normalizzazione del dominio da $[supportMin, supportMax]$ a $[0, 1]$.
+        \item \texttt{derivative()}: Restituisce un nuovo \texttt{BernsteinPolynomial} che rappresenta la derivata analitica del polinomio attuale. Il grado del nuovo polinomio sarà $n-1$.
+        \item \texttt{getCoefficients()}: Restituisce una copia dei coefficienti.
+        \item \texttt{getDegree()}: Restituisce il grado $n$ del polinomio.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Logica di Costruzione e Utility}
+
+\subsubsection{5. BernsteinOperator}
+Classe di servizio (stateless) per la creazione di istanze di \texttt{BernsteinPolynomial}.
+\begin{itemize}
+    \item \textbf{Metodi statici}:
+    \begin{itemize}
+        \item \texttt{fromFunction(Function<Double, Double> f, int n, double min, double max)}: Campiona la funzione $f$ in $n+1$ punti equidistanti nell'intervallo $[min, max]$ per costruire il polinomio approssimante.
+        \item \texttt{fromSamples(double[] samples, double min, double max)}: Costruisce un polinomio direttamente da un set di campioni pre-esistenti (es. estratti dal simulatore).
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{6. BinomialCache}
+Utility per l'ottimizzazione computazionale.
+\begin{itemize}
+    \item \textbf{Responsabilità}: Memorizza i coefficienti binomiali $\binom{n}{k}$ per evitare ricalcoli costosi durante la valutazione dei polinomi e le operazioni di convoluzione.
+    \item \textbf{Metodi}:
+    \begin{itemize}
+        \item \texttt{get(int n, int k)}: Restituisce il coefficiente binomiale dalla tabella pre-calcolata.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Note Tecniche}
+\begin{itemize}
+    \item \textbf{Scaling del Dominio}: La libreria mappa automaticamente i valori del mondo reale $[supportMin, supportMax]$ nello spazio $[0, 1]$ richiesto dalle funzioni di base standard.
+    \item \textbf{Stocasticità}: I coefficienti $c_i$ di un polinomio che approssima una CDF devono essere non decrescenti e compresi tra 0 e 1 per garantire le proprietà di una distribuzione di probabilità.
+\end{itemize}

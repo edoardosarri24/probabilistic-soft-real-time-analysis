@@ -11,3 +11,5 @@
 - trovare anche il valore $\alpha_{k,t}$ che rappresneta il numero di job di ogni task che fa interferenza sul task a probabilità più bassa?
 
 # Bernstein
+- negli appunti rifattorizzare con le basi e spiegare che anche in quelli normali possiamo shiftare il supporto.
+- scrivere l'implementazione nel report.
