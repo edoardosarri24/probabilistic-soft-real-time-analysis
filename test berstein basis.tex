@@ -25,3 +25,14 @@ Vengono testate le funzioni matematiche di supporto, in particolare il calcolo d
     \item \textbf{Grandi Valori (\texttt{binomialCoefficient\_largeValues}):} Utilizzo di \texttt{BigInteger} per gestire coefficienti che superano il limite dei tipi primitivi (es. $\binom{100}{50}$).
     \item \textbf{Casi Limite (\texttt{binomialCoefficient\_edgeCases}):} Gestione dei casi in cui $k > n$ o $k < 0$, che devono restituire $0$.
 \end{itemize}
+
+
+\subsection{Validazione e Test calcol polinomi}
+Per garantire la correttezza dell'implementazione dell'algoritmo di de Casteljau, sono stati definiti i seguenti test unitari:
+
+\begin{itemize}
+    \item \textbf{Costante:} Verifica che un polinomio con tutti i coefficienti uguali a $C$ valga $C$ in tutto il dominio. Garantisce la proprietà di "partition of unity" della base.
+    \item \textbf{Identità:} Utilizzando i coefficienti $\beta_i = \frac{i}{n}$, il polinomio deve coincidere con la funzione identità $f(x)=x$ (linearità).
+    \item \textbf{Boundaries:} Verifica la valutazione agli estremi del supporto (es. $x=0$ e $x=1$ per basi lineari). Garantisce che $P(0) = \beta_0$ e $P(1) = \beta_n$.
+    \item \textbf{Simmetria:} Verifica che invertendo l'ordine dei coefficienti e valutando in $1-x$, il risultato sia identico.
+\end{itemize}

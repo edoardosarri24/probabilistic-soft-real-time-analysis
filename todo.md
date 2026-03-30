@@ -12,9 +12,11 @@
 - trovare anche il valore $\alpha_{k,t}$ che rappresneta il numero di job di ogni task che fa interferenza sul task a probabilità più bassa?
 
 # Bernstein
-- implementare il calcolo del polinomio.
+- implementare il calcolo del polinomio e documentare tutto.
+- valutare se possiamo de Casteljau's algorithm vale per uttte le basi.
+- valutare se l'approccio usato con l'algoritmo di de Casteljau è migliore di rendere più efficiente (caching o C code) il calcolo delle basi.
 - implementare la classe Bersntein.
-- Calcolo della Derivata
+- Calcolo della Derivata.
 - viasualizzazione?
 
 ### migliorie
@@ -28,3 +30,4 @@
 ### domande
 - con la base esponenziale, deve essere $\lambda>0$ o $\lambda\ge0$?
     al momento è $\ge$, magari cambialo nell'implementazione.
+- il fatto che la versione classica sia instabile anche da $n>20$ (è effettivamente così?) è un problema?

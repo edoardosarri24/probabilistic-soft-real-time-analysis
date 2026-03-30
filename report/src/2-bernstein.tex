@@ -14,15 +14,38 @@ In Figure~\ref{fig:bernstein_class_diagram} is shown the class diagram of the Be
         Is the exponential Bernstein basis. The input \texttt{x} is mapped into $t=1-e^{-\lambda x}$.
 \end{itemize}
 
-\subsection{Usage}
-The domain model is in general not used directly by the client (i.e., by the \texttt{Main.java}), but we a static classes named \texttt{Bernstein.java} that provides the entry point to create and manipulate Bersntesin polynomial. It provides the following capabilities:
-\begin{itemize}
-    \item TODO
-\end{itemize}
-
 \begin{figure}[htbp]
     \centering
     \includegraphics[max width=\textwidth, max height=0.85\textheight, keepaspectratio]{images/2-bernstein/class_diagram.pdf}
     \caption{Bernstein Polynomials Library Class Diagram.}
     \label{fig:bernstein_class_diagram}
 \end{figure}
+
+\subsection{Bernstein Polynomial Calculus}
+To impleent the calculus of the Bernstein polynomial we have considered two different approaches: the direct evaluation and de Casteljau's algorithm (the choosen one).
+\subsubsection{Direct Evaluation}
+With the direct evaluation we compute the value of the polynomial using the explicit formula $P(x) = \sum_{i=0}^{n} f(\tfrac{i}{n}) \cdot b_{i,n}(x)$, where $f(\tfrac{i}{n})$ is the $i$-th coefficient of degree $n$ and $b_{i,n}(x)$ is the $i$-th basis function of degree $n$.
+
+Using this technique we have the following consequences:
+\begin{itemize}
+    \item \textbf{Advantage}: It's very simple to implement. If the coefficients are precalculated and stored in a table, the evaluation can be done in $O(n)$ time.
+    \item \textbf{Disadvantage}: It can be numerically unstable for high degrees (i.e., already for $n>20$) due to the large coefficients and small powers.
+\end{itemize}
+
+\subsubsection{de Casteljau's algorithm}
+It's a recursive approach similar to the Horner's scheme for standard polynomials.
+
+Using this technique we have the following consequences:
+\begin{itemize}
+    \item \textbf{Advantage}: The recursion is efficient if implemented in in iterative way. It is very stable also for high degrees.
+    \item \textbf{Disadvantage}: It has a higher compotational cost of $O(n^2)$ due to the double nested loop: if the degree is very high, it can be significantly slower than direct evaluation. It is usefull if we are considering only the classic linear basis.
+\end{itemize}
+
+\subsection{Testing}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Usage}
+The domain model is in general not used directly by the client (i.e., by the \texttt{Main.java}), but we a static classes named \texttt{Bernstein.java} that provides the entry point to create and manipulate Bersntesin polynomial. It provides the following capabilities:
+\begin{itemize}
+    \item TODO
+\end{itemize}
