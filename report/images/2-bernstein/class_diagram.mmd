@@ -16,21 +16,21 @@ classDiagram
 
     class BernsteinBasis {
         <<abstract>>
-        + eval(int i, int n, double x) double
-        # clamp(double x) double
+        + eval(int i, int degree, double x) double
+        + abstract clamp(double x) double
     }
 
     class LinearBernsteinBasis {
         <<final>>
         - double supportMin = 0.0
         - double supportMax = 1.0
-        # clamp(double x) double
+        + clamp(double x) double
     }
 
     class ExponentialBernsteinBasis {
         <<final>>
         - double lambda
-        # clamp(double x) double
+        + clamp(double x) double
     }
 
     %% Relations

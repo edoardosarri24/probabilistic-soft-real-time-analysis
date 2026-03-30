@@ -13,15 +13,15 @@ public abstract class BernsteinBasis {
     /**
      * Evaluates the i-th Bernstein basis polynomial of degree n at point x.
      */
-    public final double eval(int i, int n, double x) {
+    public final double eval(int i, int degree, double x) {
         double t = this.clamp(x);
-        BigInteger binomialCoeff = MyMath.binomialCoefficient(n, i);
+        BigInteger binomialCoeff = MyMath.binomialCoefficient(degree, i);
         double tPower = Math.pow(t, i);
-        double oneMinusTPower = Math.pow(1-t, n-i);
+        double oneMinusTPower = Math.pow(1-t, degree-i);
         return binomialCoeff.doubleValue() * tPower * oneMinusTPower;
     }
 
     // Hooks
-    protected abstract double clamp(double x);
+    public abstract double clamp(double x);
 
 }
