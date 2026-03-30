@@ -1,4 +1,4 @@
-# Probabilistic Soft Real-Time Simulator
+# Simulator
 
 This project is a Discrete Event Simulator (DES) designed for Probabilistic Soft Real-Time Analysis. It simulates the execution of a taskset with stochastic parameters to evaluate their timing behavior under a (eventually various) scheduling policies.
 

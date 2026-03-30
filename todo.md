@@ -1,6 +1,4 @@
 # simulator
-
-### se c'è tempo
 - Configurazione taskset con json o yaml.
 
 ### domande
@@ -12,7 +10,6 @@
 - trovare anche il valore $\alpha_{k,t}$ che rappresneta il numero di job di ogni task che fa interferenza sul task a probabilità più bassa?
 
 # Bernstein
-- fare agent.md come per simulator.
 - Calcolo della Derivata.
 - implementare la classe Bersntein con i relavi test e documentare.
 

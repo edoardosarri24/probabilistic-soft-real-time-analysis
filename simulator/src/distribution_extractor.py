@@ -35,10 +35,10 @@ def plot_distributions(data):
         fig, (pdf, cdf) = plt.subplots(1, 2, figsize=(14, 6))
         fig.suptitle(f"Task {task_id} - Execution Time Distribution", fontsize=16)
         # PDF
-        sns.histplot(execution_times, ax=pdf, stat="density", color="skyblue")
+        sns.histplot(execution_times, ax=pdf, stat="density", color="blue")
         pdf.set(title="Probability Density Function (PDF)", xlabel="Execution Time (ms)", ylabel="Density")
         # CDF
-        sns.ecdfplot(execution_times, ax=cdf, color="orange", linewidth=2)
+        sns.ecdfplot(execution_times, ax=cdf, color="red", linewidth=2)
         cdf.set(title="Cumulative Distribution Function (CDF)", xlabel="Execution Time (ms)", ylabel="Cumulative Probability")
         # Layout
         plt.tight_layout(rect=[0, 0.03, 1, 0.97])
