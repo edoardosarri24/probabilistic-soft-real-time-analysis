@@ -22,6 +22,6 @@ public abstract class BernsteinBasis {
     }
 
     // Hooks
-    public abstract double clamp(double x);
+    protected abstract double clamp(double x);
 
 }

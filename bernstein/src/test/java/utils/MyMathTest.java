@@ -30,4 +30,5 @@ public class MyMathTest {
         assertThat(MyMath.binomialCoefficient(5, 6)).isEqualTo(BigInteger.ZERO);
         assertThat(MyMath.binomialCoefficient(5, -1)).isEqualTo(BigInteger.ZERO);
     }
+
 }

@@ -22,7 +22,7 @@ In Figure~\ref{fig:bernstein_class_diagram} is shown the class diagram of the Be
 \end{figure}
 
 \subsection{Bernstein Polynomial Calculus}
-To impleent the calculus of the Bernstein polynomial we have considered two different approaches: the direct evaluation and de Casteljau's algorithm (the choosen one).
+To impleent the calculus of the Bernstein polynomial we have considered two different approaches: the direct evaluation (the choosen one) and de Casteljau's algorithm.
 \subsubsection{Direct Evaluation}
 With the direct evaluation we compute the value of the polynomial using the explicit formula $P(x) = \sum_{i=0}^{n} f(\tfrac{i}{n}) \cdot b_{i,n}(x)$, where $f(\tfrac{i}{n})$ is the $i$-th coefficient of degree $n$ and $b_{i,n}(x)$ is the $i$-th basis function of degree $n$.
 
@@ -33,7 +33,7 @@ Using this technique we have the following consequences:
 \end{itemize}
 
 \subsubsection{de Casteljau's algorithm}
-It's a recursive approach similar to the Horner's scheme for standard polynomials.
+It's a recursive approach similar to the Horner's scheme for standard polynomials: to calulate the value of the polynomial of given degree we use the value of the polynomial of degree $n-1$.
 
 Using this technique we have the following consequences:
 \begin{itemize}
@@ -42,6 +42,25 @@ Using this technique we have the following consequences:
 \end{itemize}
 
 \subsection{Testing}
+The testing of the Bernstein library considers three different aspects: the basis, the polynomial evalutatio and the Bernstein statical interface.
+
+\subsubsection{Basis Testing}
+We have tested the main properties and situatin:
+\begin{itemize}
+    \item The correct result for known and small degree in specific points.
+    \item The validation of the unity partition property.
+    \item The correct handling of invalid input.
+    \item Verified that basis functions are always non-negative within their support.
+\end{itemize}
+
+\subsubsection{Polynomial Calculus}
+We tested the following aspects:
+\begin{itemize}
+    \item If we have all coefficients $\beta_i = C$, then $P(x) = C$.
+    \item For a linear basis on $[0,1]$, if $\beta_i = i/n$, then $P(x) = x$.
+    \item The boundary conditions for which $P(x_{min}) = \beta_0$ and $P(x_{max}) = \beta_n$.
+    \item Verification of the symmetry property $P(x; \beta) = P(1-x; \text{reverse}(\beta))$ for the standard basis.
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Usage}

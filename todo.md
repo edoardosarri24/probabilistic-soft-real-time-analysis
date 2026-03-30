@@ -12,16 +12,12 @@
 - trovare anche il valore $\alpha_{k,t}$ che rappresneta il numero di job di ogni task che fa interferenza sul task a probabilità più bassa?
 
 # Bernstein
-- implementare il calcolo del polinomio e documentare tutto.
-- valutare se possiamo de Casteljau's algorithm vale per uttte le basi.
-- valutare se l'approccio usato con l'algoritmo di de Casteljau è migliore di rendere più efficiente (caching o C code) il calcolo delle basi.
-- implementare la classe Bersntein.
+- ottimizzare il calcolo del polinomio ottmizzando il calcolo delle basi.
+- implementare la classe Bersntein con i relavi test e documentare.
 - Calcolo della Derivata.
 - viasualizzazione?
 
 ### migliorie
-- calcolo polinomio
-    Esiste una relazione di ricorrenza (e.g., algoritmo di de Casteljau) che permette di calcolare i polinomi di grado superiore partendo da quelli di grado inferiore e quindi in modo efficiente.
 - basi
     - ottimizzazione caching:
         Metodi come BernsteinOperator probabilmente chiameranno eval molte volte con lo stesso $n$ e $i$ diversi. Il coefficiente binomiale viene ricalcolato ogni volta. Se le performance dovessero diventare un collo di bottiglia, potresti introdurre una cache (es. una Map<Integer, BigInteger[]> o un triangolo di Pascal pre-calcolato).
