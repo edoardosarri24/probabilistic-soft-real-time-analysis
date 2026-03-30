@@ -19,7 +19,7 @@ public final class LinearBernsteinBasis extends BernsteinBasis {
 
     // Methods
     @Override
-    public double clamp(double x) {
+    protected double map(double x) {
         if (x < this.supportMin || x > this.supportMax)
             throw new IllegalArgumentException("x must be within the support bounds");
         return (x - this.supportMin) / (this.supportMax - this.supportMin);

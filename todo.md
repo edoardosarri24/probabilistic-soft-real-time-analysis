@@ -12,9 +12,9 @@
 - trovare anche il valore $\alpha_{k,t}$ che rappresneta il numero di job di ogni task che fa interferenza sul task a probabilità più bassa?
 
 # Bernstein
-- implementare la classe Bersntein con i relavi test e documentare.
+- fare agent.md come per simulator.
 - Calcolo della Derivata.
-- viasualizzazione?
+- implementare la classe Bersntein con i relavi test e documentare.
 
 ### migliorie
 - basi

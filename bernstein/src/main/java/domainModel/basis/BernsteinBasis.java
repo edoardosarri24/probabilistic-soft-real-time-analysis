@@ -1,7 +1,5 @@
 package domainModel.basis;
 
-import java.math.BigInteger;
-
 import utils.MyMath;
 
 /**
@@ -14,14 +12,14 @@ public abstract class BernsteinBasis {
      * Evaluates the i-th Bernstein basis polynomial of degree n at point x.
      */
     public final double eval(int i, int degree, double x) {
-        double t = this.clamp(x);
-        BigInteger binomialCoeff = MyMath.binomialCoefficient(degree, i);
+        double t = this.map(x);
+        double binomialCoeff = MyMath.binomialCoefficient(degree, i).doubleValue();
         double tPower = Math.pow(t, i);
         double oneMinusTPower = Math.pow(1-t, degree-i);
-        return binomialCoeff.doubleValue() * tPower * oneMinusTPower;
+        return binomialCoeff * tPower * oneMinusTPower;
     }
 
     // Hooks
-    public abstract double clamp(double x);
+    protected abstract double map(double x);
 
 }

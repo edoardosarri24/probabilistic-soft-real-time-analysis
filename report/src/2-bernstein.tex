@@ -63,17 +63,13 @@ We tested the following aspects:
 \end{itemize}
 
 \subsubsection{Optimization}
-To optimize the performance of the librery we have used some tricks:
-\begin{itemize}
-    \item The class responsable of calculating the binamial coefficient uses a cache to store the previously calculated values. Since a lot of the same coefficients are used during the evaluation of the basis functions, this can significantly improve the performance.
-    \item During the calculation of the polynomial we calculate the mapped value $t$ (i.e., \texttt{t=basis.clamp(x)}) of the input $x$ only one time; we also calculate the basis value directly in the loop, without calling the \texttt{eval()} method of the basis.
-\end{itemize}
+To optimize the performance of the librery we have used some tricks. The class responsable of calculating the binamial coefficient uses a cache to store the previously calculated values. Since a lot of the same coefficients are used during the evaluation of the basis functions, this can significantly improve the performance.
 
 This optimization brought a speedup about $6\times$: before the optimization the evalution of a Bernstein polynomial of degree 1000 took about 68ms; after the optimization it takes about 11ms; so we have $speed-up=\tfrac{68}{11}=6.18\times$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Usage}
-The domain model is in general not used directly by the client (i.e., by the \texttt{Main.java}), but we a static classes named \texttt{Bernstein.java} that provides the entry point to create and manipulate Bersntesin polynomial. It provides the following capabilities:
+The domain model is in general not used directly by the client (i.e., by the \texttt{Main.java}), but we a static classes named \texttt{Bernstein.java} that behaves as facade and provides the entry point to create and manipulate Bersntesin polynomial. It provides the following capabilities:
 \begin{itemize}
     \item TODO
 \end{itemize}
