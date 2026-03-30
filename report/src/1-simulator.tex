@@ -46,16 +46,23 @@ During the simulation the system retrieves all execution times sampled by all ta
 \section{Implementation}
 \label{sec:simulator_implementation}
 In Figure~\ref{fig:simulator_class_diagram} is shown the class diagram of the simulator. In the following we present the core entities that compose the system.
-
 \begin{itemize}
-    \item [\textbf{Client}] Is the Main of the Java system. It is responsible for allocating the taskset and the scheduler and calling \texttt{analyze()} on the scheduler.
-    \item[\textbf{TaskSet}] Is a simple set of all tasks.
-    \item[\textbf{Task}] Represents a task. It models only the static specification of the task: the period, the execution time and the deadline; the first two are Sirio \texttt{Sampler} objects that represent the distribution from which they sample the true duration; the last is a \texttt{Duration} object, where the time must be expressed in milliseconds. Internally it also maintains a \texttt{jobCounter} to uniquely identify its jobs.
-    \item[\textbf{Job}] Represents a task instance. While a Task contains only the task specifications, a Job contains the active state: the absolute deadline, the remaining execution time, the information about its completeness and the time of completion. It has a method to handle the simulation of its execution.
-    \item[\textbf{Scheduler}] Represents the heart of the simulation, which uses the taskset for the scheduling simulation. It's responsible for initializing the system clock with a \texttt{MyClock} object and handling the system logging and the simulation duration.
-    \item[\textbf{FixedPriorityScheduler}] Represents the abstraction for all fixed priority scheduling algorithms. All its subclasses must only implement the assign priority method.
-    \item[\textbf{DMScheduler}] Is the specialization of the \texttt{Scheduler} that implements the priority assignment of the Deadline Monotonic scheduling algorithm.
-    \item[\textbf{Event}] Is the abstract class that represents the relevant events of the system; each event is defined by the time of its occurrence. The idea is that the time can go forward until it reaches an instance of this class. The two implementations are: \texttt{ReleaseEvent} which models the job release event; \texttt{DeadlineEvent} which models the reaching of the job deadline.
+    \item\textbf{Client} \\
+        Is the Main of the Java system. It is responsible for allocating the taskset and the scheduler and calling \texttt{analyze()} on the scheduler.
+    \item\textbf{TaskSet} \\
+        Is a simple set of all tasks.
+    \item\textbf{Task} \\
+        Represents a task. It models only the static specification of the task: the period, the execution time and the deadline; the first two are Sirio \texttt{Sampler} objects that represent the distribution from which they sample the true duration; the last is a \texttt{Duration} object, where the time must be expressed in milliseconds. Internally it also maintains a \texttt{jobCounter} to uniquely identify its jobs.
+    \item\textbf{Job} \\
+        Represents a task instance. While a Task contains only the task specifications, a Job contains the active state: the absolute deadline, the remaining execution time, the information about its completeness and the time of completion. It has a method to handle the simulation of its execution.
+    \item\textbf{Scheduler} \\
+        Represents the heart of the simulation, which uses the taskset for the scheduling simulation. It's responsible for initializing the system clock with a \texttt{MyClock} object and handling the system logging and the simulation duration.
+    \item\textbf{FixedPriorityScheduler} \\
+        Represents the abstraction for all fixed priority scheduling algorithms. All its subclasses must only implement the assign priority method.
+    \item\textbf{DMScheduler} \\
+        Is the specialization of the \texttt{Scheduler} that implements the priority assignment of the Deadline Monotonic scheduling algorithm.
+    \item\textbf{Event} \\
+        Is the abstract class that represents the relevant events of the system; each event is defined by the time of its occurrence. The idea is that the time can go forward until it reaches an instance of this class. The two implementations are: \texttt{ReleaseEvent} which models the job release event; \texttt{DeadlineEvent} which models the reaching of the job deadline.
 \end{itemize}
 
 \begin{figure}[htbp]
@@ -68,13 +75,13 @@ In Figure~\ref{fig:simulator_class_diagram} is shown the class diagram of the si
 \subsection{Utilities}
 If we observe Figure~\ref{fig:simulator_class_diagram} we have to describe the system utilities.
 \begin{itemize}
-    \item [\textbf{DeterministicSampler}] A specialization of the Sirio \texttt{Sampler} interface that always returns a constant value, used for deterministic parameters.
-    \item [\textbf{MyClock}] Represents the global clock of the system. Implements the method to go at a specified time, to go forward in time by a specified duration and to print the current time.
-    \item [\textbf{MyLogger}] An interface that abstracts the logging operations.
-    \item [\textbf{TraceLogger}] Implementation of \texttt{MyLogger} that is responsible for logging in a file named \textit{trace.log} with a personalized format.
-    \item [\textbf{NoLogger}] Implementation of \texttt{MyLogger} that doesn't perform any logging operation. It's the default logger if Main passes no logger.
-    \item [\textbf{DeadlineMissedException}] A custom exception thrown when a task's job exceeds its deadline.
-    \item [\textbf{TaskExecutionTimeCollector}] Is the collector of all execution times of all tasks.
+    \item\textbf{DeterministicSampler} \\ A specialization of the Sirio \texttt{Sampler} interface that always returns a constant value, used for deterministic parameters.
+    \item\textbf{MyClock} \\ Represents the global clock of the system. Implements the method to go at a specified time, to go forward in time by a specified duration and to print the current time.
+    \item\textbf{MyLogger} \\ An interface that abstracts the logging operations.
+    \item\textbf{TraceLogger} \\ Implementation of \texttt{MyLogger} that is responsible to logging the scheduling main events in a file named \textit{trace.log} with a personalized format.
+    \item\textbf{NoLogger} \\ Implementation of \texttt{MyLogger} that doesn't perform any logging operation. It's the default logger if Main passes no logger.
+    \item\textbf{DeadlineMissedException} \\ A custom exception thrown when a task's job exceeds its deadline.
+    \item\textbf{TaskExecutionTimeCollector} \\ Is the collector of all execution times of all tasks.
 \end{itemize}
 
 \subsection{Flow}

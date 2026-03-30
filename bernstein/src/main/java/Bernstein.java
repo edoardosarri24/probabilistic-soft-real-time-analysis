@@ -8,9 +8,9 @@ import domainModel.basis.BernsteinBasis;
 /**
  * Service to build Bernstein polynomials.
  */
-public final class BernsteinOperator {
+public final class Bernstein {
 
-    private BernsteinOperator() {} // Stateless utility class
+    private Bernstein() {} // Stateless utility class
 
     /**
      * Builds a Bernstein polynomial of degree n to approximate function f on [supportMin, supportMax].

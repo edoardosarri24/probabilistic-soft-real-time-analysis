@@ -1,7 +1,7 @@
 
 classDiagram
 
-    class BernsteinOperator {
+    class Bernstein {
         <<static>>
         + fromFunction(Function f, int n) BernsteinPolynomial
     }
@@ -11,7 +11,7 @@ classDiagram
         <<final>>
         - double[] coefficients
         - BernsteinBasis basis
-        + evaluate(double x) double
+        + eval(double x) double
     }
 
     class BernsteinBasis {
@@ -20,7 +20,7 @@ classDiagram
         # clamp(double x) double
     }
 
-    class StandardBernsteinBasis {
+    class LinearBernsteinBasis {
         <<final>>
         - double supportMin = 0.0
         - double supportMax = 1.0
@@ -35,6 +35,6 @@ classDiagram
 
     %% Relations
     BernsteinPolynomial o-- BernsteinBasis
-    BernsteinBasis <|-- StandardBernsteinBasis
+    BernsteinBasis <|-- LinearBernsteinBasis
     BernsteinBasis <|-- ExponentialBernsteinBasis
-    BernsteinOperator ..> BernsteinPolynomial
+    Bernstein ..> BernsteinPolynomial

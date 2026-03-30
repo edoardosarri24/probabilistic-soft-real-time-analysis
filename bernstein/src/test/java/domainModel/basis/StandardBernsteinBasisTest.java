@@ -14,7 +14,7 @@ public class StandardBernsteinBasisTest {
 
     @Test
     public void knownValues() {
-        StandardBernsteinBasis basis = new StandardBernsteinBasis(0, 1);
+        LinearBernsteinBasis basis = new LinearBernsteinBasis(0, 1);
         
         // n=1: (1-x) and x
         assertThat(basis.eval(0, 1, 0.0)).isCloseTo(1.0, offset(EPSILON));
@@ -32,7 +32,7 @@ public class StandardBernsteinBasisTest {
 
     @Test
     public void partitionOfUnity() {
-        StandardBernsteinBasis basis = new StandardBernsteinBasis(2.0, 5.0);
+        LinearBernsteinBasis basis = new LinearBernsteinBasis(2.0, 5.0);
         int n = 10;
         
         for (int j = 0; j < 100; j++) {
@@ -49,6 +49,6 @@ public class StandardBernsteinBasisTest {
 
     @Test
     public void invalidInterval() {
-        assertThrows(IllegalArgumentException.class, () -> new StandardBernsteinBasis(10, 5));
+        assertThrows(IllegalArgumentException.class, () -> new LinearBernsteinBasis(10, 5));
     }
 }

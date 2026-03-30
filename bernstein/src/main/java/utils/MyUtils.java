@@ -18,4 +18,10 @@ public final class MyUtils {
         return value;
     }
 
+    public static double requireNonNegative(double value, String paramName) {
+        if (value < 0)
+            throw new IllegalArgumentException(paramName + " cannot be negative");
+        return value;
+    }
+
 }

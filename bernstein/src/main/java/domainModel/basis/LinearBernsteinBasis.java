@@ -1,16 +1,16 @@
 package domainModel.basis;
 
-public final class StandardBernsteinBasis extends BernsteinBasis {
+public final class LinearBernsteinBasis extends BernsteinBasis {
 
     private final double supportMin;
     private final double supportMax;
 
     // Constructor
-    public StandardBernsteinBasis() {
+    public LinearBernsteinBasis() {
         this(0.0, 1.0);
     }
 
-    public StandardBernsteinBasis(double supportMin, double supportMax) {
+    public LinearBernsteinBasis(double supportMin, double supportMax) {
         if (supportMax <= supportMin)
             throw new IllegalArgumentException("supportMax must be strictly greater than supportMin");
         this.supportMin = supportMin;
@@ -20,6 +20,8 @@ public final class StandardBernsteinBasis extends BernsteinBasis {
     // Methods
     @Override
     public double clamp(double x) {
+        if (x < this.supportMin || x > this.supportMax)
+            throw new IllegalArgumentException("x must be within the support bounds");
         return (x - this.supportMin) / (this.supportMax - this.supportMin);
     }
 
