@@ -22,8 +22,8 @@ public class BernsteinPolynomial {
         // Calculation.
         double result = 0.0;
         for (int i=0; i <= degree; i++) {
-            double basisValue = this.basis.eval(i, degree, x);
-            result += coefficients[i] * basisValue;
+            double basis = this.basis.eval(degree, i, x);
+            result += coefficients[i] * basis;
         }
         return result;
     }

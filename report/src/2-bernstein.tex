@@ -28,7 +28,7 @@ With the direct evaluation we compute the value of the polynomial using the expl
 
 Using this technique we have the following consequences:
 \begin{itemize}
-    \item \textbf{Advantage}: It's very simple to implement. If the coefficients are precalculated and stored in a table, the evaluation can be done in $O(n)$ time.
+    \item \textbf{Advantage}: It's very simple to implement. If the calculation of binomial coefficients are efficient the execution time is very competitive.
     \item \textbf{Disadvantage}: It can be numerically unstable for high degrees (i.e., already for $n>20$) due to the large coefficients and small powers.
 \end{itemize}
 
@@ -62,10 +62,10 @@ We tested the following aspects:
     \item Verification of the symmetry property $P(x; \beta) = P(1-x; \text{reverse}(\beta))$ for the standard basis.
 \end{itemize}
 
-\subsubsection{Optimization}
-To optimize the performance of the librery we have used some tricks. The class responsable of calculating the binamial coefficient uses a cache to store the previously calculated values. Since a lot of the same coefficients are used during the evaluation of the basis functions, this can significantly improve the performance.
+\subsection{Optimization}
+To optimize the performance of the librery we have used a cache trick: since a lot of binomial coefficients are used more and more times, we store the already computed value in a cache and retrives them insted of recalculating them.
 
-This optimization brought a speedup about $6\times$: before the optimization the evalution of a Bernstein polynomial of degree 1000 took about 68ms; after the optimization it takes about 11ms; so we have $speed-up=\tfrac{68}{11}=6.18\times$.
+This optimization brought a speedup about $11\times$: before the optimization the evalution of a Bernstein polynomial of degree 1000 took about 68ms; after the optimization it takes about 6ms; so we have $speed-up=\tfrac{68}{6}=11.33\times$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Usage}
@@ -73,3 +73,14 @@ The domain model is in general not used directly by the client (i.e., by the \te
 \begin{itemize}
     \item TODO
 \end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Degree Limits}
+The evaluation of Bernstein polynomials has some limitations on the degree of the polynomial that can be evaluated. In the implementation we udes the \texttt{double} type and this implies two main limitations:
+\begin{itemize}
+    \item Within a $degree<54$ we can compute the polynomial without any precision loss.
+    \item If the degree is within the $[54,1029]$ interval we have a precision loss due to the large binomial coefficients and small powers, but we can still compute the polynomial.
+    \item For $degree\ge 1030$ we have an overflow of the binomial coefficients and the polynomial cannot be computed.
+\end{itemize}
+
+This limitation allow us to deal with polynomials in a very efficient way.

@@ -13,11 +13,8 @@
 - Calcolo della Derivata.
 - implementare la classe Bersntein con i relavi test e documentare.
 
-### migliorie
-- basi
-    - Per valori di $n$ molto elevati, il calcolo diretto Math.pow(x, i) * Math.pow(1-x, n-i) può portare a un underflow (risultato 0.0) anche se il valore finale sarebbe rappresentabile dopo la moltiplicazione per il coefficiente binomiale. Soluzione: Per calcoli ad alta precisione con $n$ grande, si potrebbe considerare il calcolo nello spazio logaritmico: exp(ln(binomial) + i*ln(x) + (n-i)*ln(1-x)).
-
 ### domande
 - con la base esponenziale, deve essere $\lambda>0$ o $\lambda\ge0$?
     al momento è $\ge$, magari cambialo nell'implementazione.
+- vedi sezione 2.3 de report.
 - il fatto che la versione classica sia instabile anche da $n>20$ (è effettivamente così?) è un problema?

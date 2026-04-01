@@ -15,14 +15,14 @@ public class StandardBernsteinBasisTest {
     @Test
     public void knownValues() {
         LinearBernsteinBasis basis = new LinearBernsteinBasis(0, 1);
-        assertThat(basis.eval(0, 1, 0.0)).isCloseTo(1.0, offset(EPSILON));
+        assertThat(basis.eval(1, 0, 0.0)).isCloseTo(1.0, offset(EPSILON));
         assertThat(basis.eval(1, 1, 0.0)).isCloseTo(0.0, offset(EPSILON));
-        assertThat(basis.eval(0, 1, 1.0)).isCloseTo(0.0, offset(EPSILON));
+        assertThat(basis.eval(1, 0, 1.0)).isCloseTo(0.0, offset(EPSILON));
         assertThat(basis.eval(1, 1, 1.0)).isCloseTo(1.0, offset(EPSILON));
-        assertThat(basis.eval(0, 1, 0.5)).isCloseTo(0.5, offset(EPSILON));
+        assertThat(basis.eval(1, 0, 0.5)).isCloseTo(0.5, offset(EPSILON));
         assertThat(basis.eval(1, 1, 0.5)).isCloseTo(0.5, offset(EPSILON));
-        assertThat(basis.eval(0, 2, 0.5)).isCloseTo(0.25, offset(EPSILON));
-        assertThat(basis.eval(1, 2, 0.5)).isCloseTo(0.50, offset(EPSILON));
+        assertThat(basis.eval(2, 0, 0.5)).isCloseTo(0.25, offset(EPSILON));
+        assertThat(basis.eval(2, 1, 0.5)).isCloseTo(0.50, offset(EPSILON));
         assertThat(basis.eval(2, 2, 0.5)).isCloseTo(0.25, offset(EPSILON));
     }
 
@@ -34,7 +34,7 @@ public class StandardBernsteinBasisTest {
             double x = 2.0 + (5.0 - 2.0) * random.nextDouble();
             double sum = 0;
             for (int i=0; i <= n; i++) {
-                double val = basis.eval(i, n, x);
+                double val = basis.eval(n, i, x);
                 assertThat(val).isGreaterThanOrEqualTo(0.0);
                 sum += val;
             }

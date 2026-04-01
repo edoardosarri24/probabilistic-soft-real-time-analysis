@@ -16,9 +16,9 @@ public class ExponentialBernsteinBasisTest {
     public void knownValues() {
         double lambda = 1.0;
         ExponentialBernsteinBasis basis = new ExponentialBernsteinBasis(lambda);
-        assertThat(basis.eval(0, 5, 0.0)).isCloseTo(1.0, offset(EPSILON));
+        assertThat(basis.eval(5, 0, 0.0)).isCloseTo(1.0, offset(EPSILON));
         for (int i=1; i <= 5; i++)
-            assertThat(basis.eval(i, 5, 0.0)).isCloseTo(0.0, offset(EPSILON));
+            assertThat(basis.eval(5, i, 0.0)).isCloseTo(0.0, offset(EPSILON));
         assertThat(basis.eval(10, 10, 100.0)).isCloseTo(1.0, offset(EPSILON));
     }
 
@@ -30,7 +30,7 @@ public class ExponentialBernsteinBasisTest {
             double x = random.nextDouble() * 20.0;
             double sum = 0;
             for (int i = 0; i <= n; i++) {
-                double val = basis.eval(i, n, x);
+                double val = basis.eval(n, i, x);
                 assertThat(val).isGreaterThanOrEqualTo(-EPSILON); // Small tolerance for precision
                 sum += val;
             }
