@@ -14,26 +14,12 @@ public abstract class BernsteinBasis {
      */
     public final double eval(int degree, int i, double x) {
         double t = this.map(x);
-
-        double binomialCoeff = MyMath.binomialCoefficient(degree, i);
-        double tPower = Math.pow(t, i);
-        double oneMinusTPower = Math.pow(1-t, degree-i);
-
-        return binomialCoeff * tPower * oneMinusTPower;
-    }
-
-    // Hooks
-    protected abstract double map(double x);
-
-
-    public final double eval2(int degree, int i, double x) {
-        double t = this.map(x);
-        // Base cases optimization.
+        // Base cases optimization
         if (t == 0.0)
             return (i == 0) ? 1.0 : 0.0;
         if (t == 1.0)
             return (i == degree) ? 1.0 : 0.0;
-        // Binomial coefficient.
+        // Binomial coefficient
         double binomialCoeff = MyMath.binomialCoefficient(degree, i);
         if (binomialCoeff == 0.0)
             return 0.0;
@@ -42,5 +28,8 @@ public abstract class BernsteinBasis {
         double oneMinusTPower = MyMath.intPow(1.0-t, degree-i);
         return binomialCoeff * tPower * oneMinusTPower;
     }
+
+    // Hooks
+    protected abstract double map(double x);
 
 }

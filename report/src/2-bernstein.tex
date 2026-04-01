@@ -7,9 +7,11 @@ In Figure~\ref{fig:bernstein_class_diagram} is shown the class diagram of the Be
     \item \textbf{BernsteinPolynomial} \\
         It represent the whole polynomial and provides the main API to manipulate it.
     \item \textbf{BernsteinBasis} \\
-        Is the interface that represent the basis of the polynomial. It contain the whole logic to compute the basis and provides the hook (i.e., the \texttt{clamp()} method) that allow its implementation to define their type of basis.
+        Is the interface that represent the basis of the polynomial. It contain the whole logic to compute the basis and provides the hook (i.e., the \texttt{map()} method) that allow its implementation to define their type of basis.
+    \item \textbf{ClassicalBernsteinBasis} \\
+        Is the classic Bernstein basis, where the input must be in $[0,1]$.
     \item \textbf{LinearBernsteinBasis} \\
-        Is the classic Bernstein basis. The input \texttt{x} is mapped into $[0,1]$, by deafult, or in the $[a,b]$ intervall if it specified.
+        Is the classic Bernstein basis if we want approximate a function defined in the $[a,b]$ interval. The input \texttt{x} is mapped into $t=\tfrac{x-a}{b-a}$.
     \item \textbf{ExponentialBernsteinBasis} \\
         Is the exponential Bernstein basis. The input \texttt{x} is mapped into $t=1-e^{-\lambda x}$.
 \end{itemize}
@@ -63,9 +65,9 @@ We tested the following aspects:
 \end{itemize}
 
 \subsection{Optimization}
-To optimize the performance of the librery we have used a cache trick: since a lot of binomial coefficients are used more and more times, we store the already computed value in a cache and retrives them insted of recalculating them.
+To optimize the performance of the librery we have used a cache trick: since a lot of binomial coefficients are used more and more times, we store the already computed value in a cache and retrives them insted of recalculating them. Furthermore during the polynomial evaluatio we don't use the \texttt{Math.pow} Java function, but we have defined our own method to compute the power more efficient.
 
-This optimization brought a speedup about $11\times$: before the optimization the evalution of a Bernstein polynomial of degree 1000 took about 68ms; after the optimization it takes about 6ms; so we have $speed-up=\tfrac{68}{6}=11.33\times$.
+These optimizations brought a speedup about $2\times$: before the optimization the evalution of a Bernstein polynomial of degree 1000 took about 68ms; after the optimization it takes about 6ms; so we have $speed-up=\tfrac{68}{3}=22\times$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Usage}

@@ -15,14 +15,19 @@ classDiagram
 
     class BernsteinBasis {
         <<abstract>>
-        + eval(int i, int degree, double x) double
+        + eval(int degree, int i, double x) double
         + abstract map(double x) double
+    }
+
+    class ClassicalBernsteinBasis {
+        <<final>>
+        # map(double x) double
     }
 
     class LinearBernsteinBasis {
         <<final>>
-        - double supportMin = 0.0
-        - double supportMax = 1.0
+        - double supportMin
+        - double supportMax
         # map(double x) double
     }
 
@@ -34,6 +39,7 @@ classDiagram
 
     %% Relations
     BernsteinPolynomial o-- BernsteinBasis
+    BernsteinBasis <|-- ClassicalBernsteinBasis
     BernsteinBasis <|-- LinearBernsteinBasis
     BernsteinBasis <|-- ExponentialBernsteinBasis
     Bernstein ..> BernsteinPolynomial

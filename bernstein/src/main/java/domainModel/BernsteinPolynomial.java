@@ -2,7 +2,7 @@ package domainModel;
 
 import domainModel.basis.BernsteinBasis;
 
-public class BernsteinPolynomial {
+public final class BernsteinPolynomial {
 
     private final double[] coefficients;
     private final BernsteinBasis basis;
@@ -27,6 +27,5 @@ public class BernsteinPolynomial {
         }
         return result;
     }
-
 
 }

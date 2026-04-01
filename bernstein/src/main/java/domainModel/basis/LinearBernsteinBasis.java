@@ -6,10 +6,6 @@ public final class LinearBernsteinBasis extends BernsteinBasis {
     private final double supportMax;
 
     // Constructor
-    public LinearBernsteinBasis() {
-        this(0.0, 1.0);
-    }
-
     public LinearBernsteinBasis(double supportMin, double supportMax) {
         if (supportMax <= supportMin)
             throw new IllegalArgumentException("supportMax must be strictly greater than supportMin");
