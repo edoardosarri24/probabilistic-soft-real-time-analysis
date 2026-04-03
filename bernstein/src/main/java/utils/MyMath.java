@@ -34,7 +34,7 @@ public final class MyMath {
         // New value calculation.
         double result = 1.0;
         for (int i=1; i <= optimizedK; i++)
-            result = result * (n-i+1) / (double) i;
+            result = result * ((double) (n-i+1) / i);
         // Store the value and the symmetric one in cache if not too large
         if (n < 1000) {
             double[] row = cache.computeIfAbsent(n, key -> new double[key/2 + 1]);

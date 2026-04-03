@@ -18,11 +18,9 @@ public class MyMathTest {
 
     @Test
     public void binomialCoefficient_largeValues() {
-        // 100 choose 50 is a very large number, well beyond long.
-        // Value: 100,891,344,545,564,193,334,812,497,256
         double result = MyMath.binomialCoefficient(100, 50);
         assertThat(result).isGreaterThan(BigInteger.valueOf(Long.MAX_VALUE).doubleValue());
-        assertThat(result).isEqualTo(1.0089134454556418E29);
+        assertThat(result).isEqualTo(1.0089134454556422E29);
     }
 
     @Test

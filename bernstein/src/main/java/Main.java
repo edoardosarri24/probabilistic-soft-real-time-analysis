@@ -1,3 +1,7 @@
+import java.math.BigDecimal;
+
+import org.oristool.simulator.samplers.ExponentialSampler;
+
 import domainModel.BernsteinPolynomial;
 import domainModel.basis.BernsteinBasis;
 import domainModel.basis.ClassicalBernsteinBasis;
@@ -16,7 +20,7 @@ public class Main {
         double[] sampler = new double[degree + 1];
         for (int i = 0; i <= degree; i++) {
             double x_i = (double) i / degree;
-            // Funzione target: sin(π * x)
+            new ExponentialSampler(new BigDecimal(10));
             sampler[i] = Math.sin(Math.PI * x_i);
         }
 

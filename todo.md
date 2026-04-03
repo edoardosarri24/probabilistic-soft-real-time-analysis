@@ -18,7 +18,6 @@
 
 # Bernstein
 - implementare la classe Bersntein con i relavi test e documentare? ci serve davvero una facade?
-- al momento ci va bene usare double. assicurarsi che quei limiti che ho messo nella sezione 2.3 del report siano validi.
 - L'approssimazione della CDF non l'ho implementata come nel in [questo](bernstein/paper/EPEW26_bernstein.pdf) paper. Ho cambiato base e usato la formula coeffic*base (vedi miei appunti).
 - implementazione della derivata con la relativa documentazione.
 - visulizzare anche la funzione originale?

@@ -78,11 +78,11 @@ The domain model is in general not used directly by the client (i.e., by the \te
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Degree Limits}
-The evaluation of Bernstein polynomials has some limitations on the degree of the polynomial that can be evaluated. In the implementation we udes the \texttt{double} type and this implies two main limitations:
+The evaluation of Bernstein polynomials has some limitations on the degree of the polynomial. In the implementation we have used the \texttt{double} type insted teh maximum precision type (i.e., \texttt{BigDecimal}) and allow the efficientness (tetses in a test case) of the code but implies some limitations. These limitation are also shown in some test case.
 \begin{itemize}
-    \item Within a $degree<54$ we can compute the polynomial without any precision loss.
+    \item Within a $degree<54$ we can compute the polynomial without any precision loss. The standard IEC 754 says that the numeber of bit for the mantissa is 53 bits (52 + 1), and that implies that we can represent exactly all the integer numbers up to $2^{53}$. The sum of the binomial coefficients for a given degree $n$ is $2^n$, so for $n<53$ we can compute the polynomial without any precision loss.
     \item If the degree is within the $[54,1029]$ interval we have a precision loss due to the large binomial coefficients and small powers, but we can still compute the polynomial.
-    \item For $degree\ge 1030$ we have an overflow of the binomial coefficients and the polynomial cannot be computed.
+    \item For $degree\ge 1030$ we have an overflow of the binomial coefficients and the polynomial cannot be computed. The test cases show as the binomial coefficient for $n=1029$ is finite and less than $Double.MAX_VALUE$, while for $n=1030$ it becomes infinite.
 \end{itemize}
 
 This limitation allow us to deal with polynomials in a very efficient way.
