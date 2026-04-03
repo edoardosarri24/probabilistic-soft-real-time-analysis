@@ -39,7 +39,7 @@ public class BernsteinPolynomialStochasticTest {
             coeffs[i] = constant;
         BernsteinPolynomial p = new BernsteinPolynomial(
             coeffs,
-            new ExponentialBernsteinBasis(0.5));
+            new ExponentialBernsteinBasis());
         for (int i=0; i < 100; i++) {
             double x = random.nextDouble() * 20.0;
             assertThat(p.eval(x)).isCloseTo(constant, offset(EPSILON));
@@ -58,7 +58,7 @@ public class BernsteinPolynomialStochasticTest {
             new LinearBernsteinBasis(-5, 5));
         BernsteinPolynomial pExp = new BernsteinPolynomial(
             coeffs,
-            new ExponentialBernsteinBasis(1.2));
+            new ExponentialBernsteinBasis());
         for (int i = 0; i < 50; i++) {
             double xLinear = -5.0 + 10.0 * random.nextDouble();
             double xExp = random.nextDouble() * 10.0;

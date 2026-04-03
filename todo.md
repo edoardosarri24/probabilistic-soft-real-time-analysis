@@ -17,20 +17,13 @@
         - $D>R$: Il job $i$-esimo non avrà completato prima del rilascio del job $i+1$-esimo. Teoricamente non è un problema visto che il simulatore è stocastico e quindi è una situazione che è possibile. Praticamente non è un problema, ma è da implementare? È una situazione che ci interessa o in questo caso dobbiao porre $D=R$.
 
 # Bernstein
-- con la base esponenziale, deve essere $\lambda>0$ o $\lambda\ge0$?
-    al momento è $\ge$, eventualmente cambialo nell'implementazione.
-- La convuluzione serve solo a sommare distribuzioni? Perché la carnevali ne parlava per polinomi di Bernstein?
-- implementazione della derivata con la relativa documentazione.
 - implementare la classe Bersntein con i relavi test e documentare? ci serve davvero una facade?
-- fare la visualizzazione.
+- al momento ci va bene usare double. assicurarsi che quei limiti che ho messo nella sezione 2.3 del report siano validi.
+- L'approssimazione della CDF non l'ho implementata come nel in [questo](bernstein/paper/EPEW26_bernstein.pdf) paper. Ho cambiato base e usato la formula coeffic*base (vedi miei appunti).
+- implementazione della derivata con la relativa documentazione.
+- visulizzare anche la funzione originale?
 
 ### domande
-- vedi sezione 2.3 de report.
-- ci interessa solo la derivata pria giusto? cioè passare dall'approssimazione della cdf a quella della pdf?
-- nella valutazione del polinomio (non derivata, quindi quello che approssimerà la cdf) nelle formule del paper ci sono formule diverse rispetto ad usare $\sum coeff*base$, dove base cambia a seconda se è classica, lineare o esponenziale. è la stessa cosa oppure no?
-- nell'implementazione si vuole usare un array di coefficienti. nella formule questi correispondono alla funzione f(i/n). nelle derivate abbiamo la differenza tra due coefficienti consecutivi giusto?
 
-# paper
-- primo rosso sottolineato nell'articolo.
-- dove c'è la y, si intende la x all'interno di quell'intervallo specifico giusto?
-- come si mette la lambda nelle formule? nella base ce l'ho messa quindi mi immagino devo metterla anche nell'approssimazione della cdf e pdf.
+# Varie
+- sistemare consegue polinomi e PH.

@@ -44,7 +44,6 @@ def plot_distributions(data):
         plt.tight_layout(rect=[0, 0.03, 1, 0.97])
         plt.savefig(output_dir / f"task_{task_id}.pdf")
         plt.close(fig)
-
     # Declarative execution of plotting.
     sns.set_theme(style="whitegrid")
     output_dir = Path("results/distribution")

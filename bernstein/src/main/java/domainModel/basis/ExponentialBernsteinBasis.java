@@ -4,18 +4,11 @@ import utils.MyUtils;
 
 public final class ExponentialBernsteinBasis extends BernsteinBasis {
 
-    private final double lambda;
-
-    // Constructors
-    public ExponentialBernsteinBasis(double lambda) {
-        this.lambda = MyUtils.requirePositive(lambda, "lambda");
-    }
-
     // Methods
     @Override
     protected double map(double x) {
         x = MyUtils.requireNonNegative(x, "x");
-        return 1.0 - Math.exp(-this.lambda * x);
+        return 1.0 - Math.exp(-x);
     }
 
 }

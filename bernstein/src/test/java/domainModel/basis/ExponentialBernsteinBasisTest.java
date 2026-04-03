@@ -14,8 +14,7 @@ public class ExponentialBernsteinBasisTest {
 
     @Test
     public void knownValues() {
-        double lambda = 1.0;
-        ExponentialBernsteinBasis basis = new ExponentialBernsteinBasis(lambda);
+        ExponentialBernsteinBasis basis = new ExponentialBernsteinBasis();
         assertThat(basis.eval(5, 0, 0.0)).isCloseTo(1.0, offset(EPSILON));
         for (int i=1; i <= 5; i++)
             assertThat(basis.eval(5, i, 0.0)).isCloseTo(0.0, offset(EPSILON));
@@ -24,7 +23,7 @@ public class ExponentialBernsteinBasisTest {
 
     @Test
     public void partitionOfUnity() {
-        ExponentialBernsteinBasis basis = new ExponentialBernsteinBasis(0.5);
+        ExponentialBernsteinBasis basis = new ExponentialBernsteinBasis();
         int n = 15;
         for (int j=0; j < 100; j++) {
             double x = random.nextDouble() * 20.0;
@@ -38,8 +37,4 @@ public class ExponentialBernsteinBasisTest {
         }
     }
 
-    @Test
-    public void invalidLambda() {
-        assertThrows(IllegalArgumentException.class, () -> new ExponentialBernsteinBasis(-0.1));
-    }
 }
