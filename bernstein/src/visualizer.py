@@ -26,21 +26,28 @@ def read_data():
 
 def plot_polynomial(data):
     """
-    Produces a plot of the Bernstein Polynomial and saves it to a PDF.
+    Produces a plot of the Bernstein Polynomial and the original function, then saves it to a PDF.
     """
     # Takes data.
     x = data.get("x", [])
-    y = data.get("y", [])
-    if not x or not y:
+    y_poly = data.get("y_poly", [])
+    y_orig = data.get("y_orig", [])
+
+    if not x or not y_poly:
         print("Error: No data to plot.")
         sys.exit(1)
+
     # Figure
     sns.set_theme(style="whitegrid")
     plt.figure(figsize=(10, 6))
-    sns.lineplot(x=x, y=y, label="Bernstein Polynomial", color="red", linewidth=2)
-    plt.title("Bernstein Polynomial", fontsize=16)
+    if y_orig:
+        sns.lineplot(x=x, y=y_orig, label="Original Function", color="blue", linewidth=1.5, linestyle="--")
+    sns.lineplot(x=x, y=y_poly, label="Bernstein Polynomial", color="red", linewidth=2)
+    plt.title("Bernstein Polynomial Approximation", fontsize=16)
     plt.xlabel("x", fontsize=12)
     plt.ylabel("f(x)", fontsize=12)
+    plt.legend()
+
     # Save the plot.
     output_dir = Path("results")
     output_dir.mkdir(parents=True, exist_ok=True)

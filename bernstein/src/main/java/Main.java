@@ -1,10 +1,14 @@
 import java.math.BigDecimal;
 
+import javax.sound.sampled.Line;
+
 import org.oristool.simulator.samplers.ExponentialSampler;
 
 import domainModel.BernsteinPolynomial;
 import domainModel.basis.BernsteinBasis;
 import domainModel.basis.ClassicalBernsteinBasis;
+import domainModel.basis.ExponentialBernsteinBasis;
+import domainModel.basis.LinearBernsteinBasis;
 
 /**
  * Hello world!
@@ -21,16 +25,15 @@ public class Main {
         for (int i = 0; i <= degree; i++) {
             double x_i = (double) i / degree;
             new ExponentialSampler(new BigDecimal(10));
-            sampler[i] = Math.sin(Math.PI * x_i);
+            sampler[i] = Math.cos(Math.PI * x_i);
         }
 
         // 3. Istanziamo la base e il polinomio
-        // Assumiamo che BernsteinBasis abbia un costruttore di default
-        BernsteinBasis basis = new ClassicalBernsteinBasis();
+        BernsteinBasis basis = new LinearBernsteinBasis(0, 1);
         BernsteinPolynomial poly = new BernsteinPolynomial(sampler, basis);
 
         // Visualizziamo su 20 punti tra 0 e 1 per vedere la curva risultante
-        poly.visualize(0.0, 1.0);
+        poly.visualize(0.0, 1.0, null);
     }
 
 }

@@ -29,18 +29,23 @@ public final class BernsteinPolynomial {
         return result;
     }
 
-    public void visualize(double supportMin, double supportMax) {
-        int degree = this.functionSampler.length-1;
+    public void visualize(double supportMin, double supportMax, java.util.function.DoubleUnaryOperator originalFunction) {
+        int degree = this.functionSampler.length - 1;
         int numPoints = Math.max(200, degree * 10);
 
         double step = (supportMax - supportMin) / (numPoints - 1);
         double[] xValues = new double[numPoints];
-        double[] yValues = new double[numPoints];
-        for (int i = 0; i < numPoints; i++) {
+        double[] yPoly = new double[numPoints];
+        double[] yOrig = (originalFunction != null) ? new double[numPoints] : null;
+
+        for (int i=0; i < numPoints; i++) {
             xValues[i] = supportMin + i * step;
-            yValues[i] = eval(xValues[i]);
+            yPoly[i] = eval(xValues[i]);
+            if (yOrig != null) {
+                yOrig[i] = originalFunction.applyAsDouble(xValues[i]);
+            }
         }
-        MyUtils.callPythonVisualizer(xValues, yValues);
+        MyUtils.callPythonVisualizer(xValues, yPoly, yOrig);
     }
 
 }
