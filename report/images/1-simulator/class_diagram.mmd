@@ -63,7 +63,7 @@ classDiagram
     }
 
     %% Logger
-    class MyLogger {
+    class MyTraceLogger {
         <<interface>>
         + log(String message) : void
         + close() : void
@@ -75,7 +75,7 @@ classDiagram
         + close() : void
     }
 
-    class NoLogger {
+    class NoTraceLogger {
         <<final>>
         + log(String message) : void
         + close() : void
@@ -112,7 +112,13 @@ classDiagram
 
     class TaskExecutionTimeCollector{
         <<final>>
-        - taskExecutionTime : Map~Task,List~
+        - taskExecutionTime : Map~Task,ListDuration~
+    }
+
+    class AbortedJobsCollector{
+        <<final>>
+        - abortedJobs : Map~Task,ListJob~
+        - jobPerTaskReleased : Map~Task,Integer~
     }
 
     %% Relationships
@@ -121,8 +127,9 @@ classDiagram
     Scheduler <|-- FixedPriorityScheduler
     FixedPriorityScheduler <|-- DMScheduler
     Scheduler --> MyClock
-    Scheduler --> MyLogger
+    Scheduler --> MyTraceLogger
     Scheduler --> TaskExecutionTimeCollector
+    Scheduler --> AbortedJobsCollector
     FixedPriorityScheduler o-- TaskSet
     FixedPriorityScheduler o-- Event : eventQueue
     Scheduler ..> DeadlineMissedException : throws
@@ -136,9 +143,8 @@ classDiagram
     Event <|-- ReleaseEvent
     Event <|-- DeadlineEvent
     %% Logger
-    MyLogger <|.. TraceLogger
-    MyLogger <|.. NoLogger
-
+    MyTraceLogger <|.. TraceLogger
+    MyTraceLogger <|.. NoTraceLogger
     %% Sampler
     Sampler <|.. DeterministicSampler
     Sampler <|.. DiscreteChoiceSampler

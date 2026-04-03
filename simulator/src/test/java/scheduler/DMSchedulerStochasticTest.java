@@ -1,8 +1,5 @@
 package scheduler;
 
-
-import static org.assertj.core.api.Assertions.assertThatNoException;
-
 import java.math.BigDecimal;
 import java.util.Random;
 
@@ -10,11 +7,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.RepeatedTest;
 import org.oristool.simulator.samplers.ExponentialSampler;
 import org.oristool.simulator.samplers.UniformSampler;
-
-import exeptions.DeadlineMissedException;
 import taskSet.Task;
 import taskSet.TaskSet;
-import utils.log.NoLogger;
+import utils.log.NoTraceLogger;
 
 class DMSchedulerStochasticTest {
 
@@ -30,14 +25,8 @@ class DMSchedulerStochasticTest {
                 60.0,
                 new ExponentialSampler(new BigDecimal(5)));
         TaskSet taskSet = new TaskSet(tasks);
-        Scheduler scheduler = new DMScheduler(taskSet, 1000.0, new NoLogger());
-        assertThatNoException().isThrownBy(() -> {
-            try {
-                scheduler.analyze();
-            } catch (DeadlineMissedException e) {
-                // Expected domain exception, ignored for robustness test of the engine
-            }
-        });
+        Scheduler scheduler = new DMScheduler(taskSet, 1000.0, new NoTraceLogger());
+        scheduler.analyze();
     }
 
     @RepeatedTest(5)
@@ -57,13 +46,7 @@ class DMSchedulerStochasticTest {
         Scheduler scheduler = new DMScheduler(
             taskSet,
             500.0,
-            new NoLogger());
-        assertThatNoException().isThrownBy(() -> {
-            try {
-                scheduler.analyze();
-            } catch (DeadlineMissedException e) {
-                // Ignore
-            }
-        });
+            new NoTraceLogger());
+        scheduler.analyze();
     }
 }

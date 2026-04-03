@@ -51,7 +51,6 @@ If you need to execute a different class (e.g., for specific tests or alternativ
 ##### Coding Style
 - **Type Safety:** High use of `java.time.Duration` for time representation to avoid precision issues.
 - **Immutability:** Core models like `Task` and `Job` use final fields where possible.
-- **Exceptions:** Custom exceptions like `DeadlineMissedException` are used to signal simulation-ending timing violations.
 - **Readability over Efficiency:** Prioritize code clarity, declarative patterns (e.g., Streams, Pattern Matching), and logical separation over micro-optimizations or redundant checks, unless performance becomes a documented bottleneck.
 
 ##### Testing Practices

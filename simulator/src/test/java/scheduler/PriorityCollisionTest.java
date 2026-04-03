@@ -9,17 +9,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.oristool.simulator.samplers.Sampler;
 
-import exeptions.DeadlineMissedException;
 import sampler.DeterministicSampler;
 import taskSet.Task;
 import taskSet.TaskSet;
-import utils.log.MyLogger;
+import utils.log.MyTraceLogger;
 
 public class PriorityCollisionTest {
 
     @Test
     @DisplayName("Priority Collision: Two tasks with same priority should both execute")
-    public void testPriorityCollision() throws DeadlineMissedException {
+    public void testPriorityCollision() {
         Sampler period = new DeterministicSampler(new BigDecimal(100));
         Sampler exec = new DeterministicSampler(new BigDecimal(10));
         Task task1 = new Task(period, 100, exec);
@@ -29,7 +28,7 @@ public class PriorityCollisionTest {
         task2.setPriority(1);
         TaskSet ts = new TaskSet(task1, task2);
         StringBuilder logOutput = new StringBuilder();
-        MyLogger logger = new MyLogger() {
+        MyTraceLogger logger = new MyTraceLogger() {
             @Override
             public void log(String message) {
                 logOutput.append(message);
@@ -47,5 +46,7 @@ public class PriorityCollisionTest {
         String output = logOutput.toString();
         assertThat(output).contains("execute Task 1");
         assertThat(output).contains("execute Task 2");
+        assertThat(scheduler.getAbortedJobsCollector().getAbortedJobsCount(task1)).isEqualTo(0);
+        assertThat(scheduler.getAbortedJobsCollector().getAbortedJobsCount(task2)).isEqualTo(0);
     }
 }

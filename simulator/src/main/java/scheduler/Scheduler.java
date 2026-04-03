@@ -3,26 +3,27 @@ package scheduler;
 import java.math.BigDecimal;
 import java.time.Duration;
 
-import exeptions.DeadlineMissedException;
 import sampler.DeterministicSampler;
 import taskSet.TaskSet;
 import utils.MyClock;
 import utils.MyUtils;
 import utils.SampleDuration;
-import utils.TaskExecutionTimeCollector;
-import utils.log.MyLogger;
+import utils.collector.AbortedJobsCollector;
+import utils.collector.TaskExecutionTimeCollector;
+import utils.log.MyTraceLogger;
 
 public abstract class Scheduler {
 
     private final TaskSet taskSet;
     private final Duration simulationDuration;
     private final MyClock clock = new MyClock();
-    private final MyLogger logger;
+    private final MyTraceLogger logger;
     private final TaskExecutionTimeCollector taskExecutionTimeCollector = new TaskExecutionTimeCollector();
+    private final AbortedJobsCollector abortedJobsCollector = new AbortedJobsCollector();
 
 
     // Constructor
-    public Scheduler(TaskSet taskSet, double simulationDuration, MyLogger logger) {
+    public Scheduler(TaskSet taskSet, double simulationDuration, MyTraceLogger logger) {
         this.taskSet = MyUtils.requireNonNull(taskSet, "taskSet");
         this.simulationDuration = SampleDuration.sample(
             new DeterministicSampler(new BigDecimal(MyUtils.requireNonNegative(simulationDuration, "simulationDuration"))));
@@ -38,7 +39,7 @@ public abstract class Scheduler {
         return this.clock;
     }
 
-    protected MyLogger getLogger() {
+    protected MyTraceLogger getLogger() {
         return this.logger;
     }
 
@@ -50,13 +51,17 @@ public abstract class Scheduler {
         return this.taskExecutionTimeCollector;
     }
 
+    protected AbortedJobsCollector getAbortedJobsCollector() {
+        return this.abortedJobsCollector;
+    }
+
 
     // Methods
     /**
      * Entry point for the analysis of a scheduler.
      * @return The all task execution time sampled during the simulation.
      */
-    public final TaskExecutionTimeCollector analyze() throws DeadlineMissedException {
+    public final TaskExecutionTimeCollector analyze() {
         try {
             this.analyzeForSubClasses();
             return this.taskExecutionTimeCollector;
@@ -65,6 +70,6 @@ public abstract class Scheduler {
         }
     }
 
-    protected abstract void analyzeForSubClasses() throws DeadlineMissedException;
+    protected abstract void analyzeForSubClasses();
 
 }

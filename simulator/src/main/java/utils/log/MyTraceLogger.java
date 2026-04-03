@@ -1,6 +1,6 @@
 package utils.log;
 
-public interface MyLogger {
+public interface MyTraceLogger {
     void log(String message);
     void close();
 }

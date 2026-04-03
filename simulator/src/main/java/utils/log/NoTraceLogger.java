@@ -4,7 +4,7 @@ package utils.log;
  * A logger implementation that does nothing.
  * Used as a default when no logger is provided to the scheduler.
  */
-public final class NoLogger implements MyLogger {
+public final class NoTraceLogger implements MyTraceLogger {
     @Override
     public void log(String message) {
         // Do nothing

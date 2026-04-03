@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.logging.*;
 
-public final class TraceLogger implements MyLogger {
+public final class TraceLogger implements MyTraceLogger {
 
     private final Logger logger;
     private FileHandler fileHandler;

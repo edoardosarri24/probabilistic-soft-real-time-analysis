@@ -6,18 +6,18 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import taskSet.Task;
 import taskSet.TaskSet;
-import utils.log.MyLogger;
-import utils.log.NoLogger;
+import utils.log.MyTraceLogger;
+import utils.log.NoTraceLogger;
 
 public final class DMScheduler extends FixedPriorityScheduler {
 
     // Constructor
-    public DMScheduler(TaskSet taskSet, double simulationDuration, MyLogger logger) {
+    public DMScheduler(TaskSet taskSet, double simulationDuration, MyTraceLogger logger) {
         super(taskSet, simulationDuration, logger);
     }
 
     public DMScheduler(TaskSet taskSet, double simulationDuration) {
-        super(taskSet, simulationDuration, new NoLogger());
+        super(taskSet, simulationDuration, new NoTraceLogger());
     }
 
     // methods
