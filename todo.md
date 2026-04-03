@@ -1,10 +1,8 @@
 # simulator
 - Configurazione taskset con json o yaml.
-- capire cosa cambia tra activejobs e readyjobs.
 
 - cosa succede se un job sfora la deadline? al momento si abortisce la simulazione, ma magari ci interessa abortire il job e documentarlo in un qualche modo? in che modo?
     - simulazione continua
-    - execution time responsabile messo nelle statistiche.
     - prevedere due config dove in una i job che sforano la deadline vengano abortiti (tenere statistica di quanti job su tempo e sul totale) e nell'altra si continua e si porta in fondo il job.
 - trovare anche il valore $\alpha_{k,t}$ che rappresneta il numero di job di ogni task che fa interferenza sul task a probabilità più bassa? e in generale cosa vogliamo fare col simulatore? ci serve solo raccogliere distribuzioni?
     - servirà poi.
@@ -23,6 +21,3 @@
 - visulizzare anche la funzione originale?
 
 ### domande
-
-# Varie
-- sistemare consegue polinomi e PH.
