@@ -50,6 +50,7 @@ public final class Job {
     public boolean isCompleted() {
         return this.isCompleted;
     }
+
     public Duration getExecutionTime() {
         return this.executionTime;
     }
@@ -111,7 +112,7 @@ public final class Job {
         if (!isCompleted && currentTime.compareTo(this.absoluteDeadline) >= 0)
             return true;
         // If job is completed, check if it finished after or before the deadline.
-        if (isCompleted && Objects.nonNull(completionTime) && completionTime.compareTo(this.absoluteDeadline) > 0)
+        if (isCompleted && completionTime.compareTo(this.absoluteDeadline) > 0)
             return true;
         return false;
     }

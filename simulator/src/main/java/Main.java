@@ -1,7 +1,6 @@
 import java.math.BigDecimal;
 
 import org.oristool.simulator.samplers.ExponentialSampler;
-import org.oristool.simulator.samplers.UniformSampler;
 
 import exeptions.DeadlineMissedException;
 import sampler.DeterministicSampler;
@@ -18,11 +17,11 @@ public class Main {
         Task task1 = new Task(
             new DeterministicSampler(new BigDecimal(35)),
             35,
-            new UniformSampler(new BigDecimal(3), new BigDecimal(9)));
+            new DeterministicSampler(new BigDecimal(3)));
         Task task2 = new Task(
             new DeterministicSampler(new BigDecimal(50)),
             50,
-            new UniformSampler(new BigDecimal(3), new BigDecimal(15)));
+            new DeterministicSampler(new BigDecimal(3)));
         Task task3 = new Task(
             new DeterministicSampler(new BigDecimal(80)),
             80,

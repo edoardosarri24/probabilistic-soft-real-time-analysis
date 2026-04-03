@@ -132,7 +132,7 @@ public abstract class FixedPriorityScheduler extends Scheduler  {
      * Check the deadlines miss for all active jobs.
      */
     private void checkDeadlines() throws DeadlineMissedException {
-        for (Job job : activeJobs)
+        for (Job job : this.activeJobs)
             if (job.isDeadlineMissed(this.getClock().getCurrentTime())) {
                 this.getLogger().log("<" + this.getClock().printCurrentTime() + ", deadlineMiss " + job.toString() + ">\n");
                 throw new DeadlineMissedException("Il task " + job.toString() + " ha superato la deadline");
@@ -143,7 +143,7 @@ public abstract class FixedPriorityScheduler extends Scheduler  {
         // First release new job and trace its execution time.
         Job newJob = task.releaseJob(this.getClock().getCurrentTime());
         this.getTaskExecutionTimeCollector().add(task, newJob.getExecutionTime());
-        activeJobs.add(newJob);
+        this.activeJobs.add(newJob);
         this.readyJobs.add(newJob);
         this.getLogger().log("<" + this.getClock().printCurrentTime() + ", release " + newJob.toString() + ">");
         // Schedule deadline event for this job
