@@ -100,26 +100,26 @@ If we observe Figure~\ref{fig:simulator_class_diagram} we have to describe the s
 \end{itemize}
 
 \subsection{Flow}
-Let's analyze, thanks also to Figure~\ref{fig:simulator_activity_diagram}, the scheduler flow. This follows the steps below:
+As illustrated in Figure~\ref{fig:simulator_activity_diagram}, the scheduler flow follows these steps:
 \begin{enumerate}
-    \item Assign priority according to the scheduling algorithm policy.
-    \item Reset the state of the whole system. This allows the client (i.e., the \texttt{Main.java}) to call \texttt{analyze()} multiple times to obtain consecutive schedulings.
-    \item Release the first job of all tasks.
-    \item Iterate through all events until we find a next event with a time higher than the simulation duration.
+    \item Assign task priorities according to the scheduling algorithm.
+    \item Reset the system state. This allows the client (i.e., \texttt{Main.java}) to call \texttt{analyze()} multiple times for consecutive simulations on the same instance.
+    \item Release the first job for each task in the taskset.
+    \item Iterate through the events in the queue until the next event time exceeds the simulation duration.
     \begin{enumerate}
-        \item Take the first event from the event queue and calculate the available time from now to this current event.
-        \item Distribute the available time among all ready jobs according to their priority.
+        \item Retrieve the first event from the queue and calculate the available time between the current clock and the event time.
+        \item Distribute this available time among the ready jobs according to their priority.
         \begin{enumerate}
-            \item Access the highest priority job from the ready jobs queue without removing it.
-            \item Evaluate if the last job executed must be preempted by this new highest priority job.
-            \item Give to the job the available time that it can exploit and execute the job. If the job finishes its work we remove it from the ready job list.
-            \item Advance the system clock by the real job execution time and check for deadline misses.
-            \item Calculate the new available time.
+            \item Access the highest priority job from the ready queue.
+            \item Check if the last executed job must be preempted by the current highest priority job for logging purposes.
+            \item Execute the job for the available time. If the job finishes, remove it from the ready list.
+            \item Advance the system clock by the actual execution time and check for deadline misses.
+            \item Update the remaining available time.
         \end{enumerate}
-        \item Carry the logical clock current time to our event time. Then check for deadline misses for all jobs in the ready jobs list; with this we ensure that the simulator state is correct and we can proceed.
-        \item Consider all events that have the same time as our current event. We have to deal with them all together. For these events that represent a new release, we release a new job of the related task. The release behavior is: create a new job and add it to all related structures; trace the job execution time; add its deadline event to the event queue; add the new task release time to the event queue.
+        \item Synchronize the system clock with the event time and check for deadline misses for all ready jobs to ensure the state is consistent.
+        \item Process all events that occur at the same time as the current clock. For a new release: create the job, sample its execution time, and add both its deadline and its next release time to the event queue.
     \end{enumerate}
-    \item If the current time is lower than the simulation duration, execute the simulation for the remaining time.
+    \item If the simulation duration has not been reached, execute the simulation for the remaining time.
 \end{enumerate}
 
 \begin{figure}[htbp]

@@ -2,37 +2,30 @@ stateDiagram-v2
     [*] --> Initialization
 
     state Initialization {
-        AssingPiority: Assign priority according to the algorithm policy.
-        ResetSystem: Reset global state.
-        ReleaseFirstJobs: Release the first jobs for each task.
-        AssingPiority --> ResetSystem
-        ResetSystem --> ReleaseFirstJobs
+        PriorityAssignment: Assign priorities according to scheduling policy.
+        StateReset: Reset global clock, collectors, and internal state.
+        Bootstrapping: Release the first job for each task.
+        PriorityAssignment --> StateReset
+        StateReset --> Bootstrapping
     }
 
-    state "Event Loop" as EventLoop {
+    state "Main Simulation Loop" as MainLoop {
+        CheckDuration: Check if next event time is within duration.
+        state DurationCheck <<choice>>
 
-        CheckNextEventTime : Check if we are still within the simulation duration.
-        state NextEventTimeCheck <<choice>>
-        AvailableTime: Calculate available time from now to next event.
-        DistributeTime: Distribute available time among ready tasks.
-        AdvaceTime : Advance time to the next event.
-        CheckDeadline : Check deadline miss.
-        state DeadlineCheck <<choice>>
-        ReleaseJob : Release new job for the task has completed their periods.
+        CalculateInterval: Calculate available time until next event.
+        DistributeLoad: Distribute available time among ready jobs by priority.
+        Synchronization: Align clock with event time and verify deadlines.
+        EventHandling: Process simultaneous events and release new jobs.
 
-        [*] --> TakeNextEvent
-        TakeNextEvent --> CheckNextEventTime
-        CheckNextEventTime --> NextEventTimeCheck
-        NextEventTimeCheck --> [*] : Simulation Ended
-        NextEventTimeCheck --> AvailableTime : Continue
-        AvailableTime --> DistributeTime
-        DistributeTime --> AdvaceTime
-        AdvaceTime --> CheckDeadline
-        CheckDeadline --> DeadlineCheck
-        DeadlineCheck --> ReleaseJob : State Ok
-        ReleaseJob --> TakeNextEvent
+        [*] --> CheckDuration
+        CheckDuration --> DurationCheck
+        DurationCheck --> [*] : Duration Exceeded
+        DurationCheck --> CalculateInterval : Continue
+        CalculateInterval --> DistributeLoad
+        DistributeLoad --> Synchronization
+        Synchronization --> EventHandling
+        EventHandling --> CheckDuration
     }
 
-    Initialization --> EventLoop
-    DeadlineCheck --> [*] : Deadline Missed
-    EventLoop --> [*]
+    Initialization --> MainLoop

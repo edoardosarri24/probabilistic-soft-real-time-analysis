@@ -1,5 +1,4 @@
 # simulator
-- rischrivere la docuemntazione sul flusso con l'activity diagram.
 - cosa succede se un job sfora la deadline? al momento si abortisce la simulazione, ma magari ci interessa abortire il job e documentarlo in un qualche modo? in che modo?
     - simulazione continua con due possibili scenari (settabili tramite strategy):
         -  I job che sforano la deadline vengano abortiti. Dobbiamo tenere traccia di alcune statistiche: numero assoluto di job che hanno abortito per task; percentuale di job che hanno abortito per task.
