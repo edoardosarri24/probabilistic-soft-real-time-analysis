@@ -44,26 +44,21 @@ public abstract class FixedPriorityScheduler extends Scheduler  {
         while (!eventQueue.isEmpty()) {
             Event event = eventQueue.poll();
             Duration nextEventTime = event.getTime();
-            
             // Distribute available time over ready jobs.
             Duration availableTime = nextEventTime.minus(this.getClock().getCurrentTime());
             this.distributeAvailableTime(availableTime);
             // Advance with the clock time.
             this.getClock().advanceTo(nextEventTime);
-
             // Collect and remove all events that occur at the same time.
             List<Event> currentEvents = new LinkedList<>();
             currentEvents.add(event);
             while (!eventQueue.isEmpty() && eventQueue.peek().getTime().equals(nextEventTime))
                 currentEvents.add(eventQueue.poll());
-
-            // 1. Process Deadlines
-            for (Event e : currentEvents) {
-                if (e instanceof DeadlineEvent deadlineEvent)
-                    this.handleDeadlineMiss(deadlineEvent.getJob());
-            }
-
-            // 2. Process Releases
+            // Handle events just retrived.
+            currentEvents.stream()
+                .filter(DeadlineEvent.class::isInstance)
+                .map(DeadlineEvent.class::cast)
+                .forEach(deadlineEvent -> this.handleDeadlineMiss(deadlineEvent.getJob()));
             currentEvents.stream()
                 .filter(ReleaseEvent.class::isInstance)
                 .map(ReleaseEvent.class::cast)
@@ -103,7 +98,8 @@ public abstract class FixedPriorityScheduler extends Scheduler  {
             // Preemption handling.
             this.checkPreemption(highPriorityJob);
             // Execution
-            this.getLogger().log("<" + this.getClock().printCurrentTime() + ", execute " + highPriorityJob.toString() + ">");
+            if (!highPriorityJob.equals(this.lastJobExecuted))
+                this.getLogger().log("<" + this.getClock().printCurrentTime() + ", execute " + highPriorityJob.toString() + ">");
             Duration executedTime = highPriorityJob.execute(availableTime);
             // Advance clock and define the new available time.
             this.getClock().advanceBy(executedTime);
@@ -121,9 +117,11 @@ public abstract class FixedPriorityScheduler extends Scheduler  {
 
     private void handleDeadlineMiss(Job job) {
         if (job.isDeadlineMissed(this.getClock().getCurrentTime())) {
-            this.getLogger().log("<" + this.getClock().printCurrentTime() + ", deadlineMiss " + job.toString() + " (aborted)>\n");
+            this.getLogger().log("<" + this.getClock().printCurrentTime() + ", deadlineMiss " + job.toString() + " (aborted)>");
             this.readyJobs.remove(job);
             this.getAbortedJobsCollector().addAbortedJobs(job.getTask());
+            if (job.equals(this.lastJobExecuted))
+                this.lastJobExecuted = null;
         }
     }
 
@@ -142,7 +140,6 @@ public abstract class FixedPriorityScheduler extends Scheduler  {
         // Track released job
         this.getAbortedJobsCollector().incrementJobPerTaskReleased(task);
         this.getTaskExecutionTimeCollector().add(newJob.getTask(), newJob.getExecutionTime());
-        
         // Schedule deadline event for this job (only if within simulation duration)
         if (newJob.getAbsoluteDeadline().compareTo(this.getSimulationDuration()) <= 0)
             eventQueue.add(new DeadlineEvent(newJob.getAbsoluteDeadline(), newJob));

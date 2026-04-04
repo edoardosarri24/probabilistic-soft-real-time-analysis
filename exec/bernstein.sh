@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env zsh
+
+set -e
 
 # Load SDKMAN! in the script
 export SDKMAN_DIR="$HOME/.sdkman"
@@ -12,6 +14,5 @@ fi
 # Execute the script
 cd bernstein || { echo "Error: 'bernstein' folder doesn't exist"; exit 1; }
 sdk use java 24.0.2-tem
-mvn test
-mvn clean compile exec:java -U
+mvn clean validate compile test exec:java
 cd ..
