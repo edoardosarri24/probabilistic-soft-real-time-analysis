@@ -18,15 +18,22 @@ The simulator follows a DES approach, jumping between critical time points (Even
     - `Job`: Represents a single instance of a task's execution with a specific release time and absolute deadline.
     - `TaskSet`: A collection of tasks to be simulated.
 - **Events (`event` package):**
+    - `Event`: Abstract base class for all events.
     - `ReleaseEvent`: Signals when a new job is released.
     - `DeadlineEvent`: A sentinel event to verify if a job has met its deadline at the exact instant of expiration.
+- **Samplers (`sampler` package):**
+    - `DeterministicSampler`: Returns a constant value.
+    - `DiscreteChoiceSampler`: Returns values from a discrete probability distribution.
 - **Scheduling (`scheduler` package):**
     - `Scheduler`: Abstract base class managing the event queue (`PriorityQueue`), the clock, and the simulation loop.
     - `FixedPriorityScheduler`: Base for fixed-priority policies.
-    - `DMScheduler`: Implementation of the Deadline Monotonic scheduling policy.
-- **Utilities:**
+    - `DeadlineMonotonicScheduler`: Implementation of the Deadline Monotonic scheduling policy.
+- **Utilities (`utils` package):**
     - `MyClock`: Tracks absolute simulation time using `java.time.Duration`.
-    - `MyLogger`: Custom logging for simulation traces.
+    - `TraceLogger` (`log` sub-package): Interface for logging simulation traces, with implementations like `MyTraceLogger` and `NoTraceLogger`.
+    - `Collectors` (`collector` sub-package): Classes like `AbortedJobsCollector` and `TaskExecutionTimeCollector` for gathering metrics.
+    - `SampleDuration`: Utility to sample durations from distributions.
+    - `MyUtils`: General utility functions.
 
 ### Building and Running
 
@@ -40,7 +47,7 @@ This script handles the SDKMAN configuration, builds the project, and executes b
 ##### Running Alternative Main Classes
 If you need to execute a different class (e.g., for specific tests or alternative scenarios):
 1. Open `simulator/pom.xml`.
-2. Create a new class in [java](simulator/src/main/java)folder
+2. Create a new class in [java](simulator/src/main/java) folder.
 3. Locate the `<mainClass>` tag within the `exec-maven-plugin` configuration.
 4. Change `Main` to the fully qualified name of the desired class.
 5. Run `./exec/simulator.sh`.
@@ -54,7 +61,7 @@ If you need to execute a different class (e.g., for specific tests or alternativ
 - **Readability over Efficiency:** Prioritize code clarity, declarative patterns (e.g., Streams, Pattern Matching), and logical separation over micro-optimizations or redundant checks, unless performance becomes a documented bottleneck.
 
 ##### Testing Practices
-- **JUnit & AssertJ:** The project uses JUnit 4 and AssertJ for testing (see `pom.xml`).
+- **JUnit 5 & AssertJ:** The project uses JUnit 5 (Jupiter) and AssertJ for testing (see `pom.xml`).
 - **Validation:** Every code change should be validated by running `mvn test` to ensure the DES logic remains sound.
 
 ##### Important Files

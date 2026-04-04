@@ -33,7 +33,7 @@ class DMSchedulerAdvancedSystemTest {
         Task t2 = new Task(new DeterministicSampler(new BigDecimal(100)), 20.0, new DeterministicSampler(new BigDecimal(15)));
         
         TaskSet taskSet = new TaskSet(t1, t2);
-        DMScheduler scheduler = new DMScheduler(taskSet, 30.0, customLogger);
+        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 30.0, customLogger);
         scheduler.analyze();
 
         String t1Name = t1.toString();
@@ -61,7 +61,7 @@ class DMSchedulerAdvancedSystemTest {
         // T1: P=10, D=10, C=10
         Task t1 = new Task(new DeterministicSampler(new BigDecimal(10)), 10.0, new DeterministicSampler(new BigDecimal(10)));
         TaskSet taskSet = new TaskSet(t1);
-        DMScheduler scheduler = new DMScheduler(taskSet, 30.0, new NoTraceLogger());
+        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 30.0, new NoTraceLogger());
         scheduler.analyze();
 
         // All 3 jobs should complete (0-10, 10-20, 20-30)
@@ -76,7 +76,7 @@ class DMSchedulerAdvancedSystemTest {
         // T1: P=10, D=10, C=20 (Impossible to complete)
         Task t1 = new Task(new DeterministicSampler(new BigDecimal(10)), 10.0, new DeterministicSampler(new BigDecimal(20)));
         TaskSet taskSet = new TaskSet(t1);
-        DMScheduler scheduler = new DMScheduler(taskSet, 40.0, new NoTraceLogger());
+        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 40.0, new NoTraceLogger());
         scheduler.analyze();
 
         // Every job should be aborted at its deadline (at 10, 20, 30, 40).
@@ -92,7 +92,7 @@ class DMSchedulerAdvancedSystemTest {
         // T1: P=100, D=10, C=5, offset=50
         Task t1 = new Task(new DeterministicSampler(new BigDecimal(100)), 10.0, new DeterministicSampler(new BigDecimal(5)), new DeterministicSampler(new BigDecimal(50)));
         TaskSet taskSet = new TaskSet(t1);
-        DMScheduler scheduler = new DMScheduler(taskSet, 100.0, new NoTraceLogger());
+        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 100.0, new NoTraceLogger());
         scheduler.analyze();
 
         // 0-50: Idle
@@ -111,7 +111,7 @@ class DMSchedulerAdvancedSystemTest {
         Task t2 = new Task(new DeterministicSampler(new BigDecimal(40)), 40.0, new DeterministicSampler(new BigDecimal(30)));
         
         TaskSet taskSet = new TaskSet(t1, t2);
-        DMScheduler scheduler = new DMScheduler(taskSet, 80.0, new NoTraceLogger());
+        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 80.0, new NoTraceLogger());
         scheduler.analyze();
 
         assertThat(scheduler.getAbortedJobsCollector().getAbortedJobsCount(t1)).isEqualTo(0);

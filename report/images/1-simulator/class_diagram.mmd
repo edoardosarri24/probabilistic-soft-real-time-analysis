@@ -16,7 +16,7 @@ classDiagram
         # assignPriority() : void
     }
 
-    class DMScheduler {
+    class DeadlineMonotonicScheduler {
         <<final>>
         # assignPriority() : void
     }
@@ -59,7 +59,7 @@ classDiagram
 
     class DeadlineEvent {
         <<final>>
-        -job : Job
+        - job : Job
     }
 
     %% Logger
@@ -82,9 +82,9 @@ classDiagram
     }
 
     %% Sampler
-    class Sampler {
+    class Sirio.Sampler {
         <<interface>>
-        +getSample() : BigDecimal
+        + getSample() : BigDecimal
     }
 
     class DeterministicSampler {
@@ -125,19 +125,18 @@ classDiagram
     Client --> Scheduler : analyse()
     %% Scheduler
     Scheduler <|-- FixedPriorityScheduler
-    FixedPriorityScheduler <|-- DMScheduler
+    FixedPriorityScheduler <|-- DeadlineMonotonicScheduler
     Scheduler --> MyClock
     Scheduler --> MyTraceLogger
     Scheduler --> TaskExecutionTimeCollector
     Scheduler --> AbortedJobsCollector
     FixedPriorityScheduler o-- TaskSet
     FixedPriorityScheduler o-- Event : eventQueue
-    Scheduler ..> DeadlineMissedException : throws
     %% TaskSet
     TaskSet *-- Task
     Job o-- Task
-    Task o-- Sampler : periodSampler
-    Task o-- Sampler : executionTimeSampler
+    Task o-- Sirio.Sampler : periodSampler
+    Task o-- Sirio.Sampler : executionTimeSampler
     Task ..> Job : releaseJob
     %% Event
     Event <|-- ReleaseEvent
@@ -146,5 +145,5 @@ classDiagram
     MyTraceLogger <|.. TraceLogger
     MyTraceLogger <|.. NoTraceLogger
     %% Sampler
-    Sampler <|.. DeterministicSampler
-    Sampler <|.. DiscreteChoiceSampler
+    Sirio.Sampler <|.. DeterministicSampler
+    Sirio.Sampler <|.. DiscreteChoiceSampler

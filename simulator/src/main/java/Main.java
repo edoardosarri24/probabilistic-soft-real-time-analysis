@@ -1,7 +1,7 @@
 import java.math.BigDecimal;
 
 import sampler.DeterministicSampler;
-import scheduler.DMScheduler;
+import scheduler.DeadlineMonotonicScheduler;
 import scheduler.Scheduler;
 import taskSet.Task;
 import taskSet.TaskSet;
@@ -24,15 +24,11 @@ public class Main {
             80,
             new DeterministicSampler(new BigDecimal(30)));
         TaskSet taskSet = new TaskSet(task1, task2, task3);
-        Scheduler dm = new DMScheduler(
+        Scheduler dm = new DeadlineMonotonicScheduler(
             taskSet,
             5000000,
             new TraceLogger());
-
         TaskExecutionTimeCollector dataSimulation = dm.analyze();
         MyUtils.callPythonExtractor(dataSimulation);
-        
-        // Output final statistics about aborted jobs
-        System.out.println("Simulation complete. Total aborted jobs recorded.");
     }
 }

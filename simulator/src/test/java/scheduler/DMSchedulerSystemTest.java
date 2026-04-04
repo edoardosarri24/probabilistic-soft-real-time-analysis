@@ -24,7 +24,7 @@ class DMSchedulerSystemTest {
         Task t1 = new Task(new DeterministicSampler(new BigDecimal(10)), 10.0, new DeterministicSampler(new BigDecimal(4)));
         TaskSet taskSet = new TaskSet(t1);
         
-        DMScheduler scheduler = new DMScheduler(taskSet, 50.0, new NoTraceLogger());
+        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 50.0, new NoTraceLogger());
         scheduler.analyze();
 
         Map<Task, java.util.List<Duration>> executionTimes = scheduler.getTaskExecutionTimeCollector().getTaskExecutionTime();
@@ -40,7 +40,7 @@ class DMSchedulerSystemTest {
         Task t2 = new Task(new DeterministicSampler(new BigDecimal(20)), 15.0, new DeterministicSampler(new BigDecimal(10)));
         TaskSet taskSet = new TaskSet(t1, t2);
         
-        DMScheduler scheduler = new DMScheduler(taskSet, 25.0, new NoTraceLogger());
+        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 25.0, new NoTraceLogger());
         scheduler.analyze();
         
         assertThat(scheduler.getClock().getCurrentTime()).isEqualTo(Duration.ofMillis(25));
@@ -58,7 +58,7 @@ class DMSchedulerSystemTest {
         Task t2 = new Task(new DeterministicSampler(new BigDecimal(10)), 10.0, new DeterministicSampler(new BigDecimal(8)));
         TaskSet taskSet = new TaskSet(t1, t2);
         
-        DMScheduler scheduler = new DMScheduler(taskSet, 30.0, new NoTraceLogger());
+        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 30.0, new NoTraceLogger());
         scheduler.analyze();
         
         // Simulation should complete up to 30ms
@@ -84,7 +84,7 @@ class DMSchedulerSystemTest {
     void analyzeShouldBeIdempotent() {
         Task t1 = new Task(new DeterministicSampler(new BigDecimal(10)), 10.0, new DeterministicSampler(new BigDecimal(4)));
         TaskSet taskSet = new TaskSet(t1);
-        DMScheduler scheduler = new DMScheduler(taskSet, 30.0, new NoTraceLogger());
+        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 30.0, new NoTraceLogger());
 
         // First run
         scheduler.analyze();
@@ -105,7 +105,7 @@ class DMSchedulerSystemTest {
     void jobCompletingAtDeadlineShouldSuccess() {
         Task t1 = new Task(new DeterministicSampler(new BigDecimal(20)), 10.0, new DeterministicSampler(new BigDecimal(10)));
         TaskSet taskSet = new TaskSet(t1);
-        DMScheduler scheduler = new DMScheduler(taskSet, 20.0, new NoTraceLogger());
+        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 20.0, new NoTraceLogger());
 
         assertThatNoException().isThrownBy(scheduler::analyze);
         assertThat(scheduler.getAbortedJobsCollector().getAbortedJobsCount(t1)).isEqualTo(0);
@@ -116,7 +116,7 @@ class DMSchedulerSystemTest {
     void zeroExecutionTimeTaskShouldWork() {
         Task t1 = new Task(new DeterministicSampler(new BigDecimal(10)), 10.0, new DeterministicSampler(new BigDecimal(0)));
         TaskSet taskSet = new TaskSet(t1);
-        DMScheduler scheduler = new DMScheduler(taskSet, 20.0, new NoTraceLogger());
+        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 20.0, new NoTraceLogger());
 
         scheduler.analyze();
         assertThat(scheduler.getTaskExecutionTimeCollector().getTaskExecutionTime().get(t1)).hasSize(2);
@@ -141,7 +141,7 @@ class DMSchedulerSystemTest {
         Task t3 = new Task(new DeterministicSampler(new BigDecimal(100)), 100.0, new DeterministicSampler(new BigDecimal(50)));
         
         TaskSet taskSet = new TaskSet(t1, t2, t3);
-        DMScheduler scheduler = new DMScheduler(taskSet, 60.0, customLogger);
+        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 60.0, customLogger);
         
         scheduler.analyze();
 
@@ -162,7 +162,7 @@ class DMSchedulerSystemTest {
         Task t1 = new Task(new DeterministicSampler(new BigDecimal(10)), 10.0, new DeterministicSampler(new BigDecimal(4)), new DeterministicSampler(new BigDecimal(15)));
         TaskSet taskSet = new TaskSet(t1);
         
-        DMScheduler scheduler = new DMScheduler(taskSet, 30.0, new NoTraceLogger());
+        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 30.0, new NoTraceLogger());
         scheduler.analyze();
 
         Map<Task, java.util.List<Duration>> executionTimes = scheduler.getTaskExecutionTimeCollector().getTaskExecutionTime();
@@ -177,7 +177,7 @@ class DMSchedulerSystemTest {
         Task t2 = new Task(new DeterministicSampler(new BigDecimal(10)), 10.0, new DeterministicSampler(new BigDecimal(4)), new DeterministicSampler(new BigDecimal(7)));
         TaskSet taskSet = new TaskSet(t1, t2);
         
-        DMScheduler scheduler = new DMScheduler(taskSet, 30.0, new NoTraceLogger());
+        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 30.0, new NoTraceLogger());
         scheduler.analyze();
 
         Map<Task, java.util.List<Duration>> executionTimes = scheduler.getTaskExecutionTimeCollector().getTaskExecutionTime();

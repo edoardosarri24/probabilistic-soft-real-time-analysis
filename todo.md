@@ -1,14 +1,9 @@
 # simulator
+- rischrivere la docuemntazione sul flusso con l'activity diagram.
 - cosa succede se un job sfora la deadline? al momento si abortisce la simulazione, ma magari ci interessa abortire il job e documentarlo in un qualche modo? in che modo?
     - simulazione continua con due possibili scenari (settabili tramite strategy):
-        - I job che sforano la deadline vengano abortiti. Dobbiamo tenere traccia di alcune statistiche: numero assoluto di job che hanno abortito per task; percentuale di job che hanno abortito per task.
+        -  I job che sforano la deadline vengano abortiti. Dobbiamo tenere traccia di alcune statistiche: numero assoluto di job che hanno abortito per task; percentuale di job che hanno abortito per task.
         - Si continua e si porta in fondo il job. Dobbiamo tenere traccia di alcune statistiche: TODO.
-- In generale devo riscrviere un po' tutta la doc: class diagram: aggiungere classi e controllare i nome (cambiando DM in DeadlineMonotonic).
-- rivedre anche i fil agent.
-- rischrivere la docuemntazione sul flusso.
-- documentare il fatto che ora lo scheduler non si arresta ma continua. considera anche con non lancia eccezioni.
-- capire i test che fanno e documentarli.
-
 - Configurazione taskset con json o yaml.
 - trovare anche il valore $\alpha_{k,t}$ che rappresneta il numero di job di ogni task che fa interferenza sul task a probabilità più bassa? e in generale cosa vogliamo fare col simulatore? ci serve solo raccogliere distribuzioni?
     - servirà poi non importa farlo ora.

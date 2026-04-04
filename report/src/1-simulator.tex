@@ -1,5 +1,5 @@
 \chapter{Simulator}
-The simulator's general objective is to have an instrument to validate our ideas and results in an experimental way. In particular we want to obtain experimentally for each task, the distribution of job execution time.
+The simulator's general objective is to have an instrument to validate our ideas and results in an empirical way. In particular we want to obtain experimentally for each task, the distribution of job execution time.
 
 This kind of simulation must be totally deterministic; for this reason all timing aspects have been handled in a discrete way using the \texttt{Duration} Java type. In this way we can handle the complexity of small durations with a high abstraction level. We assume that the time is taken as input and returned as output in milliseconds. During the execution, to obtain the maximum precision, it's processed in nanoseconds.
 
@@ -34,13 +34,13 @@ The simulator inputs are the following:
 \end{itemize}
 
 \subsection{Output - Logging}
-To test the scheduler algorithm implementation and to have evidence of the system behavior, the simulator can produce a file, named \textit{trace.log}, containing a sequence of \textit{<time, event>}, where \textit{event} can be: the release of a job, the execution and the completion of a job, the task preemption and the deadline miss event.
-
-\subsection{Output - Deadline Miss}
-The system has obviously the capabilities to identify a deadline miss by a task and can also identify the job that is responsible for this violation. A violation implies the abort of the whole simulation.
+To test the scheduler algorithm implementation and to have evidence of the system behavior, the simulator can produce a file, named \textit{trace.log}. This file contains a sequence of \textit{<time, event>}, where \textit{event} can be: the release of a job, the execution and the completion of a job, the task preemption and the deadline miss event.
 
 \subsection{Output - Distribution}
 During the simulation the system retrieves all execution times sampled by all tasks using the \texttt{TaskExecutionTimeCollector} class. These data are sent to a Python script that is the only one responsible for dealing with them. The final output is a distribution of execution time for each task.
+
+\subsection{Output - Deadline Miss}
+As we mentioned before, the simulator can identify a deadline miss event. This doesn't implies the abort of the whole simulation, but only the abort fo the job that has missed its deadline; in this way the simulator can go on. In each case of the deadline miss we use an event collector that stores the number of aborted jobs on the number of released jobs, for each task. In this way at the end of the simulation we can extract a statistic aboud the aborted jobs.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}
@@ -48,7 +48,7 @@ During the simulation the system retrieves all execution times sampled by all ta
 In Figure~\ref{fig:simulator_class_diagram} is shown the class diagram of the simulator. In the following we present the core entities that compose the system.
 \begin{itemize}
     \item\textbf{Client} \\
-        Is the Main of the Java system. It is responsible for allocating the taskset and the scheduler and calling \texttt{analyze()} on the scheduler.
+        Is the Main of the Java system. It is responsible for allocating the taskset and the scheduler, calling \texttt{analyze()} on the scheduler and the \texttt{callPythonExtractor} of the \texttt{MyUtils} class.
     \item\textbf{TaskSet} \\
         Is a simple set of all tasks.
     \item\textbf{Task} \\
@@ -59,8 +59,8 @@ In Figure~\ref{fig:simulator_class_diagram} is shown the class diagram of the si
         Represents the heart of the simulation, which uses the taskset for the scheduling simulation. It's responsible for initializing the system clock with a \texttt{MyClock} object and handling the system logging and the simulation duration.
     \item\textbf{FixedPriorityScheduler} \\
         Represents the abstraction for all fixed priority scheduling algorithms. All its subclasses must only implement the assign priority method.
-    \item\textbf{DMScheduler} \\
-        Is the specialization of the \texttt{Scheduler} that implements the priority assignment of the Deadline Monotonic scheduling algorithm.
+    \item\textbf{DeadlineMonotonicScheduler} \\
+        Is the specialization of the \texttt{FixedPriorityScheduler} that implements the priority assignment of the Deadline Monotonic scheduling algorithm.
     \item\textbf{Event} \\
         Is the abstract class that represents the relevant events of the system; each event is defined by the time of its occurrence. The idea is that the time can go forward until it reaches an instance of this class. The two implementations are: \texttt{ReleaseEvent} which models the job release event; \texttt{DeadlineEvent} which models the reaching of the job deadline.
 \end{itemize}
@@ -75,19 +75,25 @@ In Figure~\ref{fig:simulator_class_diagram} is shown the class diagram of the si
 \subsection{Utilities}
 If we observe Figure~\ref{fig:simulator_class_diagram} we have to describe the system utilities.
 \begin{itemize}
-    \item\textbf{DeterministicSampler} \\
-        A specialization of the Sirio \texttt{Sampler} interface that always returns a constant value, used for deterministic parameters.
-    \item\textbf{MyClock} \\
+    \item \textbf{Sirio.Sampler} \\
+        Is the Sirio interface. We have defined two implementation:
+        \begin{itemize}
+            \item \textbf{DeterministicSampler} \\
+                It always returns a constant value. Usefull for deterministic parameters that allow also probabilistic values.
+            \item \textbf{DiscreteChoiceSampler} \\
+                Represent a weighted choice.
+        \end{itemize}
+    \item \textbf{MyClock} \\
         Represents the global clock of the system. Implements the method to go at a specified time, to go forward in time by a specified duration and to print the current time.
-    \item\textbf{MyTraceLogger} \\
-        An interface that abstracts the logging operations.
-    \item\textbf{TraceLogger} \\
-        Implementation of \texttt{MyTraceLogger} that is responsible to logging the scheduling main events in a file named \textit{trace.log} with a personalized format.
-    \item\textbf{NoTraceLogger} \\
-        Implementation of \texttt{MyTraceLogger} that doesn't perform any logging operation. It's the default logger if Main passes no logger.
-    \item\textbf{DeadlineMissedException} \\
-        A custom exception thrown when a task's job exceeds its deadline.
-    \item\textbf{TaskExecutionTimeCollector} \\
+    \item \textbf{MyTraceLogger} \\
+        An interface that abstracts the logging operations. We have two implementation:
+        \begin{itemize}
+            \item \textbf{NoTraceLogger} \\
+                Implementation of \texttt{MyTraceLogger} that doesn't perform any logging operation. It's the default logger if Main doesnt pass any logger.
+            \item \textbf{TraceLogger} \\
+                Implementation of \texttt{MyTraceLogger} that is responsible to logging the scheduling main events in a file named \textit{trace.log} with a personalized format.
+        \end{itemize}
+    \item \textbf{TaskExecutionTimeCollector} \\
         Is the collector of all execution times of all tasks.
     \item \textbf{AbortedJobsCollector} \\
         Is the collector of all aborted jobs of all tasks. This is useful to have a trace of all jobs that have been aborted due to deadline misses, to analyze them in a post-mortem way.
@@ -124,25 +130,11 @@ Let's analyze, thanks also to Figure~\ref{fig:simulator_activity_diagram}, the s
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Testing}
-The simulator tests are divided into two categories: the deterministic system test and the stochastic test.
-
-\subsection{System Test}
-This kind of test always uses the \texttt{DeterministicSampler}. The objective is to verify the correct behavior of the simulator system.
-
-The scenarios that were tested are: single task execution; properties of the DM scheduling; task preemption; overload of the system, i.e. execution of a taskset with a load factor greater than 1; multiple consecutive calls of \texttt{analyze()} produce the same result; semantic validation of the traces; numerical stability with $10^6$ jobs released.
-
-This huge number of tests guarantees: the correctness of the DM scheduling algorithm; the precision of the clock implementation; the reliability of reusing the same instance for state handling.
-
-\subsection{Stochastic Test}
-This kind of simulation uses real stochastic distributions to sample the parameters of the jobs.
-
-The scenarios tested are the following: repeated simulations with different distributions and different tasks; we have stressed the queue management with a huge number of events.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Distribution Extraction}
 \label{sec:simulator_distribution_extraction}
-Since the main objective of the whole system is to produce the distribution of the tasks' execution time, the Python script launch is made in \texttt{Main.java}, immediately after the generation of the simulation data. This prevents us from jumping from a Java system to a Python script: we only have to run the simulator system.
+Since the main objective of the whole system is to produce the distribution of the tasks execution time, we have implemented a Python script that can be launch directly from \texttt{Main.java} with a java call, immediately after the generation of the simulation data. This prevents us from jumping from a Java system to a Python script: we only have to run the simulator system.
+
+The Python script represents the information retrived during the simulation by the \texttt{TaskExecutionTimeCollector} collector in a \textit{.pdf} file in \textit{results/} directory.
 
 \subsection{Java}
 The Java \texttt{Main} creates a \texttt{ProcessBuilder} to execute directly the Python script and also redirects the console and the bash: now Python has full control.
@@ -151,3 +143,19 @@ Once the simulator has produced the data, they are stored in a \texttt{Map} obje
 
 \subsection{Python}
 Once Python has read the whole data, it converts the JSON file into a dictionary. At this point, it is very simple to obtain the distribution of the execution time of all tasks.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Testing}
+The simulator tests are divided into two categories: the deterministic system test and the stochastic test.
+
+\subsection{System Test}
+This kind of test always uses the \texttt{DeterministicSampler}. The objective is to verify the correct behavior of the simulator system in various scheduling scenarios.
+
+The scenarios that were tested are: single task execution; properties of the DM scheduling; task preemption (including nested preemption); overload of the system, i.e., execution of a taskset with a load factor greater than 1 resulting in aborted jobs; idempotency of the analysis process (i.e., multiple consecutive calls of \texttt{analyze()} produce the same result); offset management for tasks with non-zero initial release times; handling of priority collisions; boundary cases such as jobs completing exactly at their deadline or tasks with zero execution time; semantic validation of the traces; and engine robustness during complex abort-preemption chains.
+
+These tests guarantee: the correctness of the DM scheduling algorithm; the precision of the clock implementation; the reliability of reusing the same instance for state handling; and the robustness of the engine in complex scheduling scenarios.
+
+\subsection{Stochastic Test}
+This kind of simulation uses real stochastic distributions to sample the parameters of the jobs.
+
+The scenarios tested are the following: repeated simulations with different stochastic distributions (e.g., \texttt{UniformSampler} and \texttt{ExponentialSampler}) and multiple tasks; engine robustness with high task density and random loads to ensure simulation stability.

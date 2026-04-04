@@ -9,14 +9,14 @@ import taskSet.TaskSet;
 import utils.log.MyTraceLogger;
 import utils.log.NoTraceLogger;
 
-public final class DMScheduler extends FixedPriorityScheduler {
+public final class DeadlineMonotonicScheduler extends FixedPriorityScheduler {
 
     // Constructor
-    public DMScheduler(TaskSet taskSet, double simulationDuration, MyTraceLogger logger) {
+    public DeadlineMonotonicScheduler(TaskSet taskSet, double simulationDuration, MyTraceLogger logger) {
         super(taskSet, simulationDuration, logger);
     }
 
-    public DMScheduler(TaskSet taskSet, double simulationDuration) {
+    public DeadlineMonotonicScheduler(TaskSet taskSet, double simulationDuration) {
         super(taskSet, simulationDuration, new NoTraceLogger());
     }
 

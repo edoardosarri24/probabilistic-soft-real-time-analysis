@@ -25,7 +25,7 @@ class DMSchedulerStochasticTest {
                 60.0,
                 new ExponentialSampler(new BigDecimal(5)));
         TaskSet taskSet = new TaskSet(tasks);
-        Scheduler scheduler = new DMScheduler(taskSet, 1000.0, new NoTraceLogger());
+        Scheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 1000.0, new NoTraceLogger());
         scheduler.analyze();
     }
 
@@ -43,7 +43,7 @@ class DMSchedulerStochasticTest {
                 new UniformSampler(new BigDecimal(0.5), new BigDecimal(meanExec)));
         }
         TaskSet taskSet = new TaskSet(tasks);
-        Scheduler scheduler = new DMScheduler(
+        Scheduler scheduler = new DeadlineMonotonicScheduler(
             taskSet,
             500.0,
             new NoTraceLogger());
