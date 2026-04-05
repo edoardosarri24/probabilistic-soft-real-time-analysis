@@ -3,11 +3,11 @@ import java.math.BigDecimal;
 import sampler.DeterministicSampler;
 import scheduler.DeadlineMonotonicScheduler;
 import scheduler.Scheduler;
+import scheduler.deadlineMIssStrategy.ContinueStrategy;
 import taskSet.Task;
 import taskSet.TaskSet;
 import utils.MyUtils;
 import utils.collector.TaskExecutionTimeCollector;
-import utils.log.TraceLogger;
 
 public class Main {
     public static void main(String[] args) {
@@ -27,7 +27,7 @@ public class Main {
         Scheduler dm = new DeadlineMonotonicScheduler(
             taskSet,
             5000000,
-            new TraceLogger());
+            new ContinueStrategy());
         TaskExecutionTimeCollector dataSimulation = dm.analyze();
         MyUtils.callPythonExtractor(dataSimulation);
     }

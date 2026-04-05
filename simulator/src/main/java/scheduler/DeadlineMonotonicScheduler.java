@@ -4,20 +4,16 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import scheduler.deadlineMIssStrategy.DeadlineMissStrategy;
 import taskSet.Task;
 import taskSet.TaskSet;
-import utils.log.MyTraceLogger;
-import utils.log.NoTraceLogger;
 
 public final class DeadlineMonotonicScheduler extends FixedPriorityScheduler {
 
     // Constructor
-    public DeadlineMonotonicScheduler(TaskSet taskSet, double simulationDuration, MyTraceLogger logger) {
-        super(taskSet, simulationDuration, logger);
-    }
-
-    public DeadlineMonotonicScheduler(TaskSet taskSet, double simulationDuration) {
-        super(taskSet, simulationDuration, new NoTraceLogger());
+    public DeadlineMonotonicScheduler(TaskSet taskSet, double simulationDuration, DeadlineMissStrategy strategy) {
+        super(taskSet, simulationDuration, strategy);
     }
 
     // methods
@@ -31,8 +27,7 @@ public final class DeadlineMonotonicScheduler extends FixedPriorityScheduler {
             .forEach(i -> {
                 Task task = sortedByDeadline.get(i);
                 task.setPriority(i+1);
-            }
-        );
+            });
     }
 
 }

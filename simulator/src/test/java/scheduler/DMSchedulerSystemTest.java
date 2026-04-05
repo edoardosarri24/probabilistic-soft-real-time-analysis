@@ -12,9 +12,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import sampler.DeterministicSampler;
+import scheduler.deadlineMIssStrategy.AbortJobStrategy;
 import taskSet.Task;
 import taskSet.TaskSet;
-import utils.log.NoTraceLogger;
 
 class DMSchedulerSystemTest {
 
@@ -24,7 +24,7 @@ class DMSchedulerSystemTest {
         Task t1 = new Task(new DeterministicSampler(new BigDecimal(10)), 10.0, new DeterministicSampler(new BigDecimal(4)));
         TaskSet taskSet = new TaskSet(t1);
         
-        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 50.0, new NoTraceLogger());
+        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 50.0, new AbortJobStrategy());
         scheduler.analyze();
 
         Map<Task, java.util.List<Duration>> executionTimes = scheduler.getTaskExecutionTimeCollector().getTaskExecutionTime();
@@ -40,7 +40,7 @@ class DMSchedulerSystemTest {
         Task t2 = new Task(new DeterministicSampler(new BigDecimal(20)), 15.0, new DeterministicSampler(new BigDecimal(10)));
         TaskSet taskSet = new TaskSet(t1, t2);
         
-        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 25.0, new NoTraceLogger());
+        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 25.0, new AbortJobStrategy());
         scheduler.analyze();
         
         assertThat(scheduler.getClock().getCurrentTime()).isEqualTo(Duration.ofMillis(25));
@@ -58,7 +58,7 @@ class DMSchedulerSystemTest {
         Task t2 = new Task(new DeterministicSampler(new BigDecimal(10)), 10.0, new DeterministicSampler(new BigDecimal(8)));
         TaskSet taskSet = new TaskSet(t1, t2);
         
-        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 30.0, new NoTraceLogger());
+        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 30.0, new AbortJobStrategy());
         scheduler.analyze();
         
         // Simulation should complete up to 30ms
@@ -84,7 +84,7 @@ class DMSchedulerSystemTest {
     void analyzeShouldBeIdempotent() {
         Task t1 = new Task(new DeterministicSampler(new BigDecimal(10)), 10.0, new DeterministicSampler(new BigDecimal(4)));
         TaskSet taskSet = new TaskSet(t1);
-        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 30.0, new NoTraceLogger());
+        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 30.0, new AbortJobStrategy());
 
         // First run
         scheduler.analyze();
@@ -105,7 +105,7 @@ class DMSchedulerSystemTest {
     void jobCompletingAtDeadlineShouldSuccess() {
         Task t1 = new Task(new DeterministicSampler(new BigDecimal(20)), 10.0, new DeterministicSampler(new BigDecimal(10)));
         TaskSet taskSet = new TaskSet(t1);
-        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 20.0, new NoTraceLogger());
+        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 20.0, new AbortJobStrategy());
 
         assertThatNoException().isThrownBy(scheduler::analyze);
         assertThat(scheduler.getAbortedJobsCollector().getAbortedJobsCount(t1)).isEqualTo(0);
@@ -116,7 +116,7 @@ class DMSchedulerSystemTest {
     void zeroExecutionTimeTaskShouldWork() {
         Task t1 = new Task(new DeterministicSampler(new BigDecimal(10)), 10.0, new DeterministicSampler(new BigDecimal(0)));
         TaskSet taskSet = new TaskSet(t1);
-        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 20.0, new NoTraceLogger());
+        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 20.0, new AbortJobStrategy());
 
         scheduler.analyze();
         assertThat(scheduler.getTaskExecutionTimeCollector().getTaskExecutionTime().get(t1)).hasSize(2);
@@ -128,10 +128,6 @@ class DMSchedulerSystemTest {
     @DisplayName("Semantic: Nested preemption (T1 preempts T2, which already preempted T3)")
     void nestedPreemptionShouldBeHandledCorrectly() {
         java.util.List<String> logs = new java.util.ArrayList<>();
-        utils.log.MyTraceLogger customLogger = new utils.log.MyTraceLogger() {
-            @Override public void log(String msg) { logs.add(msg); }
-            @Override public void close() {}
-        };
 
         // T1: P=15, D=15, C=2
         // T2: P=30, D=30, C=20
@@ -141,7 +137,7 @@ class DMSchedulerSystemTest {
         Task t3 = new Task(new DeterministicSampler(new BigDecimal(100)), 100.0, new DeterministicSampler(new BigDecimal(50)));
         
         TaskSet taskSet = new TaskSet(t1, t2, t3);
-        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 60.0, customLogger);
+        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 60.0, new AbortJobStrategy());
         
         scheduler.analyze();
 
@@ -162,7 +158,7 @@ class DMSchedulerSystemTest {
         Task t1 = new Task(new DeterministicSampler(new BigDecimal(10)), 10.0, new DeterministicSampler(new BigDecimal(4)), new DeterministicSampler(new BigDecimal(15)));
         TaskSet taskSet = new TaskSet(t1);
         
-        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 30.0, new NoTraceLogger());
+        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 30.0, new AbortJobStrategy());
         scheduler.analyze();
 
         Map<Task, java.util.List<Duration>> executionTimes = scheduler.getTaskExecutionTimeCollector().getTaskExecutionTime();
@@ -177,7 +173,7 @@ class DMSchedulerSystemTest {
         Task t2 = new Task(new DeterministicSampler(new BigDecimal(10)), 10.0, new DeterministicSampler(new BigDecimal(4)), new DeterministicSampler(new BigDecimal(7)));
         TaskSet taskSet = new TaskSet(t1, t2);
         
-        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 30.0, new NoTraceLogger());
+        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 30.0, new AbortJobStrategy());
         scheduler.analyze();
 
         Map<Task, java.util.List<Duration>> executionTimes = scheduler.getTaskExecutionTimeCollector().getTaskExecutionTime();

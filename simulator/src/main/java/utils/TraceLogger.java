@@ -1,4 +1,4 @@
-package utils.log;
+package utils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.logging.*;
 
-public final class TraceLogger implements MyTraceLogger {
+public final class TraceLogger {
 
     private final Logger logger;
     private FileHandler fileHandler;
@@ -44,12 +44,10 @@ public final class TraceLogger implements MyTraceLogger {
     }
 
     // Methods
-    @Override
     public void log(String message) {
         this.logger.info(message);
     }
 
-    @Override
     public void close() {
         if (Objects.nonNull(fileHandler)) {
             fileHandler.close();

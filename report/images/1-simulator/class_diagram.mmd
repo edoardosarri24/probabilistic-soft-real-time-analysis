@@ -21,6 +21,27 @@ classDiagram
         # assignPriority() : void
     }
 
+    %% Strategy
+    class DeadlineMissStrategy {
+        <<interface>>
+        + handleDeadlineMiss() : void
+    }
+
+    class AbortSimulationStrategy {
+        <<final>>
+        + handleDeadlineMiss() : void
+    }
+
+    class AbortJobStrategy {
+        <<final>>
+        + handleDeadlineMiss() : void
+    }
+
+    class ContinueStrategy {
+        <<final>>
+        + handleDeadlineMiss() : void
+    }
+
     %% TaskSet
     class TaskSet {
         <<final>>
@@ -62,25 +83,6 @@ classDiagram
         - job : Job
     }
 
-    %% Logger
-    class MyTraceLogger {
-        <<interface>>
-        + log(String message) : void
-        + close() : void
-    }
-
-    class TraceLogger {
-        <<final>>
-        + log(String message) : void
-        + close() : void
-    }
-
-    class NoTraceLogger {
-        <<final>>
-        + log(String message) : void
-        + close() : void
-    }
-
     %% Sampler
     class Sirio.Sampler {
         <<interface>>
@@ -110,6 +112,12 @@ classDiagram
         + reset() : void
     }
 
+    class TraceLogger {
+        <<final>>
+        + log(String message) : void
+        + close() : void
+    }
+
     class TaskExecutionTimeCollector{
         <<final>>
         - taskExecutionTime : Map~Task,ListDuration~
@@ -127,11 +135,12 @@ classDiagram
     Scheduler <|-- FixedPriorityScheduler
     FixedPriorityScheduler <|-- DeadlineMonotonicScheduler
     Scheduler --> MyClock
-    Scheduler --> MyTraceLogger
     Scheduler --> TaskExecutionTimeCollector
     Scheduler --> AbortedJobsCollector
     FixedPriorityScheduler o-- TaskSet
     FixedPriorityScheduler o-- Event : eventQueue
+    Scheduler --> TraceLogger
+    Scheduler *-- DeadlineMissStrategy
     %% TaskSet
     TaskSet *-- Task
     Job o-- Task
@@ -141,9 +150,10 @@ classDiagram
     %% Event
     Event <|-- ReleaseEvent
     Event <|-- DeadlineEvent
-    %% Logger
-    MyTraceLogger <|.. TraceLogger
-    MyTraceLogger <|.. NoTraceLogger
     %% Sampler
     Sirio.Sampler <|.. DeterministicSampler
     Sirio.Sampler <|.. DiscreteChoiceSampler
+    %% Streategy
+    DeadlineMissStrategy <|.. AbortSimulationStrategy
+    DeadlineMissStrategy <|.. AbortJobStrategy
+    DeadlineMissStrategy <|.. ContinueStrategy

@@ -7,9 +7,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.RepeatedTest;
 import org.oristool.simulator.samplers.ExponentialSampler;
 import org.oristool.simulator.samplers.UniformSampler;
+
+import scheduler.deadlineMIssStrategy.AbortJobStrategy;
 import taskSet.Task;
 import taskSet.TaskSet;
-import utils.log.NoTraceLogger;
 
 class DMSchedulerStochasticTest {
 
@@ -25,7 +26,7 @@ class DMSchedulerStochasticTest {
                 60.0,
                 new ExponentialSampler(new BigDecimal(5)));
         TaskSet taskSet = new TaskSet(tasks);
-        Scheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 1000.0, new NoTraceLogger());
+        Scheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 1000.0, new AbortJobStrategy());
         scheduler.analyze();
     }
 
@@ -46,7 +47,7 @@ class DMSchedulerStochasticTest {
         Scheduler scheduler = new DeadlineMonotonicScheduler(
             taskSet,
             500.0,
-            new NoTraceLogger());
+            new AbortJobStrategy());
         scheduler.analyze();
     }
 }

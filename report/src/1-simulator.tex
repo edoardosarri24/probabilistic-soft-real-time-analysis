@@ -47,22 +47,24 @@ As we mentioned before, the simulator can identify a deadline miss event. This d
 \label{sec:simulator_implementation}
 In Figure~\ref{fig:simulator_class_diagram} is shown the class diagram of the simulator. In the following we present the core entities that compose the system.
 \begin{itemize}
-    \item\textbf{Client} \\
+    \item \textbf{Client} \\
         Is the Main of the Java system. It is responsible for allocating the taskset and the scheduler, calling \texttt{analyze()} on the scheduler and the \texttt{callPythonExtractor} of the \texttt{MyUtils} class.
-    \item\textbf{TaskSet} \\
+    \item \textbf{TaskSet} \\
         Is a simple set of all tasks.
-    \item\textbf{Task} \\
+    \item \textbf{Task} \\
         Represents a task. It models only the static specification of the task: the period, the execution time and the deadline; the first two are Sirio \texttt{Sampler} objects that represent the distribution from which they sample the true duration; the last is a \texttt{Duration} object, where the time must be expressed in milliseconds. Internally it also maintains a \texttt{jobCounter} to uniquely identify its jobs.
-    \item\textbf{Job} \\
+    \item \textbf{Job} \\
         Represents a task instance. While a Task contains only the task specifications, a Job contains the active state: the absolute deadline, the remaining execution time, the information about its completeness and the time of completion. It has a method to handle the simulation of its execution.
-    \item\textbf{Scheduler} \\
+    \item \textbf{Scheduler} \\
         Represents the heart of the simulation, which uses the taskset for the scheduling simulation. It's responsible for initializing the system clock with a \texttt{MyClock} object and handling the system logging and the simulation duration.
-    \item\textbf{FixedPriorityScheduler} \\
+    \item \textbf{FixedPriorityScheduler} \\
         Represents the abstraction for all fixed priority scheduling algorithms. All its subclasses must only implement the assign priority method.
-    \item\textbf{DeadlineMonotonicScheduler} \\
+    \item \textbf{DeadlineMonotonicScheduler} \\
         Is the specialization of the \texttt{FixedPriorityScheduler} that implements the priority assignment of the Deadline Monotonic scheduling algorithm.
-    \item\textbf{Event} \\
+    \item \textbf{Event} \\
         Is the abstract class that represents the relevant events of the system; each event is defined by the time of its occurrence. The idea is that the time can go forward until it reaches an instance of this class. The two implementations are: \texttt{ReleaseEvent} which models the job release event; \texttt{DeadlineEvent} which models the reaching of the job deadline.
+    \item \textbf{DeadlineMissStrategy} \\
+        Is the interface responsable to the implementation of the jobs deadliness missed policy. There are the possibility: the \texttt{AbortSimulationStrategy} that interrups the whole simulation; the \texttt{AbortJobStrategy} that abort the job and cuntinue the simulation; the \texttt{ContinueStrategy} that do nothing and leave the job in the ready job queque. All these three solution the job abortion and collect the related statistics.
 \end{itemize}
 
 \begin{figure}[htbp]
@@ -85,14 +87,8 @@ If we observe Figure~\ref{fig:simulator_class_diagram} we have to describe the s
         \end{itemize}
     \item \textbf{MyClock} \\
         Represents the global clock of the system. Implements the method to go at a specified time, to go forward in time by a specified duration and to print the current time.
-    \item \textbf{MyTraceLogger} \\
-        An interface that abstracts the logging operations. We have two implementation:
-        \begin{itemize}
-            \item \textbf{NoTraceLogger} \\
-                Implementation of \texttt{MyTraceLogger} that doesn't perform any logging operation. It's the default logger if Main doesnt pass any logger.
-            \item \textbf{TraceLogger} \\
-                Implementation of \texttt{MyTraceLogger} that is responsible to logging the scheduling main events in a file named \textit{trace.log} with a personalized format.
-        \end{itemize}
+    \item \textbf{TraceLogger} \\
+        The logging utils that is responsible to logging the scheduling main events in a file named \textit{trace.log} with a personalized format.An interface that abstracts the logging operations.
     \item \textbf{TaskExecutionTimeCollector} \\
         Is the collector of all execution times of all tasks.
     \item \textbf{AbortedJobsCollector} \\

@@ -11,10 +11,10 @@ import java.util.TreeSet;
 import event.DeadlineEvent;
 import event.Event;
 import event.ReleaseEvent;
+import scheduler.deadlineMIssStrategy.DeadlineMissStrategy;
 import taskSet.Job;
 import taskSet.Task;
 import taskSet.TaskSet;
-import utils.log.MyTraceLogger;
 
 public abstract class FixedPriorityScheduler extends Scheduler  {
 
@@ -30,8 +30,8 @@ public abstract class FixedPriorityScheduler extends Scheduler  {
      * @param taskSet The taskset that will be schedule.
      * @param simulationDuration Must be expressed in milliseconds.
      */
-    public FixedPriorityScheduler(TaskSet taskSet, double simulationDuration, MyTraceLogger logger) {
-        super(taskSet, simulationDuration, logger);
+    public FixedPriorityScheduler(TaskSet taskSet, double simulationDuration, DeadlineMissStrategy strategy) {
+        super(taskSet, simulationDuration, strategy);
     }
 
     // Methods
@@ -117,12 +117,14 @@ public abstract class FixedPriorityScheduler extends Scheduler  {
 
     private void handleDeadlineMiss(Job job) {
         if (job.isDeadlineMissed(this.getClock().getCurrentTime())) {
-            this.getLogger().log("<" + this.getClock().printCurrentTime() + ", deadlineMiss " + job.toString() + " (aborted)>");
-            this.readyJobs.remove(job);
-            this.getAbortedJobsCollector().addAbortedJobs(job.getTask());
-            if (job.equals(this.lastJobExecuted))
-                this.lastJobExecuted = null;
+            this.getStrategy().handleDeadlineMiss(job, this);
         }
+    }
+
+    public void abortJob(Job job) {
+        this.readyJobs.remove(job);
+        if (job.equals(this.lastJobExecuted))
+            this.lastJobExecuted = null;
     }
 
     private void checkPreemption(Job currentJob) {

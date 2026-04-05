@@ -11,10 +11,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import sampler.DeterministicSampler;
+import scheduler.deadlineMIssStrategy.AbortJobStrategy;
 import taskSet.Task;
 import taskSet.TaskSet;
-import utils.log.MyTraceLogger;
-import utils.log.NoTraceLogger;
 
 class DMSchedulerAdvancedSystemTest {
 
@@ -22,10 +21,6 @@ class DMSchedulerAdvancedSystemTest {
     @DisplayName("Scenario: Abort-Preemption Chain - verifies fix for lastJobExecuted after abort")
     void abortPreemptionChainShouldNotLogFalsePreempt() {
         List<String> logs = new ArrayList<>();
-        MyTraceLogger customLogger = new MyTraceLogger() {
-            @Override public void log(String msg) { logs.add(msg); }
-            @Override public void close() {}
-        };
 
         // T1: P=10, D=10, C=5 (High Priority)
         // T2: P=100, D=20, C=15 (Low Priority) - Released at 0
@@ -33,7 +28,7 @@ class DMSchedulerAdvancedSystemTest {
         Task t2 = new Task(new DeterministicSampler(new BigDecimal(100)), 20.0, new DeterministicSampler(new BigDecimal(15)));
         
         TaskSet taskSet = new TaskSet(t1, t2);
-        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 30.0, customLogger);
+        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 30.0, new AbortJobStrategy());
         scheduler.analyze();
 
         String t1Name = t1.toString();
@@ -61,7 +56,7 @@ class DMSchedulerAdvancedSystemTest {
         // T1: P=10, D=10, C=10
         Task t1 = new Task(new DeterministicSampler(new BigDecimal(10)), 10.0, new DeterministicSampler(new BigDecimal(10)));
         TaskSet taskSet = new TaskSet(t1);
-        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 30.0, new NoTraceLogger());
+        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 30.0, new AbortJobStrategy());
         scheduler.analyze();
 
         // All 3 jobs should complete (0-10, 10-20, 20-30)
@@ -76,7 +71,7 @@ class DMSchedulerAdvancedSystemTest {
         // T1: P=10, D=10, C=20 (Impossible to complete)
         Task t1 = new Task(new DeterministicSampler(new BigDecimal(10)), 10.0, new DeterministicSampler(new BigDecimal(20)));
         TaskSet taskSet = new TaskSet(t1);
-        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 40.0, new NoTraceLogger());
+        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 40.0, new AbortJobStrategy());
         scheduler.analyze();
 
         // Every job should be aborted at its deadline (at 10, 20, 30, 40).
@@ -92,7 +87,7 @@ class DMSchedulerAdvancedSystemTest {
         // T1: P=100, D=10, C=5, offset=50
         Task t1 = new Task(new DeterministicSampler(new BigDecimal(100)), 10.0, new DeterministicSampler(new BigDecimal(5)), new DeterministicSampler(new BigDecimal(50)));
         TaskSet taskSet = new TaskSet(t1);
-        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 100.0, new NoTraceLogger());
+        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 100.0, new AbortJobStrategy());
         scheduler.analyze();
 
         // 0-50: Idle
@@ -111,7 +106,7 @@ class DMSchedulerAdvancedSystemTest {
         Task t2 = new Task(new DeterministicSampler(new BigDecimal(40)), 40.0, new DeterministicSampler(new BigDecimal(30)));
         
         TaskSet taskSet = new TaskSet(t1, t2);
-        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 80.0, new NoTraceLogger());
+        DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 80.0, new AbortJobStrategy());
         scheduler.analyze();
 
         assertThat(scheduler.getAbortedJobsCollector().getAbortedJobsCount(t1)).isEqualTo(0);

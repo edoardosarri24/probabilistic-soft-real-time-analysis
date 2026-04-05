@@ -4,30 +4,32 @@ import java.math.BigDecimal;
 import java.time.Duration;
 
 import sampler.DeterministicSampler;
+import scheduler.deadlineMIssStrategy.DeadlineMissStrategy;
 import taskSet.TaskSet;
 import utils.MyClock;
 import utils.MyUtils;
 import utils.SampleDuration;
+import utils.TraceLogger;
 import utils.collector.AbortedJobsCollector;
 import utils.collector.TaskExecutionTimeCollector;
-import utils.log.MyTraceLogger;
 
 public abstract class Scheduler {
 
     private final TaskSet taskSet;
     private final Duration simulationDuration;
     private final MyClock clock = new MyClock();
-    private final MyTraceLogger logger;
+    private final TraceLogger logger = new TraceLogger();
+    private final DeadlineMissStrategy strategy;
     private final TaskExecutionTimeCollector taskExecutionTimeCollector = new TaskExecutionTimeCollector();
     private final AbortedJobsCollector abortedJobsCollector = new AbortedJobsCollector();
 
 
     // Constructor
-    public Scheduler(TaskSet taskSet, double simulationDuration, MyTraceLogger logger) {
+    public Scheduler(TaskSet taskSet, double simulationDuration, DeadlineMissStrategy strategy) {
         this.taskSet = MyUtils.requireNonNull(taskSet, "taskSet");
         this.simulationDuration = SampleDuration.sample(
             new DeterministicSampler(new BigDecimal(MyUtils.requireNonNegative(simulationDuration, "simulationDuration"))));
-        this.logger = MyUtils.requireNonNull(logger, "logger");
+        this.strategy = MyUtils.requireNonNull(strategy, "strategy");
     }
 
     // Getter and setter
@@ -35,11 +37,11 @@ public abstract class Scheduler {
         return this.taskSet;
     }
 
-    protected MyClock getClock() {
+    public MyClock getClock() {
         return this.clock;
     }
 
-    protected MyTraceLogger getLogger() {
+    public TraceLogger getLogger() {
         return this.logger;
     }
 
@@ -47,11 +49,15 @@ public abstract class Scheduler {
         return this.simulationDuration;
     }
 
+    protected DeadlineMissStrategy getStrategy() {
+        return this.strategy;
+    }
+
     protected TaskExecutionTimeCollector getTaskExecutionTimeCollector() {
         return this.taskExecutionTimeCollector;
     }
 
-    protected AbortedJobsCollector getAbortedJobsCollector() {
+    public AbortedJobsCollector getAbortedJobsCollector() {
         return this.abortedJobsCollector;
     }
 

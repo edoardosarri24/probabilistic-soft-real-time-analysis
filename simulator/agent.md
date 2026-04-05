@@ -31,7 +31,7 @@ The simulator follows a DES approach, jumping between critical time points (Even
 - **Utilities (`utils` package):**
     - `MyClock`: Tracks absolute simulation time using `java.time.Duration`.
     - `TraceLogger` (`log` sub-package): Interface for logging simulation traces, with implementations like `MyTraceLogger` and `NoTraceLogger`.
-    - `Collectors` (`collector` sub-package): Classes like `AbortedJobsCollector` and `TaskExecutionTimeCollector` for gathering metrics.
+    - `Collectors` (`collector` sub-package): Classes like `AbortedJobsCollector` and `TaskExecutionTimeCollector` for gathering metrics. Note: `TaskExecutionTimeCollector` contains statistics for all released jobs, including those that missed their deadline.
     - `SampleDuration`: Utility to sample durations from distributions.
     - `MyUtils`: General utility functions.
 

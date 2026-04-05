@@ -12,7 +12,7 @@ else
 fi
 
 # Execute the script
-cd bernstein || { echo "Error: 'bernstein' folder doesn't exist"; exit 1; }
+cd simulator || { echo "Error: 'simulator' folder doesn't exist"; exit 1; }
 sdk use java 24.0.2-tem
 mvn clean validate compile test exec:java
 cd ..
