@@ -12,7 +12,7 @@ public final class AbortJobStrategy implements DeadlineMissStrategy {
     public void handleDeadlineMiss(Job job, FixedPriorityScheduler scheduler) {
         scheduler.getLogger().log("<" + scheduler.getClock().printCurrentTime() + ", deadlineMiss " + job.toString() + " (aborted)>");
         scheduler.abortJob(job);
-        scheduler.getAbortedJobsCollector().addAbortedJobs(job.getTask());
+        scheduler.getAbortedJobsCollector().incrementDeadlineMissCount(job.getTask());
     }
 
 }

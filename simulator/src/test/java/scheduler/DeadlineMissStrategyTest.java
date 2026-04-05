@@ -32,7 +32,7 @@ class DeadlineMissStrategyTest {
         // Simulation should reach end time
         assertThat(scheduler.getClock().getCurrentTime()).isEqualTo(Duration.ofMillis(20));
         // Jobs at t=0 and t=10 should both miss deadline at t=5 and t=15
-        assertThat(scheduler.getAbortedJobsCollector().getAbortedJobsCount(t1)).isEqualTo(2);
+        assertThat(scheduler.getAbortedJobsCollector().getDeadlineMissCount(t1)).isEqualTo(2);
         // Execution times are recorded at release, so we expect 2 entries even if aborted
         List<Duration> executionTimes = scheduler.getTaskExecutionTimeCollector().getTaskExecutionTime().getOrDefault(t1, List.of());
         assertThat(executionTimes).hasSize(2);
@@ -69,7 +69,7 @@ class DeadlineMissStrategyTest {
         // Simulation should reach end time
         assertThat(scheduler.getClock().getCurrentTime()).isEqualTo(Duration.ofMillis(40));
         // Both jobs missed their deadlines
-        assertThat(scheduler.getAbortedJobsCollector().getAbortedJobsCount(t1)).isEqualTo(2);
+        assertThat(scheduler.getAbortedJobsCollector().getDeadlineMissCount(t1)).isEqualTo(2);
         // But both jobs SHOULD have completed their execution
         List<Duration> completions = scheduler.getTaskExecutionTimeCollector().getTaskExecutionTime().get(t1);
         assertThat(completions).hasSize(2);

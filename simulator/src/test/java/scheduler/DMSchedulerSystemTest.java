@@ -30,7 +30,7 @@ class DMSchedulerSystemTest {
         Map<Task, java.util.List<Duration>> executionTimes = scheduler.getTaskExecutionTimeCollector().getTaskExecutionTime();
         assertThat(executionTimes.get(t1)).hasSize(5);
         assertThat(scheduler.getClock().getCurrentTime()).isEqualTo(Duration.ofMillis(50));
-        assertThat(scheduler.getAbortedJobsCollector().getAbortedJobsCount(t1)).isEqualTo(0);
+        assertThat(scheduler.getAbortedJobsCollector().getDeadlineMissCount(t1)).isEqualTo(0);
     }
 
     @Test
@@ -44,8 +44,8 @@ class DMSchedulerSystemTest {
         scheduler.analyze();
         
         assertThat(scheduler.getClock().getCurrentTime()).isEqualTo(Duration.ofMillis(25));
-        assertThat(scheduler.getAbortedJobsCollector().getAbortedJobsCount(t1)).isEqualTo(0);
-        assertThat(scheduler.getAbortedJobsCollector().getAbortedJobsCount(t2)).isEqualTo(0);
+        assertThat(scheduler.getAbortedJobsCollector().getDeadlineMissCount(t1)).isEqualTo(0);
+        assertThat(scheduler.getAbortedJobsCollector().getDeadlineMissCount(t2)).isEqualTo(0);
     }
 
     @Test
@@ -65,7 +65,7 @@ class DMSchedulerSystemTest {
         assertThat(scheduler.getClock().getCurrentTime()).isEqualTo(Duration.ofMillis(30));
         
         // At least T2 (lower priority) should have aborted jobs
-        int aborted = scheduler.getAbortedJobsCollector().getAbortedJobsCount(t2);
+        int aborted = scheduler.getAbortedJobsCollector().getDeadlineMissCount(t2);
         int completed = scheduler.getTaskExecutionTimeCollector().getTaskExecutionTime().getOrDefault(t2, java.util.Collections.emptyList()).size();
         
         assertThat(aborted).isGreaterThan(0);
@@ -108,7 +108,7 @@ class DMSchedulerSystemTest {
         DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 20.0, new AbortJobStrategy());
 
         assertThatNoException().isThrownBy(scheduler::analyze);
-        assertThat(scheduler.getAbortedJobsCollector().getAbortedJobsCount(t1)).isEqualTo(0);
+        assertThat(scheduler.getAbortedJobsCollector().getDeadlineMissCount(t1)).isEqualTo(0);
     }
 
     @Test
@@ -121,7 +121,7 @@ class DMSchedulerSystemTest {
         scheduler.analyze();
         assertThat(scheduler.getTaskExecutionTimeCollector().getTaskExecutionTime().get(t1)).hasSize(2);
         assertThat(scheduler.getClock().getCurrentTime()).isEqualTo(Duration.ofMillis(20));
-        assertThat(scheduler.getAbortedJobsCollector().getAbortedJobsCount(t1)).isEqualTo(0);
+        assertThat(scheduler.getAbortedJobsCollector().getDeadlineMissCount(t1)).isEqualTo(0);
     }
 
     @Test

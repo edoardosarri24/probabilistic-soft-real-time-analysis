@@ -123,9 +123,9 @@ classDiagram
         - taskExecutionTime : Map~Task,ListDuration~
     }
 
-    class AbortedJobsCollector{
+    class DeadlineMissCollector{
         <<final>>
-        - abortedJobs : Map~Task,ListJob~
+        - deadlineMissCount : Map~Task,ListJob~
         - jobPerTaskReleased : Map~Task,Integer~
     }
 
@@ -136,7 +136,7 @@ classDiagram
     FixedPriorityScheduler <|-- DeadlineMonotonicScheduler
     Scheduler --> MyClock
     Scheduler --> TaskExecutionTimeCollector
-    Scheduler --> AbortedJobsCollector
+    Scheduler --> DeadlineMissCollector
     FixedPriorityScheduler o-- TaskSet
     FixedPriorityScheduler o-- Event : eventQueue
     Scheduler --> TraceLogger

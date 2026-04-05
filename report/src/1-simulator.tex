@@ -78,7 +78,7 @@ In Figure~\ref{fig:simulator_class_diagram} is shown the class diagram of the si
 If we observe Figure~\ref{fig:simulator_class_diagram} we have to describe the system utilities.
 \begin{itemize}
     \item \textbf{Sirio.Sampler} \\
-        Is the Sirio interface. We have defined two implementation:
+        It is the Sirio interface. We have defined two implementation:
         \begin{itemize}
             \item \textbf{DeterministicSampler} \\
                 It always returns a constant value. Usefull for deterministic parameters that allow also probabilistic values.
@@ -90,9 +90,9 @@ If we observe Figure~\ref{fig:simulator_class_diagram} we have to describe the s
     \item \textbf{TraceLogger} \\
         The logging utils that is responsible to logging the scheduling main events in a file named \textit{trace.log} with a personalized format.An interface that abstracts the logging operations.
     \item \textbf{TaskExecutionTimeCollector} \\
-        Is the collector of all execution times of all tasks.
-    \item \textbf{AbortedJobsCollector} \\
-        Is the collector of all aborted jobs of all tasks. This is useful to have a trace of all jobs that have been aborted due to deadline misses, to analyze them in a post-mortem way.
+        It is the collector of all execution times of all tasks.
+    \item \textbf{DeadlineMissCollector} \\
+        It is the collector of all aborted jobs of all tasks. This is useful to have a trace of all jobs that have been aborted due to deadline misses, to analyze them in a post-mortem way.
 \end{itemize}
 
 \subsection{Flow}

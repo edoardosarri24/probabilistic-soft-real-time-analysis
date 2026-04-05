@@ -60,7 +60,7 @@ class DMSchedulerAdvancedSystemTest {
         scheduler.analyze();
 
         // All 3 jobs should complete (0-10, 10-20, 20-30)
-        assertThat(scheduler.getAbortedJobsCollector().getAbortedJobsCount(t1)).isEqualTo(0);
+        assertThat(scheduler.getAbortedJobsCollector().getDeadlineMissCount(t1)).isEqualTo(0);
         assertThat(scheduler.getTaskExecutionTimeCollector().getTaskExecutionTime().get(t1)).hasSize(3);
         assertThat(scheduler.getClock().getCurrentTime()).isEqualTo(Duration.ofMillis(30));
     }
@@ -75,7 +75,7 @@ class DMSchedulerAdvancedSystemTest {
         scheduler.analyze();
 
         // Every job should be aborted at its deadline (at 10, 20, 30, 40).
-        assertThat(scheduler.getAbortedJobsCollector().getAbortedJobsCount(t1)).isEqualTo(4);
+        assertThat(scheduler.getAbortedJobsCollector().getDeadlineMissCount(t1)).isEqualTo(4);
         
         // We collect ALL released jobs' execution times, even if they abort.
         assertThat(scheduler.getTaskExecutionTimeCollector().getTaskExecutionTime().get(t1)).hasSize(4);
@@ -109,8 +109,8 @@ class DMSchedulerAdvancedSystemTest {
         DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 80.0, new AbortJobStrategy());
         scheduler.analyze();
 
-        assertThat(scheduler.getAbortedJobsCollector().getAbortedJobsCount(t1)).isEqualTo(0);
-        assertThat(scheduler.getAbortedJobsCollector().getAbortedJobsCount(t2)).isEqualTo(0);
+        assertThat(scheduler.getAbortedJobsCollector().getDeadlineMissCount(t1)).isEqualTo(0);
+        assertThat(scheduler.getAbortedJobsCollector().getDeadlineMissCount(t2)).isEqualTo(0);
         assertThat(scheduler.getTaskExecutionTimeCollector().getTaskExecutionTime().get(t1)).hasSize(4);
         assertThat(scheduler.getTaskExecutionTimeCollector().getTaskExecutionTime().get(t2)).hasSize(2);
     }

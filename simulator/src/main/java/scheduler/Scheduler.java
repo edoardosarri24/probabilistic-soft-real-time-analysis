@@ -10,7 +10,7 @@ import utils.MyClock;
 import utils.MyUtils;
 import utils.SampleDuration;
 import utils.TraceLogger;
-import utils.collector.AbortedJobsCollector;
+import utils.collector.DeadlineMissCollector;
 import utils.collector.TaskExecutionTimeCollector;
 
 public abstract class Scheduler {
@@ -21,7 +21,7 @@ public abstract class Scheduler {
     private final TraceLogger logger = new TraceLogger();
     private final DeadlineMissStrategy strategy;
     private final TaskExecutionTimeCollector taskExecutionTimeCollector = new TaskExecutionTimeCollector();
-    private final AbortedJobsCollector abortedJobsCollector = new AbortedJobsCollector();
+    private final DeadlineMissCollector abortedJobsCollector = new DeadlineMissCollector();
 
 
     // Constructor
@@ -57,7 +57,7 @@ public abstract class Scheduler {
         return this.taskExecutionTimeCollector;
     }
 
-    public AbortedJobsCollector getAbortedJobsCollector() {
+    public DeadlineMissCollector getAbortedJobsCollector() {
         return this.abortedJobsCollector;
     }
 
