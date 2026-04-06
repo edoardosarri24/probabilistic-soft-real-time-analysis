@@ -5,12 +5,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.logging.*;
 
 public final class TraceLogger {
 
     private final Logger logger;
     private FileHandler fileHandler;
+    private Consumer<String> customLogger;
 
     // Constructor
     public TraceLogger() {
@@ -18,7 +20,7 @@ public final class TraceLogger {
     }
 
     public TraceLogger(String fileName) {
-        this.logger = Logger.getLogger(TraceLogger.class.getName() + "-" + fileName);
+        this.logger = Logger.getLogger(TraceLogger.class.getName() + "-" + fileName + "-" + System.currentTimeMillis());
         try {
             // Ensure parent directory exists
             Path logPath = Paths.get(fileName);
@@ -44,8 +46,14 @@ public final class TraceLogger {
     }
 
     // Methods
+    public void setCustomLogger(Consumer<String> customLogger) {
+        this.customLogger = customLogger;
+    }
+
     public void log(String message) {
         this.logger.info(message);
+        if (customLogger != null)
+            customLogger.accept(message);
     }
 
     public void close() {

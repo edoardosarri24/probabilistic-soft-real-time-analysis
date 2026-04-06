@@ -138,6 +138,7 @@ class DMSchedulerSystemTest {
         
         TaskSet taskSet = new TaskSet(t1, t2, t3);
         DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 60.0, new AbortJobStrategy());
+        scheduler.getLogger().setCustomLogger(logs::add);
         
         scheduler.analyze();
 

@@ -1,34 +1,27 @@
-import java.math.BigDecimal;
+import java.io.IOException;
 
-import sampler.DeterministicSampler;
+import config.ConfigLoader;
+import config.SimulationConfig;
 import scheduler.DeadlineMonotonicScheduler;
 import scheduler.Scheduler;
-import scheduler.deadlineMIssStrategy.ContinueStrategy;
-import taskSet.Task;
 import taskSet.TaskSet;
 import utils.MyUtils;
 import utils.collector.TaskExecutionTimeCollector;
 
 public class Main {
     public static void main(String[] args) {
-        Task task1 = new Task(
-            new DeterministicSampler(new BigDecimal(35)),
-            35,
-            new DeterministicSampler(new BigDecimal(34)));
-        Task task2 = new Task(
-            new DeterministicSampler(new BigDecimal(50)),
-            50,
-            new DeterministicSampler(new BigDecimal(3)));
-        Task task3 = new Task(
-            new DeterministicSampler(new BigDecimal(80)),
-            80,
-            new DeterministicSampler(new BigDecimal(30)));
-        TaskSet taskSet = new TaskSet(task1, task2, task3);
-        Scheduler dm = new DeadlineMonotonicScheduler(
-            taskSet,
-            5000000,
-            new ContinueStrategy());
-        TaskExecutionTimeCollector dataSimulation = dm.analyze();
-        MyUtils.callPythonExtractor(dataSimulation);
+        String configPath = args.length > 0 ? args[0] : "src/config.yaml";
+        try {
+            SimulationConfig config = ConfigLoader.loadConfig(configPath);
+            TaskSet taskSet = config.toTaskSet();
+            Scheduler dm = new DeadlineMonotonicScheduler(
+                taskSet,
+                config.simulationDurationMs,
+                config.deadlineMissStrategy.toStrategy());
+            TaskExecutionTimeCollector dataSimulation = dm.analyze();
+            MyUtils.callPythonExtractor(dataSimulation);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

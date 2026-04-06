@@ -1,0 +1,25 @@
+simulationDurationMs: 5000000
+deadlineMissStrategy:
+  type: continue
+tasks:
+  - period:
+      type: deterministic
+      value: 35
+    deadlineMs: 35
+    executionTime:
+      type: deterministic
+      value: 34
+  - period:
+      type: deterministic
+      value: 50
+    deadlineMs: 50
+    executionTime:
+      type: deterministic
+      value: 3
+  - period:
+      type: deterministic
+      value: 80
+    deadlineMs: 80
+    executionTime:
+      type: deterministic
+      value: 30

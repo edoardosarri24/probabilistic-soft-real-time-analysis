@@ -1,3 +1,4 @@
+
 # Simulator
 
 This project is a Discrete Event Simulator (DES) designed for Probabilistic Soft Real-Time Analysis. It simulates the execution of a taskset with stochastic parameters to evaluate their timing behavior under a (eventually various) scheduling policies.
@@ -19,22 +20,64 @@ The project requires the following tools and libraries:
 ### How to Use
 
 ##### Configuration
-The simulation scenario is configured in `simulator/src/main/java/Main.java`. You can define your `TaskSet` by specifying:
-- **Period Sampler**: The distribution of job arrival times.
-- **Deadline**: The relative deadline for each task.
-- **Execution Time Sampler**: The distribution of time required to complete a job.
+The simulation scenario is configured using a **JSON** or **YAML** file. By default, the simulator looks for `config.json` in the `simulator/src` directory.
+
+The configuration file defines:
+- **Simulation Duration**: Total simulation time in milliseconds (`simulationDurationMs`).
+- **Deadline Miss Strategy**: Strategy to handle jobs that miss their deadline (`continue`, `abortJob` an `abortSimulation`).
+- **Tasks**: A list of tasks, where each task defines:
+    - **Period**: The distribution of job arrival times. We have the following possibilities:
+      - `deterministic`.
+      - `discreteChoice`: with `values` and `probabilities`.
+    - **Deadline**: The relative deadline in milliseconds (`deadlineMs`).
+    - **Execution Time**: The distribution of time required to complete a job.
+    - **First Release Time** (optional): The distribution of the first job's release time.
+
+##### Example JSON (`config.json`)
+```json
+{
+  "simulationDurationMs": 5000000,
+  "deadlineMissStrategy": { "type": "continue" },
+  "tasks": [
+    {
+      "period": { "type": "deterministic", "value": 35 },
+      "deadlineMs": 35,
+      "executionTime": { "type": "deterministic", "value": 34 }
+    }
+  ]
+}
+```
+
+##### Example YAML (`config.yaml`)
+```yaml
+simulationDurationMs: 5000000
+deadlineMissStrategy:
+  type: continue
+tasks:
+  - period:
+      type: deterministic
+      value: 35
+    deadlineMs: 35
+    executionTime:
+      type: deterministic
+      value: 34
+```
 
 ##### Running the Simulation
 To build and run the simulator, use the provided script from the project root:
 ```bash
 ./exec/simulator.sh
 ```
-This script ensures the correct environment is set up and executes the `Main` class.
+
+To use a custom configuration file (e.g., `my_config.yaml`), you can run the simulator directly with:
+```bash
+cd simulator && mvn exec:java -Dexec.args="my_config.yaml"
+```
 
 ##### Output
 The simulator produces:
 - A file logs of the simulation events (if a logger like `TraceLogger` is used) in *results/* directory.
-- The data extraction via Python, always in *results/* directory.
+- The data extraction via Python in *results/distributions* directory.
 
 ##### Testing
 The project uses JUnit and AssertJ for validation. Note that `./exec/simulator.sh` also runs tests by default.

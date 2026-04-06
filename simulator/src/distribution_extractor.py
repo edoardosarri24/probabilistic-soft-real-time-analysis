@@ -46,7 +46,7 @@ def plot_distributions(data):
         plt.close(fig)
     # Declarative execution of plotting.
     sns.set_theme(style="whitegrid")
-    output_dir = Path("results/distribution")
+    output_dir = Path("results/distributions")
     output_dir.mkdir(parents=True, exist_ok=True)
     list(map(lambda item: plot_task_distribution(*item), data.items()))
 

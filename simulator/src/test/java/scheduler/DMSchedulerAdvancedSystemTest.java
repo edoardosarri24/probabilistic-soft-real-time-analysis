@@ -29,6 +29,7 @@ class DMSchedulerAdvancedSystemTest {
         
         TaskSet taskSet = new TaskSet(t1, t2);
         DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler(taskSet, 30.0, new AbortJobStrategy());
+        scheduler.getLogger().setCustomLogger(logs::add);
         scheduler.analyze();
 
         String t1Name = t1.toString();

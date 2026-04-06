@@ -5,7 +5,6 @@
 - trovare anche il valore $\alpha_{k,t}$ che rappresneta il numero di job di ogni task che fa interferenza sul task a probabilità più bassa? e in generale cosa vogliamo fare col simulatore? ci serve solo raccogliere distribuzioni?
     - servirà poi non importa farlo ora.
 
-
 ### domande
 - Avevamo detto di mettere la deadline (relativa) stocastica campionata ad ogni realease del job.
     - Visto che abbiamo un fixed priority scheduler, questo è un problema.

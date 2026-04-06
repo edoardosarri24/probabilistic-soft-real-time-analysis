@@ -30,8 +30,10 @@ The simulator inputs are the following:
     \item A fixed priority scheduling algorithm. As we will see in Section \ref{sec:simulator_implementation} the scheduling algorithm implemented is Deadline Monotonic: we can handle periodic and aperiodic tasks with a fixed priority.
     \item The taskset, characterized by the assumptions in Section~\ref{sec:simulator_task_model}.
     \item The duration of the simulation.
-    \item The type of logging. By default no logging is performed.
+    \item The strategy for the deadline miss policy. We have the following option: the abort of the whole simulation on the deadline miss discovery; the abort of the job that is responsable of the deadline miss; the contiue of the simulation with the job that have excedded its deadline.
 \end{itemize}
+
+All these aspect can be pass throght the \texttt{Main.hava} source file or by the \texttt{config.yaml} or \texttt{config.json} file. The second requires the code for the handling of the mapping from the config file to the Java object; these code is a simple call to the already implemented \texttt{ConfigLoader.java} class.
 
 \subsection{Output - Logging}
 To test the scheduler algorithm implementation and to have evidence of the system behavior, the simulator can produce a file, named \textit{trace.log}. This file contains a sequence of \textit{<time, event>}, where \textit{event} can be: the release of a job, the execution and the completion of a job, the task preemption and the deadline miss event.
@@ -77,6 +79,8 @@ In Figure~\ref{fig:simulator_class_diagram} is shown the class diagram of the si
 \subsection{Utilities}
 If we observe Figure~\ref{fig:simulator_class_diagram} we have to describe the system utilities.
 \begin{itemize}
+    \item \textbf{ConfigLoader} \\
+        It is the class responsable to the mapping from the \texttt{config.yaml} file to the Java objects.
     \item \textbf{Sirio.Sampler} \\
         It is the Sirio interface. We have defined two implementation:
         \begin{itemize}

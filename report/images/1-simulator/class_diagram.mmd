@@ -129,8 +129,13 @@ classDiagram
         - jobPerTaskReleased : Map~Task,Integer~
     }
 
+    class ConfigLoader {
+        <<final>>
+    }
+
     %% Relationships
     Client --> Scheduler : analyse()
+    Client --> ConfigLoader
     %% Scheduler
     Scheduler <|-- FixedPriorityScheduler
     FixedPriorityScheduler <|-- DeadlineMonotonicScheduler
