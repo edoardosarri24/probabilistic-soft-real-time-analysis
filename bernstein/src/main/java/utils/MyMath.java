@@ -1,5 +1,4 @@
 package utils;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -17,7 +16,7 @@ public final class MyMath {
 
     // Methods
     /**
-     * Calculate the binomial coefficient "n choose k".
+     * Calculate the binomial coefficient "n choose k" with cache optimization.
      */
     public static double binomialCoefficient(int n, int k) {
         // Checks input.
@@ -44,7 +43,7 @@ public final class MyMath {
     }
 
     /**
-     * Exponential function with integer exponent.
+     * Exponential function with integer exponent and double base.
      */
     public static double intPow(double base, int exp) {
         // Checks input.
