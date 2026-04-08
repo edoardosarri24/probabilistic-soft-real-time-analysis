@@ -1,0 +1,88 @@
+\chapter{Bernstein Polynomials Library}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Implementation}
+In Figure~\ref{fig:bernstein_class_diagram} is shown the class diagram of the Bernstein library. This first set of classes represent the model domanin ofthe system.
+\begin{itemize}
+    \item \textbf{BernsteinPolynomial} \\
+        It represent the whole polynomial and provides the main API to manipulate it.
+    \item \textbf{BernsteinBasis} \\
+        Is the interface that represent the basis of the polynomial. It contain the whole logic to compute the basis and provides the hook (i.e., the \texttt{map()} method) that allow its implementation to define their type of basis.
+    \item \textbf{ClassicalBernsteinBasis} \\
+        Is the classic Bernstein basis, where the input must be in $[0,1]$.
+    \item \textbf{LinearBernsteinBasis} \\
+        Is the classic Bernstein basis if we want approximate a function defined in the $[a,b]$ interval. The input \texttt{x} is mapped into $t=\tfrac{x-a}{b-a}$.
+    \item \textbf{ExponentialBernsteinBasis} \\
+        Is the exponential Bernstein basis. The input \texttt{x} is mapped into $t=1-e^{-x}$.
+\end{itemize}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[max width=\textwidth, max height=0.85\textheight, keepaspectratio]{images/2-bernstein/class_diagram.pdf}
+    \caption{Bernstein Polynomials Library Class Diagram.}
+    \label{fig:bernstein_class_diagram}
+\end{figure}
+
+\subsection{Bernstein Polynomial Calculus}
+To impleent the calculus of the Bernstein polynomial we have considered two different approaches: the direct evaluation (the choosen one) and de Casteljau's algorithm.
+\subsubsection{Direct Evaluation}
+With the direct evaluation we compute the value of the polynomial using the explicit formula $P(x) = \sum_{i=0}^{n} f(\tfrac{i}{n}) \cdot b_{i,n}(x)$, where $f(\tfrac{i}{n})$ is the $i$-th coefficient of degree $n$ and $b_{i,n}(x)$ is the $i$-th basis function of degree $n$.
+
+Using this technique we have the following consequences:
+\begin{itemize}
+    \item \textbf{Advantage}: It's very simple to implement. If the calculation of binomial coefficients are efficient the execution time is very competitive.
+    \item \textbf{Disadvantage}: It can be numerically unstable for high degrees (i.e., already for $n>20$) due to the large coefficients and small powers.
+\end{itemize}
+
+\subsubsection{de Casteljau's algorithm}
+It's a recursive approach similar to the Horner's scheme for standard polynomials: to calulate the value of the polynomial of given degree we use the value of the polynomial of degree $n-1$.
+
+Using this technique we have the following consequences:
+\begin{itemize}
+    \item \textbf{Advantage}: The recursion is efficient if implemented in in iterative way. It is very stable also for high degrees.
+    \item \textbf{Disadvantage}: It has a higher compotational cost of $O(n^2)$ due to the double nested loop: if the degree is very high, it can be significantly slower than direct evaluation. It is usefull if we are considering only the classic linear basis.
+\end{itemize}
+
+\subsection{Testing}
+The testing of the Bernstein library considers three different aspects: the basis, the polynomial evalutatio and the Bernstein statical interface.
+
+\subsubsection{Basis Testing}
+We have tested the main properties and situatin:
+\begin{itemize}
+    \item The correct result for known and small degree in specific points.
+    \item The validation of the unity partition property.
+    \item The correct handling of invalid input.
+    \item Verified that basis functions are always non-negative within their support.
+\end{itemize}
+
+\subsubsection{Polynomial Calculus}
+We tested the following aspects:
+\begin{itemize}
+    \item If we have all coefficients $\beta_i = C$, then $P(x) = C$.
+    \item For a linear basis on $[0,1]$, if $\beta_i = i/n$, then $P(x) = x$.
+    \item The boundary conditions for which $P(x_{min}) = \beta_0$ and $P(x_{max}) = \beta_n$.
+    \item Verification of the symmetry property $P(x; \beta) = P(1-x; \text{reverse}(\beta))$ for the standard basis.
+\end{itemize}
+
+\subsection{Optimization}
+To optimize the performance of the librery we have used a cache trick: since a lot of binomial coefficients are used more and more times, we store the already computed value in a cache and retrives them insted of recalculating them. Furthermore during the polynomial evaluatio we don't use the \texttt{Math.pow} Java function, but we have defined our own method to compute the power more efficient.
+
+These optimizations brought a speedup about $2\times$: before the optimization the evalution of a Bernstein polynomial of degree 1000 took about 68ms; after the optimization it takes about 6ms; so we have $speed-up=\tfrac{68}{3}=22\times$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Usage}
+The domain model is in general not used directly by the client (i.e., by the \texttt{Main.java}), but we a static classes named \texttt{Bernstein.java} that behaves as facade and provides the entry point to create and manipulate Bersntesin polynomial. It provides the following capabilities:
+\begin{itemize}
+    \item TODO
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Degree Limits}
+The evaluation of Bernstein polynomials has some limitations on the degree of the polynomial. In the implementation we have used the \texttt{double} type insted teh maximum precision type (i.e., \texttt{BigDecimal}) and allow the efficientness (tetses in a test case) of the code but implies some limitations. These limitation are also shown in some test case.
+\begin{itemize}
+    \item Within a $degree<54$ we can compute the polynomial without any precision loss. The standard IEC 754 says that the numeber of bit for the mantissa is 53 bits (52 + 1), and that implies that we can represent exactly all the integer numbers up to $2^{53}$. The sum of the binomial coefficients for a given degree $n$ is $2^n$, so for $n<53$ we can compute the polynomial without any precision loss.
+    \item If the degree is within the $[54,1029]$ interval we have a precision loss due to the large binomial coefficients and small powers, but we can still compute the polynomial.
+    \item For $degree\ge 1030$ we have an overflow of the binomial coefficients and the polynomial cannot be computed. The test cases show as the binomial coefficient for $n=1029$ is finite and less than $Double.MAX_VALUE$, while for $n=1030$ it becomes infinite.
+\end{itemize}
+
+This limitation allow us to deal with polynomials in a very efficient way.

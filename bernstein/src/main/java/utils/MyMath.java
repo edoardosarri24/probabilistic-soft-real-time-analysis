@@ -13,7 +13,6 @@ public final class MyMath {
     // Constructor
     private MyMath() {}
 
-
     // Methods
     /**
      * Calculate the binomial coefficient "n choose k" with cache optimization.

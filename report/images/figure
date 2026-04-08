@@ -19,7 +19,7 @@
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\textwidth]{images/6-analisi/STPN_workflow.pdf}
-    \caption{STPN del workflow~\cite{oris21}.}
-    \label{fig:STPN_workflow}
+    \includegraphics[max width=\textwidth, max height=0.85\textheight, keepaspectratio]{images/1-simulator/class_diagram.pdf}
+    \caption{Simulator Class Diagram.}
+    \label{fig:simulator_class_diagram}
 \end{figure}

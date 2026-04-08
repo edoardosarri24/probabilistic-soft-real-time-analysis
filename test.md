@@ -1,46 +1,34 @@
-# Simulator Testing Documentation
+# Report dei Test - Libreria Bernstein
 
-This document describes the testing infrastructure for the Discrete Event Simulator (DES), focusing on the new features related to **Deadline Miss Strategies**.
+Questo documento descrive i test effettuati sulle classi principali della libreria: `ECDF.java` e `Bernstein.java`.
 
-## New Test Scenarios
+## 1. ECDF (Empirical Cumulative Distribution Function)
+I test per la classe `ECDF` sono contenuti in `ECDFTest.java` e si focalizzano sulla corretta gestione dei dati campionari e sul calcolo della probabilità empirica.
 
-The `DeadlineMissStrategyTest` class was introduced to verify the behavioral differences between the three available strategies when a job misses its deadline.
+### Casi di Test:
+- **Validazione Input:** Verifica che il costruttore rifiuti input `null` o collezioni contenenti valori `null`.
+- **Dati Vuoti:** Verifica che `eval(x)` restituisca `0.0` se non sono presenti dati.
+- **Caso Singolo Valore:** Verifica il comportamento a gradino con un solo campione.
+- **Dati Multipli e Duplicati:** Verifica il calcolo di $P(X \le x)$ con dataset contenenti valori ripetuti, assicurando che la frequenza cumulata sia corretta.
+- **Ordinamento Interno:** Conferma che la classe ordini correttamente i dati non ordinati forniti in input per permettere la ricerca binaria.
 
-### 1. AbortJobStrategy
-*   **Goal**: Verify that when a job misses its deadline, it is immediately removed from the scheduler's ready queue.
-*   **Verification**:
-    *   The simulation continues until the specified duration.
-    *   The `AbortedJobsCollector` correctly increments the abort count for the task.
-    *   The `TaskExecutionTimeCollector` still contains the sampled execution time (as it is recorded at release time).
-    *   No further execution time is consumed by the aborted job.
+## 2. Bernstein Polynomial Approximation
+I test per la classe `Bernstein` sono contenuti in `BernsteinTest.java` e verificano le diverse basi (Standard, Linear, Exponential) per l'approssimazione di CDF e PDF.
 
-### 2. AbortSimulationStrategy
-*   **Goal**: Verify that the simulation stops immediately upon the first deadline miss.
-*   **Verification**:
-    *   The scheduler throws a `RuntimeException` at the exact moment of the deadline miss.
-    *   The simulation clock matches the absolute deadline of the job that caused the abort.
-    *   Ensures strict real-time constraints where any failure is considered fatal.
+### Casi di Test per la CDF:
+- **Validazione Input:** Controllo dei range di supporto (es. $[0, 1]$ per la base normale) e della positività del grado del polinomio.
+- **Comportamento ai Limiti:** Verifica che nei punti estremi del supporto ($x=a$ e $x=b$) l'approssimazione rispetti i valori della ECDF (solitamente $0$ e $1$).
+- **Partizione dell'Unità:** Verifica che se la funzione target è costantemente $1$, l'approssimazione di Bernstein sia $1$ (proprietà fondamentale delle basi di Bernstein).
+- **Monotonia:** Verifica che l'approssimazione di una funzione non decrescente (come la ECDF) resti non decrescente.
+- **Base Esponenziale (Semi-infinita):** Verifica della convergenza asintotica a $1.0$ per valori di $x$ molto grandi.
 
-### 3. ContinueStrategy
-*   **Goal**: Verify that the job remains in the system and completes its execution even after the deadline has passed.
-*   **Verification**:
-    *   The `AbortedJobsCollector` still records the deadline miss.
-    *   The job is NOT removed from `readyJobs`.
-    *   The simulation reaches the end time.
-    *   The job eventually completes, and its execution is fully simulated.
-    *   If multiple jobs of the same task are ready (due to the previous one not finishing), the scheduler maintains FIFO order (executing the oldest job first).
+### Casi di Test per la PDF:
+- **Non-negatività:** Verifica che l'approssimazione della densità (EPDF) derivata dal polinomio di Bernstein non assuma valori negativi significativi, coerentemente con le proprietà delle distribuzioni di probabilità.
+- **Supporto Lineare ed Esponenziale:** Test specifici per le derivate delle basi mappate su intervalli generici e semi-infiniti.
 
-## Comparison with Legacy Tests
-
-| Feature | Legacy Tests | New Tests (`DeadlineMissStrategyTest`) |
-| :--- | :--- | :--- |
-| **Scope** | Fixed behavior (always abort job). | Parameterized behavior via Strategy Pattern. |
-| **Error Handling** | Implicitly handled by logging and removing job. | Explicitly tested for simulation termination (`AbortSimulation`). |
-| **Soft Real-Time** | Only simulated job abortion. | Supports "Late Completion" scenarios where jobs are never dropped. |
-| **Collector Integrity**| Verified counts of aborted vs successful. | Verified that execution times are consistently recorded at release regardless of the outcome. |
-
-## Running Tests
-To execute all tests, including the new strategy-specific ones:
+## Esecuzione dei Test
+Tutti i test sono stati eseguiti con successo utilizzando lo script di automazione del progetto:
 ```bash
-./exec/simulator.sh
+./exec/bernstein.sh
 ```
+Risultato: `Tests run: 16, Failures: 0, Errors: 0, Skipped: 0`

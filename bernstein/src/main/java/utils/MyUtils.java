@@ -10,7 +10,7 @@ public final class MyUtils {
     // Constructor.
     private MyUtils() {}
 
-    // Validation Methods.
+    // Input Validation Methods.
     public static <T> T requireNonNull(T obj, String paramName) {
         return Objects.requireNonNull(obj, paramName + " cannot be null");
     }
@@ -25,6 +25,17 @@ public final class MyUtils {
         if (value < 0)
             throw new IllegalArgumentException(paramName + " cannot be negative");
         return value;
+    }
+
+    public static void validateRange(double x, double lower, double upper) {
+        if (x < lower || x > upper)
+            throw new IllegalArgumentException(
+                String.format("The value of x si out of the support range: %f isn't [%f, %f]", x, lower, upper)
+            );
+        if (lower >= upper)
+            throw new IllegalArgumentException(
+                String.format("The support is invalid: lower bound (%f) must be lower than the supper (%f)", lower, upper)
+            );
     }
 
     // Methods.

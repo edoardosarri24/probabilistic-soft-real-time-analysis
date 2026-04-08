@@ -1,4 +1,5 @@
 import utils.MyMath;
+import utils.MyUtils;
 
 public final class Bernstein {
 
@@ -24,8 +25,9 @@ public final class Bernstein {
      */
     public static double approximateECDFWithLinearBase(ECDF ecdf, double x, int degree, double lowerSupport, double upperSupport) {
         // Input checks.
-        validateInputs(ecdf, degree);
-        validateRange(x, lowerSupport, upperSupport);
+        MyUtils.requireNonNull(ecdf, "ecdf");
+        MyUtils.requirePositive(degree, "degree");
+        MyUtils.validateRange(x, lowerSupport, upperSupport);
         // Result.
         double result = 0.0;
         double range = upperSupport - lowerSupport;
@@ -50,21 +52,23 @@ public final class Bernstein {
      */
     public static double approximateECDFWithExponentialBase(ECDF ecdf, double x, int degree) {
         // Input checks.
-        validateInputs(ecdf, degree);
-        if (x < 0)
-            throw new IllegalArgumentException("The value of x must be [0,inf].");
+        MyUtils.requireNonNull(ecdf, "ecdf");
+        MyUtils.requirePositive(degree, "degree");
+        MyUtils.requireNonNegative(x, "x");
         // Result.
+        double expMinusX = Math.exp(-x);
+        double oneMinusExpMinusX = 1.0 - expMinusX;
         double result = 0.0;
         // Handle n=0.
         result += 1.0
             * MyMath.binomialCoefficient(degree, 0)
-            * MyMath.intPow(1 - Math.exp(-x), degree);
+            * MyMath.intPow(oneMinusExpMinusX, degree);
         // Others iteration.
         for (int n=1; n <= degree; n++) {
             double empiricalCDF = ecdf.eval(Math.log((double) degree/n));
             double basis = MyMath.binomialCoefficient(degree, n)
-                * Math.exp(-n * x)
-                * MyMath.intPow(1-Math.exp(-x), degree-n);
+                * MyMath.intPow(expMinusX, n)
+                * MyMath.intPow(oneMinusExpMinusX, degree-n);
             result += empiricalCDF * basis;
         }
         return result;
@@ -92,19 +96,21 @@ public final class Bernstein {
      */
     public static double approximateEPDFWithLinearBase(ECDF ecdf, double x, int degree, double lowerSupport, double upperSupport) {
         // Input checks.
-        validateInputs(ecdf, degree);
-        validateRange(x, lowerSupport, upperSupport);
+        MyUtils.requireNonNull(ecdf, "ecdf");
+        MyUtils.requirePositive(degree, "degree");
+        MyUtils.validateRange(x, lowerSupport, upperSupport);
         // Result.
         double result = 0.0;
         double range = upperSupport - lowerSupport;
+        double previousEcdf = ecdf.eval(lowerSupport);
         for (int n=1; n <= degree; n++) {
-            double firstEmpiricalCDF = ecdf.eval(lowerSupport + (double)n/degree * range);
-            double secondEmpiricalCDF = ecdf.eval(lowerSupport + (double)(n-1) / degree * range);
+            double currentEcdf = ecdf.eval(lowerSupport + (double)n/degree * range);
             double basis = MyMath.binomialCoefficient(degree, n)
                     * MyMath.intPow(x-lowerSupport, n-1)
                     * MyMath.intPow(upperSupport-x, degree-n)
                     / MyMath.intPow(range, degree - 1);
-            result += (firstEmpiricalCDF-secondEmpiricalCDF) * n * basis;
+            result += (currentEcdf-previousEcdf) * n * basis;
+            previousEcdf = currentEcdf;
         }
         return result/range;
     }
@@ -118,46 +124,30 @@ public final class Bernstein {
      */
     public static double approximateEPDFWithExponentialBase(ECDF ecdf, double x, int degree) {
         // Input checks.
-        validateInputs(ecdf, degree);
-        if (x < 0)
-            throw new IllegalArgumentException("The value of x must be [0,inf].");
+        MyUtils.requireNonNull(ecdf, "ecdf");
+        MyUtils.requirePositive(degree, "degree");
+        MyUtils.requireNonNegative(x, "x");
         // Result.
         double result = 0.0;
+        double expMinusX = Math.exp(-x);
+        double oneMinusExpMinusX = 1.0 - expMinusX;
         // Handle n=1.
-        double empiricalCDF1 = ecdf.eval(Math.log((double) degree / 1));
-        double basis1 = MyMath.binomialCoefficient(degree, 1)
+        double currentEcdf = ecdf.eval(Math.log(degree));
+        double basis0 = MyMath.binomialCoefficient(degree, 1)
                 * Math.exp(-x)
-                * MyMath.intPow(1-Math.exp(-x), degree-1);
-        result += (1.0-empiricalCDF1) * 1 * basis1;
+                * MyMath.intPow(oneMinusExpMinusX, degree-1);
+        result += (1.0-currentEcdf) * 1 * basis0;
         // Others iteration.
+        double previousEcdf = currentEcdf;
         for (int n=2; n <= degree; n++) {
-            double firstEmpiricalCDF = ecdf.eval(Math.log((double) degree / (n - 1)));
-            double secondEmpiricalCDF = ecdf.eval(Math.log((double) degree/n));
+            currentEcdf = ecdf.eval(Math.log((double) degree/n));
             double basis = MyMath.binomialCoefficient(degree, n)
-                    * Math.exp(-n * x)
-                    * MyMath.intPow(1-Math.exp(-x), degree-n);
-            result += (firstEmpiricalCDF-secondEmpiricalCDF) * n * basis;
+                    * MyMath.intPow(expMinusX, n)
+                    * MyMath.intPow(oneMinusExpMinusX, degree-n);
+            result += (previousEcdf-currentEcdf) * n * basis;
+            previousEcdf = currentEcdf;
         }
         return result;
-    }
-
-    // Helper
-    private static void validateInputs(ECDF ecdf, int degree) {
-        if (ecdf == null)
-            throw new IllegalArgumentException("The ECDF object must be non-null.");
-        if (degree <= 0)
-            throw new IllegalArgumentException("The polynomial degree must be grether than zero. Now it's: " + degree);
-    }
-
-    private static void validateRange(double x, double lower, double upper) {
-        if (x < lower || x > upper)
-            throw new IllegalArgumentException(
-                String.format("The value of x si out of the support range: %f isn't [%f, %f]", x, lower, upper)
-            );
-        if (lower >= upper)
-            throw new IllegalArgumentException(
-                String.format("The support is invalid: lower bound (%f) must be lower than the supper (%f)", lower, upper)
-            );
     }
 
 }

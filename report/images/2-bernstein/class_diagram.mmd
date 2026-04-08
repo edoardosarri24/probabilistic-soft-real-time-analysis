@@ -1,44 +1,21 @@
-
 classDiagram
 
+    %% Approximation
     class Bernstein {
         <<static>>
+        + approximateECDFWithNormalBase(ecdf, x, degree)
+        + approximateECDFWithLinearBase(ecdf, degree, x, lowerSupport, upperSupport)
+        + approximateECDFWithExponentialBase(ecdf, x, degree)
+        + approximateEPDFWithNormalBase(ecdf, x, degree)
+        + approximateEPDFWithLinearBase(ecdf, x, degree, lowerSupport upperSupport)
+        + approximateEPDFWithExponentialBase(ecdf, x, degree)
     }
 
-    %% Domain classes
-    class BernsteinPolynomial {
+    class ECDF {
         <<final>>
-        - double[] functionSampler
-        - BernsteinBasis basis
-        + eval(double x) double
-    }
-
-    class BernsteinBasis {
-        <<abstract>>
-        + eval(int degree, int i, double x) double
-        # abstract map(double x) double
-    }
-
-    class ClassicalBernsteinBasis {
-        <<final>>
-        # map(double x) double
-    }
-
-    class LinearBernsteinBasis {
-        <<final>>
-        - double supportMin
-        - double supportMax
-        # map(double x) double
-    }
-
-    class ExponentialBernsteinBasis {
-        <<final>>
-        # map(double x) double
+        data : double[]
+        + eval(double x)
     }
 
     %% Relations
-    BernsteinPolynomial o-- BernsteinBasis
-    BernsteinBasis <|-- ClassicalBernsteinBasis
-    BernsteinBasis <|-- LinearBernsteinBasis
-    BernsteinBasis <|-- ExponentialBernsteinBasis
-    Bernstein ..> BernsteinPolynomial
+    Bernstein --> ECDF

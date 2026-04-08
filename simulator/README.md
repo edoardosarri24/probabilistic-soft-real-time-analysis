@@ -1,4 +1,3 @@
-
 # Simulator
 
 This project is a Discrete Event Simulator (DES) designed for Probabilistic Soft Real-Time Analysis. It simulates the execution of a taskset with stochastic parameters to evaluate their timing behavior under a (eventually various) scheduling policies.
@@ -16,6 +15,11 @@ The project requires the following tools and libraries:
 - **Java 24**: The core language used for the simulator.
 - **Python**: For running the distribution extractor and data analysis scripts.
 - **uv**: A fast Python package installer and resolver, used to run the `distribution_extractor.py` script and manage its dependencies.
+
+##### Output
+The simulator produces:
+- A file logs of the simulation events (if a logger like `TraceLogger` is used) in *results/* directory.
+- The data extraction via Python in *results/distributions* directory.
 
 ### How to Use
 
@@ -72,16 +76,4 @@ To build and run the simulator, use the provided script from the project root:
 To use a custom configuration file (e.g., `my_config.yaml`), you can run the simulator directly with:
 ```bash
 cd simulator && mvn exec:java -Dexec.args="my_config.yaml"
-```
-
-##### Output
-The simulator produces:
-- A file logs of the simulation events (if a logger like `TraceLogger` is used) in *results/* directory.
-- The data extraction via Python in *results/distributions* directory.
-
-##### Testing
-The project uses JUnit and AssertJ for validation. Note that `./exec/simulator.sh` also runs tests by default.
-You can run the tests using:
-```bash
-mvn test
 ```

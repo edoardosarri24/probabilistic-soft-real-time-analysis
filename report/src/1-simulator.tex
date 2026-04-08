@@ -30,10 +30,15 @@ The simulator inputs are the following:
     \item A fixed priority scheduling algorithm. As we will see in Section \ref{sec:simulator_implementation} the scheduling algorithm implemented is Deadline Monotonic: we can handle periodic and aperiodic tasks with a fixed priority.
     \item The taskset, characterized by the assumptions in Section~\ref{sec:simulator_task_model}.
     \item The duration of the simulation.
-    \item The strategy for the deadline miss policy. We have the following option: the abort of the whole simulation on the deadline miss discovery; the abort of the job that is responsable of the deadline miss; the contiue of the simulation with the job that have excedded its deadline.
+    \item The strategy for the deadline miss policy. We have the following option: 
+    \begin{itemize}
+        \item \textbf{Incomplete Jobs Aborted (JA)}: We abort the job that is responsable of the deadline miss.
+        \item \textbf{Jobs run to Commpletion (JC)}: We contiue the simulation with the job that have excedded its deadline.
+        \item There is also the policy where we abort teh whole simulation if we discover a deadline miss.
+    \end{itemize}
 \end{itemize}
 
-All these aspect can be pass throght the \texttt{Main.hava} source file or by the \texttt{config.yaml} or \texttt{config.json} file. The second requires the code for the handling of the mapping from the config file to the Java object; these code is a simple call to the already implemented \texttt{ConfigLoader.java} class.
+All these aspect can be pass throght the \texttt{Main.hava} source file or by the \texttt{config.yaml} or \texttt{config.json} file. The second requires the code for the handling of the mapping from the config file to the Java object; these code is a simple call to the already implemented \texttt{ConfigLoader.java} class. This handling is made with the \textit{Jackson} library, that is responsable to the serialization of the configuration in Java objects.
 
 \subsection{Output - Logging}
 To test the scheduler algorithm implementation and to have evidence of the system behavior, the simulator can produce a file, named \textit{trace.log}. This file contains a sequence of \textit{<time, event>}, where \textit{event} can be: the release of a job, the execution and the completion of a job, the task preemption and the deadline miss event.
@@ -151,7 +156,7 @@ The simulator tests are divided into two categories: the deterministic system te
 \subsection{System Test}
 This kind of test always uses the \texttt{DeterministicSampler}. The objective is to verify the correct behavior of the simulator system in various scheduling scenarios.
 
-The scenarios that were tested are: single task execution; properties of the DM scheduling; task preemption (including nested preemption); overload of the system, i.e., execution of a taskset with a load factor greater than 1 resulting in aborted jobs; idempotency of the analysis process (i.e., multiple consecutive calls of \texttt{analyze()} produce the same result); offset management for tasks with non-zero initial release times; handling of priority collisions; boundary cases such as jobs completing exactly at their deadline or tasks with zero execution time; semantic validation of the traces; and engine robustness during complex abort-preemption chains.
+The scenarios that were tested are: single task execution; properties of the DM scheduling; task preemption (including nested preemption); overload of the system, i.e., execution of a taskset with a load factor greater than 1 resulting in aborted jobs; idempotency of the analysis process (i.e., multiple consecutive calls of \texttt{analyze()} produce the same result); offset management for tasks with non-zero initial release times; handling of priority collisions; boundary cases such as jobs completing exactly at their deadline or tasks with zero execution time; semantic validation of the traces; correct handling of all possible scenario on deadline miss discoverty.
 
 These tests guarantee: the correctness of the DM scheduling algorithm; the precision of the clock implementation; the reliability of reusing the same instance for state handling; and the robustness of the engine in complex scheduling scenarios.
 
@@ -159,3 +164,5 @@ These tests guarantee: the correctness of the DM scheduling algorithm; the preci
 This kind of simulation uses real stochastic distributions to sample the parameters of the jobs.
 
 The scenarios tested are the following: repeated simulations with different stochastic distributions (e.g., \texttt{UniformSampler} and \texttt{ExponentialSampler}) and multiple tasks; engine robustness with high task density and random loads to ensure simulation stability.
+
+\subsection{Deadli}
