@@ -1,7 +1,7 @@
 import utils.MyMath;
 import utils.MyUtils;
 
-public final class Bernstein {
+public final class BernsteinFromECDF {
 
     /**
      * Approximates the ECDF using the standard Bernstein basis on [0,1].

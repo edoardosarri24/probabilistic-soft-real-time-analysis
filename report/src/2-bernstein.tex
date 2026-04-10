@@ -21,7 +21,7 @@ The system allow us to approximate both CDF and PDF curve, given an empirical CD
 \subsection{Class Diagram}
 From the Figure~\ref{fig:bernstein_library_class_diagram} we can that there are only two single class the work together:
 \begin{itemize}
-    \item \textbf{Bernstein} \\
+    \item \textbf{BernsteinFromECDF} \\
         It is the facede of the system. It expose six methods, three for the aproximation of the empirical CDF and three for the empirical PDF.
     \item \textbf{ECDF} \\
         It is the representation of the empirical CDF. It allow the evaluation of the ECDF in a point $x$.
@@ -31,3 +31,27 @@ From the Figure~\ref{fig:bernstein_library_class_diagram} we can that there are 
 The test of this library component validate the correct handling of the empirical data and the correct calculation of the empirical probability.
 
 The test case cover the following: input validation; empty input data; single value case; duplicate data in the input; correct ordering of input data; correctness of approximation of CDF and PDF given the ECDF.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Approximation of Polynomial}
+We have defined a facade with static methods that allow us to approximate thea polynomial defined by monomial with a Bernstein Polynomial.
+
+\subsection{Implementation}
+In Figure~\ref{fig:bernstein_library_class_diagram} there are the subsystem that is responsable to this beheaviour. Let's see the main components:
+\begin{itemize}
+    \item \textbf{BersteinFromPolynomial} \\
+        It's the facade the abstract the domain model that shape the Polynomial.
+    \item \textbf{Polynomial} \\
+        It's the asbtract class the wraps the state of a polynomial, i.e. the coefficients that define the polynomial. It define also the \texttt{eval} method to evaluate the polynomial in given point \texttt{x}.
+    \item \textbf{MonomialPolynomial} \\
+        Classical polynomial where the basis is defined as an integer power of \texttt{x}.
+    \item \textbf{BernsteinPolynomial} \\
+        It represents the Bernstein polynomial. It's defined by the coefficient and the type of \texttt{Basis}. There is only one kind of basis: the linear basis map the input \texttt{x} in the \texttt{[a,b]} intervall.
+\end{itemize}
+
+\subsection{Features}
+
+\subsection{Testing}
+The tests for this section verify the correctness of the core model.
+
+We ensure that the system have a correct behaviour on the edge case, for differnt support, that respect the matematical properties of the Bernstein polynomial and that the validation of the input is exaustive.

@@ -12,16 +12,16 @@ public class BernsteinTest {
     public void approximateECDFWithNormalBase_inputValidation() {
         ECDF ecdf = new ECDF(Collections.singletonList(0.5));
         
-        assertThatThrownBy(() -> Bernstein.approximateECDFWithNormalBase(null, 0.5, 10))
+        assertThatThrownBy(() -> BernsteinFromECDF.approximateECDFWithNormalBase(null, 0.5, 10))
             .isInstanceOf(NullPointerException.class);
             
-        assertThatThrownBy(() -> Bernstein.approximateECDFWithNormalBase(ecdf, -0.1, 10))
+        assertThatThrownBy(() -> BernsteinFromECDF.approximateECDFWithNormalBase(ecdf, -0.1, 10))
             .isInstanceOf(IllegalArgumentException.class);
             
-        assertThatThrownBy(() -> Bernstein.approximateECDFWithNormalBase(ecdf, 1.1, 10))
+        assertThatThrownBy(() -> BernsteinFromECDF.approximateECDFWithNormalBase(ecdf, 1.1, 10))
             .isInstanceOf(IllegalArgumentException.class);
             
-        assertThatThrownBy(() -> Bernstein.approximateECDFWithNormalBase(ecdf, 0.5, 0))
+        assertThatThrownBy(() -> BernsteinFromECDF.approximateECDFWithNormalBase(ecdf, 0.5, 0))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -32,12 +32,12 @@ public class BernsteinTest {
         
         // At x=0, result should be 0 because all ecdf.eval(n/degree) where n/degree < 0.5 are 0.
         // And B(n, degree)(0) is only non-zero for n=0. 0/degree = 0 < 0.5, so ecdf.eval(0) = 0.
-        assertThat(Bernstein.approximateECDFWithNormalBase(ecdf, 0.0, 10)).isEqualTo(0.0);
+        assertThat(BernsteinFromECDF.approximateECDFWithNormalBase(ecdf, 0.0, 10)).isEqualTo(0.0);
         
         // At x=1, result should be 1.0 because ecdf.eval(n/degree) for all n is 1 if n/degree >= 0.5.
         // For degree=10, n=5..10 have ecdf.eval(n/10) = 1.
         // B(n, 10)(1) is 1 only for n=10. ecdf.eval(1) = 1.
-        assertThat(Bernstein.approximateECDFWithNormalBase(ecdf, 1.0, 10)).isEqualTo(1.0);
+        assertThat(BernsteinFromECDF.approximateECDFWithNormalBase(ecdf, 1.0, 10)).isEqualTo(1.0);
     }
 
     @Test
@@ -48,7 +48,7 @@ public class BernsteinTest {
         
         // On [0,1], all ecdf.eval(n/d) will be 1
         for (double x = 0.0; x <= 1.0; x += 0.2) {
-            assertThat(Bernstein.approximateECDFWithNormalBase(ecdf, x, 5)).isCloseTo(1.0, within(1e-9));
+            assertThat(BernsteinFromECDF.approximateECDFWithNormalBase(ecdf, x, 5)).isCloseTo(1.0, within(1e-9));
         }
     }
 
@@ -59,7 +59,7 @@ public class BernsteinTest {
         
         double prev = -1.0;
         for (double x = 0.0; x <= 1.0; x += 0.1) {
-            double current = Bernstein.approximateECDFWithNormalBase(ecdf, x, 10);
+            double current = BernsteinFromECDF.approximateECDFWithNormalBase(ecdf, x, 10);
             assertThat(current).isGreaterThanOrEqualTo(prev);
             prev = current;
         }
@@ -71,11 +71,11 @@ public class BernsteinTest {
         ECDF ecdf = new ECDF(Arrays.asList(12.0, 18.0));
         
         // Test boundaries
-        assertThat(Bernstein.approximateECDFWithLinearBase(ecdf, 10.0, 10, 10.0, 20.0)).isCloseTo(0.0, within(1e-9));
-        assertThat(Bernstein.approximateECDFWithLinearBase(ecdf, 20.0, 10, 10.0, 20.0)).isCloseTo(1.0, within(1e-9));
+        assertThat(BernsteinFromECDF.approximateECDFWithLinearBase(ecdf, 10.0, 10, 10.0, 20.0)).isCloseTo(0.0, within(1e-9));
+        assertThat(BernsteinFromECDF.approximateECDFWithLinearBase(ecdf, 20.0, 10, 10.0, 20.0)).isCloseTo(1.0, within(1e-9));
         
         // Test midpoint roughly
-        double mid = Bernstein.approximateECDFWithLinearBase(ecdf, 15.0, 10, 10.0, 20.0);
+        double mid = BernsteinFromECDF.approximateECDFWithLinearBase(ecdf, 15.0, 10, 10.0, 20.0);
         assertThat(mid).isBetween(0.0, 1.0);
     }
 
@@ -87,7 +87,7 @@ public class BernsteinTest {
         // basis for n=0: (1-exp(-x))^d -> 1
         // basis for n>0: exp(-nx) * (1-exp(-x))^(d-n) -> 0
         // result = 1.0 * (basis for n=0) + sum (ecdf * basis for n>0) -> 1.0
-        assertThat(Bernstein.approximateECDFWithExponentialBase(ecdf, 100.0, 10)).isCloseTo(1.0, within(1e-5));
+        assertThat(BernsteinFromECDF.approximateECDFWithExponentialBase(ecdf, 100.0, 10)).isCloseTo(1.0, within(1e-5));
     }
 
     @Test
@@ -97,7 +97,7 @@ public class BernsteinTest {
         
         // PDF should be non-negative (mostly, Bernstein can have small oscillations but for CDF it should be monotonic)
         for (double x = 0.0; x <= 1.0; x += 0.1) {
-            assertThat(Bernstein.approximateEPDFWithNormalBase(ecdf, x, 10)).isGreaterThanOrEqualTo(0.0);
+            assertThat(BernsteinFromECDF.approximateEPDFWithNormalBase(ecdf, x, 10)).isGreaterThanOrEqualTo(0.0);
         }
     }
 
@@ -106,7 +106,7 @@ public class BernsteinTest {
         ECDF ecdf = new ECDF(Arrays.asList(12.0, 15.0, 18.0));
         
         for (double x = 10.0; x <= 20.0; x += 1.0) {
-            assertThat(Bernstein.approximateEPDFWithLinearBase(ecdf, x, 10, 10.0, 20.0)).isGreaterThanOrEqualTo(0.0);
+            assertThat(BernsteinFromECDF.approximateEPDFWithLinearBase(ecdf, x, 10, 10.0, 20.0)).isGreaterThanOrEqualTo(0.0);
         }
     }
 
@@ -115,7 +115,7 @@ public class BernsteinTest {
         ECDF ecdf = new ECDF(Arrays.asList(1.0, 2.0, 5.0));
         
         for (double x = 0.0; x <= 10.0; x += 1.0) {
-            assertThat(Bernstein.approximateEPDFWithExponentialBase(ecdf, x, 10)).isGreaterThanOrEqualTo(0.0);
+            assertThat(BernsteinFromECDF.approximateEPDFWithExponentialBase(ecdf, x, 10)).isGreaterThanOrEqualTo(0.0);
         }
     }
 }

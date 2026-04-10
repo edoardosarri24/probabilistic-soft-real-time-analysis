@@ -44,12 +44,6 @@ public class ECDF {
     }
 
     // Helper.
-    /**
-     * Conta quanti elementi nell'insieme di dati sono minori o uguali a x.
-     * Utilizza la ricerca binaria in tempo O(log n).
-     * * @param x Il valore di soglia.
-     * @return Il numero intero di elementi <= x.
-     */
     private int count(double x) {
         // Base case.
         if (this.data.length == 0)

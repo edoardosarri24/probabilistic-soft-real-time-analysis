@@ -1,8 +1,8 @@
 classDiagram
 
-    %% Approximation
-    class Bernstein {
-        <<static>>
+    %% BernsteinFromECDF
+    class BernsteinFromECDF {
+        <<static-final>>
         + approximateECDFWithNormalBase(ecdf, x, degree)
         + approximateECDFWithLinearBase(ecdf, degree, x, lowerSupport, upperSupport)
         + approximateECDFWithExponentialBase(ecdf, x, degree)
@@ -17,5 +17,40 @@ classDiagram
         + eval(double x)
     }
 
-    %% Relations
-    Bernstein --> ECDF
+    BernsteinFromECDF --> ECDF
+
+    %% BernsteinFromPolynomial
+    class BernsteinFromPolynomial {
+        <<static-final>>
+    }
+
+    class Polynomial {
+        <<abstract>>
+        - coefficient : double[]
+        + eval(double x)
+    }
+
+    class MonomialPolynomial {
+        <<final>>
+    }
+
+    class BernsteinPolynomial {
+        <<final>>
+        - basis : Basis
+    }
+
+    class BernsteinBasis {
+        <<interface>>
+    }
+
+    class LinearBernsteinBasis {
+        <<final>>
+        - lowerSupport : double
+        - upperSupport : double
+    }
+
+    BernsteinFromPolynomial --> Polynomial
+    Polynomial <|-- MonomialPolynomial
+    Polynomial <|-- BernsteinPolynomial
+    BernsteinPolynomial *-- BernsteinBasis
+    BernsteinBasis <-- LinearBernsteinBasis
