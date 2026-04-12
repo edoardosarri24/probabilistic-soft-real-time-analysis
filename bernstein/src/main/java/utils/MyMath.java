@@ -47,7 +47,7 @@ public final class MyMath {
     public static double intPow(double base, int exp) {
         // Checks input.
         if (exp < 0)
-            throw new IllegalArgumentException("Esponente negativo non supportato: " + exp);
+            throw new IllegalArgumentException("Negative exponent not supported: " + exp);
         // Base cases.
         if (exp == 0)
             return 1.0;

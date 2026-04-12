@@ -17,6 +17,11 @@ public abstract class Polynomial {
         this.coefficients = coefficients.clone();
     }
 
+    // Getter and setter.
+    public double[] getCoefficient() {
+        return this.coefficients;
+    }
+
     // Methods.
     public final double eval(double x) {
         int degree = this.coefficients.length - 1;

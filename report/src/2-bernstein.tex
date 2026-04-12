@@ -34,12 +34,12 @@ The test case cover the following: input validation; empty input data; single va
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Approximation of Polynomial}
-We have defined a facade with static methods that allow us to approximate thea polynomial defined by monomial with a Bernstein Polynomial.
+The system allow us to map a polynomial in monomial form to a Bernstein polynomial. In particular, given a polynomial $\displaystyle P(x) = \sum_{i=0}^{M} a_i x^i$ of degree $M$ with known analytical form, we want identify the Bernstein Polynomial $\displaystyle B(x) = \sum_{i=0}^{N} \beta_i b_{i,N}(x)$ of degree $N$ that best fits it.
 
 \subsection{Implementation}
-In Figure~\ref{fig:bernstein_library_class_diagram} there are the subsystem that is responsable to this beheaviour. Let's see the main components:
+In Figure~\ref{fig:bernstein_library_class_diagram} there are the subsystem that is responsable to the approximation from the polynomial defined by monomial to a Bernstein Polynomial. Let's see the main components:
 \begin{itemize}
-    \item \textbf{BersteinFromPolynomial} \\
+    \item \textbf{BersteinFromMonomial} \\
         It's the facade the abstract the domain model that shape the Polynomial.
     \item \textbf{Polynomial} \\
         It's the asbtract class the wraps the state of a polynomial, i.e. the coefficients that define the polynomial. It define also the \texttt{eval} method to evaluate the polynomial in given point \texttt{x}.
@@ -50,8 +50,17 @@ In Figure~\ref{fig:bernstein_library_class_diagram} there are the subsystem that
 \end{itemize}
 
 \subsection{Features}
+The mapping techniques are:
+\begin{itemize}
+    \item Support in $[0,1]$ and $N=M$. \\
+        We have implemented two approach:
+        \begin{itemize}
+            \item We can provide a closed form forula to perform the conversion of the coefficients from the monomial ones to the Bernstein ones. This formula is $\displaystyle\beta_i = \sum_{j=0}^{i} \frac{\binom{i}{j}}{\binom{N}{j}} a_j$. We have a $\mathcal{O}(n^2)$ cost due to two inner loops.
+            \item We can multiply the vector of Bernstein coefficients $b$ and a conversion matrix $M$ to obtain the monomial coefficient $a$ as $a=Mb$; in this way we can find the bersntein coefficient as $b=M^{-1}a$ We have a $\mathcal{O}(n^3)+\mathcal{O}(n^2)$ cost due to the inversion of $M$ and two inner loops for the product; the inversion of the matrix is instable for big order of $N$. This basis change matrix is obtain from this steps: the bernstein basis are defined as $\displaystyle B_{i,N}(x) = \binom{N}{i} x^i (1-x)^{N-i}$; we can expand this in $\displaystyle B_{i,N}(x) = \binom{N}{i} x^i \sum_{j=0}^{N-i} \binom{N-i}{j} (-1)^j x^j$ and than obtain $\displaystyle B_{i,N}(x) = \binom{N}{i} x^i \left[ \sum_{j=0}^{N-i} \binom{N-i}{j} (-1)^j x^j \right]$; we can now change $i = k + j$ and obtain $\displaystyle B_{i,N}(x) = \sum_{j=i}^{N} \left[ \binom{N}{i} \binom{n-i}{j-i} (-1)^{j-i} \right] x^j$; at this point we can define the matrix as $M_{i,j} = \begin{cases} \binom{n}{j} \binom{n-j}{i-j} (-1)^{i-j} & \text{ se } i \ge j \\ 0 & \text{ se } i < j \end{cases}$.
+        \end{itemize}
+\end{itemize}
 
 \subsection{Testing}
 The tests for this section verify the correctness of the core model.
 
-We ensure that the system have a correct behaviour on the edge case, for differnt support, that respect the matematical properties of the Bernstein polynomial and that the validation of the input is exaustive.
+We ensure that the system have a correct behaviour on the edge case, for different support, that respect the matematical properties of the Bernstein polynomial and that the validation of the input is exaustive.

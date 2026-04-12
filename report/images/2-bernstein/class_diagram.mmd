@@ -19,8 +19,8 @@ classDiagram
 
     BernsteinFromECDF --> ECDF
 
-    %% BernsteinFromPolynomial
-    class BernsteinFromPolynomial {
+    %% BernsteinFromMonomial
+    class BernsteinFromMonomial {
         <<static-final>>
     }
 
@@ -49,7 +49,7 @@ classDiagram
         - upperSupport : double
     }
 
-    BernsteinFromPolynomial --> Polynomial
+    BernsteinFromMonomial --> Polynomial
     Polynomial <|-- MonomialPolynomial
     Polynomial <|-- BernsteinPolynomial
     BernsteinPolynomial *-- BernsteinBasis
