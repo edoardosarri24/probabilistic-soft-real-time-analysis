@@ -18,7 +18,7 @@ The system allow us to approximate both CDF and PDF curve, given an empirical CD
     \item \textbf{Exponential}: The original ECDF can be in $[0,+\infty]$, i.e. $F:[0,+\infty]\to[0,1]$.
 \end{itemize}
 
-\subsection{Class Diagram}
+\subsection{Implementation}
 From the Figure~\ref{fig:bernstein_library_class_diagram} we can that there are only two single class the work together:
 \begin{itemize}
     \item \textbf{BernsteinFromECDF} \\
@@ -54,7 +54,7 @@ The tests for this section verify the correctness of the core model.
 
 We ensure that the system have a correct behaviour on the edge case, for different support, that respect the matematical properties of the Bernstein polynomial and that the validation of the input is exaustive.
 
-\subsection{Features}
+\subsection{Techniques}
 We have tested some mapping technoques from the polynomial in monomial form and the Bernstein polynomial.
 
 \subsubsection{Support in $[0,1]$ and $N=M$}
@@ -67,9 +67,11 @@ The simplest scenario is if we have a support in $[0,1]$ and the degree fo the i
 \subsection{Distance}
 In the system there's the possibility to testing the distance between two given polynomials and an interval $[a,b]$. This is usefull if we test the polynomial $P_m$ in monomial form and its Berstein approximation $P_b$.
 
-The distances implemented are three kind of norm, that considers the whole interval. We have considered the following:
+The distances implemented are three the three most used type of norm, that considers the whole interval. We have considered the following:
 \begin{itemize}
     \item $L_1$: It measure the global mean error and it's obtained as $\displaystyle\int_a^b |P_m(x) - P_b(x)| dx$.
     \item $L_2$: It penalyze the big error in the whole intervall $[a,b]$ and it's obtained as $\sqrt{\displaystyle\int_a^b (P_m(x) - P_b(x))^2 dx}$.
-    \item $L_\infty$: It represent the biggest error in the intervall between the two polynomials and it's obtained as $\max_{x \in [0, 1]} |P_m(x) - P_b(x)|$.
+    \item $L_\infty$: It represent the biggest error in the intervall between the two polynomials and it's obtained as $\max_{x \in [a,b]} |P_m(x) - P_b(x)|$.
 \end{itemize}
+
+Each of these norm is calculated with a numerical approximation, and represented within the plot of the two polynomials.

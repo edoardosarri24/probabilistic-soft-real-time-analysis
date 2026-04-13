@@ -50,9 +50,10 @@ classDiagram
 
     class PolynomialDistance {
         <<final>>
-        + normL1(Polynomial poly1, Polynomial poly2, double lowerBound upperBound numberOfSamples)
-        + normL2(Polynomial poly1, Polynomial poly2, double lowerBound upperBound numberOfSamples)
-        + normLinf(Polynomial poly1, Polynomial poly2, double lowerBound upperBound numberOfSamples)
+        + withPlot(Polynomial poly1, Polynomial poly2, double lowerBound upperBound numberOfSamples)
+        - normL1(Polynomial poly1, Polynomial poly2, double lowerBound upperBound numberOfSamples)
+        - normL2(Polynomial poly1, Polynomial poly2, double lowerBound upperBound numberOfSamples)
+        - normLinf(Polynomial poly1, Polynomial poly2, double lowerBound upperBound numberOfSamples)
     }
 
     %% Relation

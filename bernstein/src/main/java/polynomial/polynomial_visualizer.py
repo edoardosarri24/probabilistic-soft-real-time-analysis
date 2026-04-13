@@ -38,17 +38,20 @@ def plot_polynomial(data):
 
     # Figure
     sns.set_theme(style="whitegrid")
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(12, 7))
     sns.lineplot(x=x, y=y_poly, label="Polynomial", color="red", linewidth=2)
-    plt.title(data.get("title", "Polynomial Visualization"), fontsize=16)
+    plt.title(data.get("title", "Polynomial Visualization"), fontsize=16, pad=20)
     plt.xlabel("x", fontsize=12)
     plt.ylabel("f(x)", fontsize=12)
     plt.legend()
 
     # Save the plot.
+    title = data.get("title", "polynomial")
+    # Sanitize title for filename
+    safe_title = "".join([c if c.isalnum() else "_" for c in title])
     output_dir = Path("results")
     output_dir.mkdir(parents=True, exist_ok=True)
-    output_path = output_dir / "polynomial.pdf"
+    output_path = output_dir / f"polynomial_visualization_{safe_title}.pdf"
     plt.savefig(output_path)
     plt.close()
 

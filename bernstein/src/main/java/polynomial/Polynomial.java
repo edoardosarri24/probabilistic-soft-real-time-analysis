@@ -56,7 +56,7 @@ public abstract class Polynomial {
             yNode.add(this.eval(x));
         }
         try {
-            ProcessBuilder pb = new ProcessBuilder("uv", "run", "src/main/java/polynomial/polinomial_visualizer.py");
+            ProcessBuilder pb = new ProcessBuilder("uv", "run", "src/main/java/polynomial/polynomial_visualizer.py");
             pb.redirectError(ProcessBuilder.Redirect.INHERIT);
             Process process = pb.start();
             try (OutputStream os = process.getOutputStream()) {
