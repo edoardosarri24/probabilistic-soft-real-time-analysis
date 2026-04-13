@@ -49,18 +49,27 @@ In Figure~\ref{fig:bernstein_library_class_diagram} there are the subsystem that
         It represents the Bernstein polynomial. It's defined by the coefficient and the type of \texttt{Basis}. There is only one kind of basis: the linear basis map the input \texttt{x} in the \texttt{[a,b]} intervall.
 \end{itemize}
 
-\subsection{Features}
-The mapping techniques are:
-\begin{itemize}
-    \item Support in $[0,1]$ and $N=M$. \\
-        We have implemented two approach:
-        \begin{itemize}
-            \item We can provide a closed form forula to perform the conversion of the coefficients from the monomial ones to the Bernstein ones. This formula is $\displaystyle\beta_i = \sum_{j=0}^{i} \frac{\binom{i}{j}}{\binom{N}{j}} a_j$. We have a $\mathcal{O}(n^2)$ cost due to two inner loops.
-            \item We can multiply the vector of Bernstein coefficients $b$ and a conversion matrix $M$ to obtain the monomial coefficient $a$ as $a=Mb$; in this way we can find the bersntein coefficient as $b=M^{-1}a$ We have a $\mathcal{O}(n^3)+\mathcal{O}(n^2)$ cost due to the inversion of $M$ and two inner loops for the product; the inversion of the matrix is instable for big order of $N$. This basis change matrix is obtain from this steps: the bernstein basis are defined as $\displaystyle B_{i,N}(x) = \binom{N}{i} x^i (1-x)^{N-i}$; we can expand this in $\displaystyle B_{i,N}(x) = \binom{N}{i} x^i \sum_{j=0}^{N-i} \binom{N-i}{j} (-1)^j x^j$ and than obtain $\displaystyle B_{i,N}(x) = \binom{N}{i} x^i \left[ \sum_{j=0}^{N-i} \binom{N-i}{j} (-1)^j x^j \right]$; we can now change $i = k + j$ and obtain $\displaystyle B_{i,N}(x) = \sum_{j=i}^{N} \left[ \binom{N}{i} \binom{n-i}{j-i} (-1)^{j-i} \right] x^j$; at this point we can define the matrix as $M_{i,j} = \begin{cases} \binom{n}{j} \binom{n-j}{i-j} (-1)^{i-j} & \text{ se } i \ge j \\ 0 & \text{ se } i < j \end{cases}$.
-        \end{itemize}
-\end{itemize}
-
 \subsection{Testing}
 The tests for this section verify the correctness of the core model.
 
 We ensure that the system have a correct behaviour on the edge case, for different support, that respect the matematical properties of the Bernstein polynomial and that the validation of the input is exaustive.
+
+\subsection{Features}
+We have tested some mapping technoques from the polynomial in monomial form and the Bernstein polynomial.
+
+\subsubsection{Support in $[0,1]$ and $N=M$}
+The simplest scenario is if we have a support in $[0,1]$ and the degree fo the input and output polynomials are the same.
+\begin{itemize}
+    \item We can provide a closed form forula to perform the conversion of the coefficients from the monomial ones to the Bernstein ones. This formula is $\displaystyle\beta_i = \sum_{j=0}^{i} \frac{\binom{i}{j}}{\binom{N}{j}} a_j$. We have a $\mathcal{O}(n^2)$ cost due to two inner loops.
+    \item We can multiply the vector of Bernstein coefficients $b$ and a conversion matrix $M$ to obtain the monomial coefficient $a$ as $a=Mb$; in this way we can find the bersntein coefficient as $b=M^{-1}a$ We have a $\mathcal{O}(n^3)+\mathcal{O}(n^2)$ cost due to the inversion of $M$ and two inner loops for the product; the inversion of the matrix is instable for big order of $N$. This basis change matrix is obtain from this steps: the bernstein basis are defined as $\displaystyle B_{i,N}(x) = \binom{N}{i} x^i (1-x)^{N-i}$; we can expand this in $\displaystyle B_{i,N}(x) = \binom{N}{i} x^i \sum_{j=0}^{N-i} \binom{N-i}{j} (-1)^j x^j$ and than obtain $\displaystyle B_{i,N}(x) = \binom{N}{i} x^i \left[ \sum_{j=0}^{N-i} \binom{N-i}{j} (-1)^j x^j \right]$; we can now change $i = k + j$ and obtain $\displaystyle B_{i,N}(x) = \sum_{j=i}^{N} \left[ \binom{N}{i} \binom{n-i}{j-i} (-1)^{j-i} \right] x^j$; at this point we can define the matrix as $M_{i,j} = \begin{cases} \binom{n}{j} \binom{n-j}{i-j} (-1)^{i-j} & \text{ se } i \ge j \\ 0 & \text{ se } i < j \end{cases}$.
+\end{itemize}
+
+\subsection{Distance}
+In the system there's the possibility to testing the distance between two given polynomials and an interval $[a,b]$. This is usefull if we test the polynomial $P_m$ in monomial form and its Berstein approximation $P_b$.
+
+The distances implemented are three kind of norm, that considers the whole interval. We have considered the following:
+\begin{itemize}
+    \item $L_1$: It measure the global mean error and it's obtained as $\displaystyle\int_a^b |P_m(x) - P_b(x)| dx$.
+    \item $L_2$: It penalyze the big error in the whole intervall $[a,b]$ and it's obtained as $\sqrt{\displaystyle\int_a^b (P_m(x) - P_b(x))^2 dx}$.
+    \item $L_\infty$: It represent the biggest error in the intervall between the two polynomials and it's obtained as $\max_{x \in [0, 1]} |P_m(x) - P_b(x)|$.
+\end{itemize}

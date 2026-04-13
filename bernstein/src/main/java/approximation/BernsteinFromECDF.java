@@ -1,3 +1,5 @@
+package approximation;
+
 import utils.MyMath;
 import utils.MyUtils;
 

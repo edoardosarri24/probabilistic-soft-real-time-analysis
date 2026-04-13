@@ -17,8 +17,6 @@ classDiagram
         + eval(double x)
     }
 
-    BernsteinFromECDF --> ECDF
-
     %% BernsteinFromMonomial
     class BernsteinFromMonomial {
         <<static-final>>
@@ -49,8 +47,20 @@ classDiagram
         - upperSupport : double
     }
 
+    class PolynomialDistance {
+        <<final>>
+        + normL1(Polynomial poly1, Polynomial poly2, double lowerBound upperBound numberOfSamples)
+        + normL2(Polynomial poly1, Polynomial poly2, double lowerBound upperBound numberOfSamples)
+        + normLinf(Polynomial poly1, Polynomial poly2, double lowerBound upperBound numberOfSamples)
+    }
+
+    %% Relation
+    Client --> BernsteinFromMonomial
+    Client --> BernsteinFromECDF
+    Client --> PolynomialDistance
     BernsteinFromMonomial --> Polynomial
     Polynomial <|-- MonomialPolynomial
     Polynomial <|-- BernsteinPolynomial
     BernsteinPolynomial *-- BernsteinBasis
     BernsteinBasis <-- LinearBernsteinBasis
+    BernsteinFromECDF --> ECDF

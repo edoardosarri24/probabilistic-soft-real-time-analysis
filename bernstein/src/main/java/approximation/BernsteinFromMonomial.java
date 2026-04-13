@@ -1,3 +1,4 @@
+package approximation;
 import polynomial.BernsteinPolynomial;
 import polynomial.MonomialPolynomial;
 import polynomial.bernsteinBasis.LinearBernsteinbasis;
@@ -26,7 +27,7 @@ public final class BernsteinFromMonomial {
     }
 
     /**
-     * Exact conversion from monomial basis to Bernstein basis on [0,1] for N=M using matrix inversion.
+     * Conversion from monomial basis to Bernstein basis on [0,1] for N=M using matrix inversion.
      */
     public static BernsteinPolynomial withMatrixInversion(MonomialPolynomial polynomial) {
         MyUtils.requireNonNull(polynomial, "polynomial");
@@ -39,7 +40,7 @@ public final class BernsteinFromMonomial {
                 matrix[j][i] = MyMath.binomialCoefficient(degree, i)
                         * MyMath.binomialCoefficient(degree-i, j-i)
                         * ((j - i) % 2 == 0 ? 1.0 : -1.0);
-        // Solving.
+        // Solving it.
         double[] newCoefficients = new double[degree + 1];
         for (int i=0; i <= degree; i++) {
             double sum = 0.0;
