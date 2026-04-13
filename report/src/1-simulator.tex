@@ -99,7 +99,7 @@ If we observe Figure~\ref{fig:simulator_class_diagram} we have to describe the s
     \item \textbf{TraceLogger} \\
         The logging utils that is responsible to logging the scheduling main events in a file named \textit{trace.log} with a personalized format.An interface that abstracts the logging operations.
     \item \textbf{TaskExecutionTimeCollector} \\
-        It is the collector of all execution times of all tasks.
+        It is the collector of all execution times of all tasks. It allow teh visualization of the empirical distribution (ECDF and EPDF).
     \item \textbf{DeadlineMissCollector} \\
         It is the collector of all aborted jobs of all tasks. This is useful to have a trace of all jobs that have been aborted due to deadline misses, to analyze them in a post-mortem way.
 \end{itemize}

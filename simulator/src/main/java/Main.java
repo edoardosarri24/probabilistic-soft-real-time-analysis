@@ -5,7 +5,6 @@ import config.SimulationConfig;
 import scheduler.DeadlineMonotonicScheduler;
 import scheduler.Scheduler;
 import taskSet.TaskSet;
-import utils.MyUtils;
 import utils.collector.TaskExecutionTimeCollector;
 
 public class Main {
@@ -19,7 +18,7 @@ public class Main {
                 config.simulationDurationMs,
                 config.deadlineMissStrategy.toStrategy());
             TaskExecutionTimeCollector dataSimulation = dm.analyze();
-            MyUtils.callPythonExtractor(dataSimulation);
+            dataSimulation.visualyze();
         } catch (IOException e) {
             e.printStackTrace();
         }
