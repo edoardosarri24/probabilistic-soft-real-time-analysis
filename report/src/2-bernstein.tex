@@ -8,6 +8,15 @@ In Figure~\ref{fig:bernstein_library_class_diagram} we can see the architecture 
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Library Constrain}
+The evaluation of Bernstein polynomials has some limitations on the degree of the polynomial that can be evaluated. In the implementation we udes the \texttt{double} type and this implies two main limitations:
+\begin{itemize}
+    \item Within a $degree<54$ we can compute the polynomial without any precision loss.
+    \item If the degree is within the $[54,1029]$ interval we have a precision loss due to the large binomial coefficients and small powers, but we can still compute the polynomial.
+    \item For $degree\ge 1030$ we have an overflow of the binomial coefficients and the polynomial cannot be computed.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Approximation of Empirical Cumulative Distribution Function}
 In this Section we discuss the part of the library responsable to the approximation of a Empirical Cumulative Distribution Function (ECDF) with a Bernstein polynomial.
 

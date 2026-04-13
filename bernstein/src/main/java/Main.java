@@ -1,17 +1,28 @@
+import approximation.BernsteinFromMonomial;
+import polynomial.BernsteinPolynomial;
 import polynomial.MonomialPolynomial;
 import polynomial.PolynomialDistance;
 
+/**
+ * P(x) = 1 + x + x^2 + ... + x^d with d={10, 50, 100, 1000}
+ */
 public class Main {
     public static void main(String[] args) {
-        // Test Polynomial.visualyze with dynamic naming
-        MonomialPolynomial poly1 = new MonomialPolynomial(new double[]{0, 0, 1}); // x^2
-        poly1.visualyze("x_squared", 0, 1, 100);
-        System.out.println("Generated: results/polynomia_visualization_x_squared.pdf");
+        int[] degrees = {10, 25, 35, 40, 50, 100, 1029, 1030, 1100};
+        for (int degree : degrees) {
+            double[] coefficients = new double[degree+1];
+            for (int i=0; i <= degree; i++)
+                coefficients[i] = 1.0;
+            MonomialPolynomial poly = new MonomialPolynomial(coefficients);
 
-        // Test PolynomialDistance.withPlot with dynamic naming
-        MonomialPolynomial poly2 = new MonomialPolynomial(new double[]{0, 1});    // x
-        System.out.println("Calculating distance between x^2 and x...");
-        PolynomialDistance.withPlot("comparison_x2_x", poly1, poly2, 0, 1, 100);
-        System.out.println("Generated: results/polynomial_distance_visualization_comparison_x2_x.pdf");
+            // Direct
+            BernsteinPolynomial bernsteinDirect = BernsteinFromMonomial.withDirectCoefficientConversion(poly);
+            PolynomialDistance.withPlot("sum_until_d_" + degree + "_Direct", poly, bernsteinDirect, 0.0, 1.0, 100);
+
+            // Matrix
+            BernsteinPolynomial bernsteinMatrix = BernsteinFromMonomial.withMatrixInversion(poly);
+            PolynomialDistance.withPlot("sum_until_d_" + degree + "_Matrix", poly, bernsteinMatrix, 0.0, 1.0, 100);
+        }
     }
+
 }

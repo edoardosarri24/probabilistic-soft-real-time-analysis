@@ -26,7 +26,7 @@ classDiagram
         <<abstract>>
         - coefficient : double[]
         + eval(double x)
-        - visualyze(String title, double lowerBound upperBound, int numbersOfPoints)
+        - visualize(String title, double lowerBound upperBound, int numbersOfPoints)
     }
 
     class MonomialPolynomial {
@@ -51,9 +51,9 @@ classDiagram
     class PolynomialDistance {
         <<final>>
         + withPlot(Polynomial poly1, Polynomial poly2, double lowerBound upperBound numberOfSamples)
-        - normL1(Polynomial poly1, Polynomial poly2, double lowerBound upperBound numberOfSamples)
-        - normL2(Polynomial poly1, Polynomial poly2, double lowerBound upperBound numberOfSamples)
-        - normLinf(Polynomial poly1, Polynomial poly2, double lowerBound upperBound numberOfSamples)
+        + normL1(Polynomial poly1, Polynomial poly2, double lowerBound upperBound numberOfSamples)
+        + normL2(Polynomial poly1, Polynomial poly2, double lowerBound upperBound numberOfSamples)
+        + normLinf(Polynomial poly1, Polynomial poly2, double lowerBound upperBound numberOfSamples)
     }
 
     %% Relation

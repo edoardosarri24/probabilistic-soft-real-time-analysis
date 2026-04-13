@@ -38,12 +38,12 @@ public abstract class Polynomial {
         return result;
     }
 
-    public void visualyze(String title, double lowerBound, double upperBound, int numbersOfPoints) {
+    public void visualize(String title, double lowerBound, double upperBound, int numbersOfPoints) {
         if (lowerBound >= upperBound)
             throw new IllegalArgumentException(String.format(
         "The support is invalid: lower bound (%f) must be lower than the upper (%f)", lowerBound, upperBound));
         if (numbersOfPoints <= 1)
-            throw new IllegalArgumentException("There are few points to visualyze the polynomial");
+            throw new IllegalArgumentException("There are few points to visualize the polynomial");
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode data = mapper.createObjectNode();
         data.put("title", title);

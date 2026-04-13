@@ -33,9 +33,9 @@ def plot_polynomial_distance(data):
     x = np.array(data.get("x", []))
     y1 = np.array(data.get("y1", []))
     y2 = np.array(data.get("y2", []))
-    norm_l1 = data.get("norm_l1", 0.0)
-    norm_l2 = data.get("norm_l2", 0.0)
-    norm_linf = data.get("norm_linf", 0.0)
+    norm_l1 = float(data.get("norm_l1", 0.0))
+    norm_l2 = float(data.get("norm_l2", 0.0))
+    norm_linf = float(data.get("norm_linf", 0.0))
     if len(x) == 0 or len(y1) == 0 or len(y2) == 0:
         print("Error: No data to plot.")
         sys.exit(1)
@@ -54,7 +54,7 @@ def plot_polynomial_distance(data):
     # Legend and metrics
     plt.legend(loc='upper left', frameon=True)
     dist_title = "Distances:"
-    dist_metrics = f"L1: {norm_l1:.4f}\nL2: {norm_l2:.4f}\nL∞: {norm_linf:.4f}"
+    dist_metrics = f"L1: {norm_l1:.15f}\nL2: {norm_l2:.15f}\nL∞: {norm_linf:.15f}"
     full_text = f"{dist_title}\n{dist_metrics}"
     props = dict(boxstyle='round,pad=0.5', facecolor='white', alpha=0.9, edgecolor='lightgray')
     plt.gca().text(0.015, 0.82, full_text, transform=plt.gca().transAxes, fontsize=11, verticalalignment='top', bbox=props)
