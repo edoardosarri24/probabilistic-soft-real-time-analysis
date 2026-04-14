@@ -1,5 +1,6 @@
 package approximation;
 
+import domainModel.ECDF;
 import utils.MyMath;
 import utils.MyUtils;
 

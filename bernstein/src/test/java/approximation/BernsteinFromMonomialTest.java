@@ -2,8 +2,9 @@ package approximation;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 import org.junit.jupiter.api.Test;
-import polynomial.BernsteinPolynomial;
-import polynomial.MonomialPolynomial;
+
+import domainModel.polynomial.BernsteinPolynomial;
+import domainModel.polynomial.MonomialPolynomial;
 
 public class BernsteinFromMonomialTest {
 

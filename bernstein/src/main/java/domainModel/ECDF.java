@@ -1,4 +1,4 @@
-package approximation;
+package domainModel;
 import java.util.Arrays;
 import java.util.Collection;
 

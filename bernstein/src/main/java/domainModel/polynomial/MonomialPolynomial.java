@@ -1,4 +1,4 @@
-package polynomial;
+package domainModel.polynomial;
 
 import utils.MyMath;
 

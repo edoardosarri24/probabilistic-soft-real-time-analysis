@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 import org.junit.jupiter.api.Test;
 
-import polynomial.BernsteinPolynomial;
-import polynomial.bernsteinBasis.LinearBernsteinbasis;
+import domainModel.polynomial.BernsteinPolynomial;
+import domainModel.polynomial.bernsteinBasis.LinearBernsteinbasis;
 
 public class BernsteinPolynomialTest {
 

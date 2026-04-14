@@ -1,8 +1,11 @@
-package polynomial;
+package functionality;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import domainModel.polynomial.Polynomial;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.function.DoubleUnaryOperator;
@@ -118,7 +121,7 @@ public final class PolynomialDistance {
             y2Node.add(poly2.eval(x));
         }
         try {
-            ProcessBuilder pb = new ProcessBuilder("uv", "run", "src/main/java/polynomial/polynomial_distance_visualizer.py");
+            ProcessBuilder pb = new ProcessBuilder("uv", "run", "src/main/java/visualizer/polynomial_distance.py");
             pb.redirectError(ProcessBuilder.Redirect.INHERIT);
             Process process = pb.start();
             try (OutputStream os = process.getOutputStream()) {

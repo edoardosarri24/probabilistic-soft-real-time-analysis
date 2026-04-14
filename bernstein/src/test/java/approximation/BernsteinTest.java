@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import org.junit.jupiter.api.Test;
 
+import domainModel.ECDF;
+
 public class BernsteinTest {
 
     @Test

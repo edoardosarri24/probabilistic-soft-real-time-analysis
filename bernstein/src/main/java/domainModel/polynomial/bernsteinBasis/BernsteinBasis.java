@@ -1,4 +1,4 @@
-package polynomial.bernsteinBasis;
+package domainModel.polynomial.bernsteinBasis;
 
 public interface BernsteinBasis {
 

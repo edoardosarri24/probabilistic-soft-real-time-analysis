@@ -1,7 +1,7 @@
 import approximation.BernsteinFromMonomial;
-import polynomial.BernsteinPolynomial;
-import polynomial.MonomialPolynomial;
-import polynomial.PolynomialDistance;
+import domainModel.polynomial.BernsteinPolynomial;
+import domainModel.polynomial.MonomialPolynomial;
+import functionality.PolynomialDistance;
 
 /**
  * P(x) = 1 + x + x^2 + ... + x^d with d={10, 50, 100, 1000}

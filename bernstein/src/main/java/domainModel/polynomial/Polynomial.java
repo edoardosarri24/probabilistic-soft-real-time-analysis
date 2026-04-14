@@ -1,4 +1,4 @@
-package polynomial;
+package domainModel.polynomial;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -56,7 +56,7 @@ public abstract class Polynomial {
             yNode.add(this.eval(x));
         }
         try {
-            ProcessBuilder pb = new ProcessBuilder("uv", "run", "src/main/java/polynomial/polynomial_visualizer.py");
+            ProcessBuilder pb = new ProcessBuilder("uv", "run", "src/main/java/visualizer/polynomial.py");
             pb.redirectError(ProcessBuilder.Redirect.INHERIT);
             Process process = pb.start();
             try (OutputStream os = process.getOutputStream()) {

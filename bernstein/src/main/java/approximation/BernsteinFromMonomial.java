@@ -1,7 +1,7 @@
 package approximation;
-import polynomial.BernsteinPolynomial;
-import polynomial.MonomialPolynomial;
-import polynomial.bernsteinBasis.LinearBernsteinbasis;
+import domainModel.polynomial.BernsteinPolynomial;
+import domainModel.polynomial.MonomialPolynomial;
+import domainModel.polynomial.bernsteinBasis.LinearBernsteinbasis;
 import utils.MyMath;
 import utils.MyUtils;
 

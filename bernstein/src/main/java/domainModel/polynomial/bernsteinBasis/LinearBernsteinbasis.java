@@ -1,4 +1,4 @@
-package polynomial.bernsteinBasis;
+package domainModel.polynomial.bernsteinBasis;
 import utils.MyMath;
 import utils.MyUtils;
 

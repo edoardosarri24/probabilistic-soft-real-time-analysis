@@ -1,5 +1,5 @@
-package polynomial;
-import polynomial.bernsteinBasis.BernsteinBasis;
+package domainModel.polynomial;
+import domainModel.polynomial.bernsteinBasis.BernsteinBasis;
 
 public final class BernsteinPolynomial extends Polynomial {
 
