@@ -6,7 +6,7 @@ import polynomial.PolynomialDistance;
 /**
  * P(x) = 1 + x + x^2 + ... + x^d with d={10, 50, 100, 1000}
  */
-public class Main {
+public class Main_monomial_approximation_support_0_1_N_equal_M {
     public static void main(String[] args) {
         int[] degrees = {10, 25, 35, 40, 50, 100, 1029, 1030, 1100};
         for (int degree : degrees) {

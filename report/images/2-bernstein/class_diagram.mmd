@@ -64,5 +64,5 @@ classDiagram
     Polynomial <|-- MonomialPolynomial
     Polynomial <|-- BernsteinPolynomial
     BernsteinPolynomial *-- BernsteinBasis
-    BernsteinBasis <-- LinearBernsteinBasis
+    BernsteinBasis <|-- LinearBernsteinBasis
     BernsteinFromECDF --> ECDF

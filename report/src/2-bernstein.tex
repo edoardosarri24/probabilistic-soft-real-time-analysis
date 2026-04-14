@@ -8,8 +8,23 @@ In Figure~\ref{fig:bernstein_library_class_diagram} we can see the architecture 
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Library Constrain}
-The evaluation of Bernstein polynomials has some limitations on the degree of the polynomial that can be evaluated. In the implementation we udes the \texttt{double} type and this implies two main limitations:
+\section{Library Constraints}
+\label{sec:bernstein_library_constrains}
+The critical part of the library, from a computational perspective, is the calculation of the binomial coefficients. The whole library is based on \texttt{double} type and this implies some limitations on the degree of the polynomial that can be evaluated.
+
+\myskip
+
+These limitations are due to two factors:
+\begin{itemize}
+    \item Range \\
+        The exponent allow us to represent numbers up to $1.8\times10^{308}$.
+    \item Precision \\
+        We can garantee a precision up to 15 decimal digits: the 52 digits of the mantissa brings the machine $\epsilon$ error to circa $10^{-16}$.
+\end{itemize}
+
+\myskip
+
+The conseguence of these approach is the following:
 \begin{itemize}
     \item Within a $degree<54$ we can compute the polynomial without any precision loss.
     \item If the degree is within the $[54,1029]$ interval we have a precision loss due to the large binomial coefficients and small powers, but we can still compute the polynomial.
@@ -49,9 +64,9 @@ The system allow us to map a polynomial in monomial form to a Bernstein polynomi
 In Figure~\ref{fig:bernstein_library_class_diagram} there are the subsystem that is responsable to the approximation from the polynomial defined by monomial to a Bernstein Polynomial. Let's see the main components:
 \begin{itemize}
     \item \textbf{BersteinFromMonomial} \\
-        It's the facade the abstract the domain model that shape the Polynomial.
+        It's the facade to use the system and abstract the domain model that shape the polynomial.
     \item \textbf{Polynomial} \\
-        It's the asbtract class the wraps the state of a polynomial, i.e. the coefficients that define the polynomial. It define also the \texttt{eval} method to evaluate the polynomial in given point \texttt{x} and the \texttt{visualyze()} method the plot it self with a given precision.
+        It's the abstract class the wraps the state of a polynomial, i.e. the coefficients that define the polynomial. It define also the \texttt{eval} method to evaluate the polynomial in given point \texttt{x} and the \texttt{visualyze()} method the plot it self with a given precision.
     \item \textbf{MonomialPolynomial} \\
         Classical polynomial where the basis is defined as an integer power of \texttt{x}.
     \item \textbf{BernsteinPolynomial} \\
@@ -63,10 +78,11 @@ The tests for this section verify the correctness of the core model.
 
 We ensure that the system have a correct behaviour on the edge case, for different support, that respect the matematical properties of the Bernstein polynomial and that the validation of the input is exaustive.
 
-\subsection{Techniques}
+\subsection{Approximation Techniques}
 We have tested some mapping technoques from the polynomial in monomial form and the Bernstein polynomial.
 
 \subsubsection{Support in $[0,1]$ and $N=M$}
+\label{subsec:monomial_approximation_support_0_1_N_equal_M}
 The simplest scenario is if we have a support in $[0,1]$ and the degree fo the input and output polynomials are the same.
 \begin{itemize}
     \item We can provide a closed form forula to perform the conversion of the coefficients from the monomial ones to the Bernstein ones. This formula is $\displaystyle\beta_i = \sum_{j=0}^{i} \frac{\binom{i}{j}}{\binom{N}{j}} a_j$. We have a $\mathcal{O}(n^2)$ cost due to two inner loops.
@@ -83,4 +99,8 @@ The distances implemented are three the three most used type of norm, that consi
     \item $L_\infty$: It represent the biggest error in the intervall between the two polynomials and it's obtained as $\max_{x \in [a,b]} |P_m(x) - P_b(x)|$.
 \end{itemize}
 
-Each of these norm is calculated with a numerical approximation, and represented within the plot of the two polynomials.
+\myskip
+
+Each of these norm, except for $L_\infty$, is calculated with a numerical integration: it is a family of techniques to approximate the value of a definite integral in without calculation the primitive of the function. This is usefull when is difficult derive the primitive of the function or when the function isn't known in the analytical form.
+
+In this case we used a specific newton-cotes formula, the Simpson's rule.

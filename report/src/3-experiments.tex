@@ -1,0 +1,17 @@
+\chapter{Experiments}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Monomial Approximation}
+
+\subsubsection{Support in $[0,1]$ and $N=M$}
+We have evalueted the two techniques described in Section~\ref{subsec:monomial_approximation_support_0_1_N_equal_M}. For both methods the test include the same polynomial expressed in monomial form, i.e. $\displaystyle p_n(x)=\sum_{i=0}^{n} a_i x^i$, and differents orders $n$. These experiment are in \href{https://github.com/edoardosarri24/probabilistic-soft-real-time-analysis/blob/main/bernstein/src/main/java/Main_monomial_approximation_support_0_1_N_equal_M.java}{this Main.java}.
+
+The results are allign with the limition of the \texttt{double} type described in Section~\ref{sec:bernstein_library_constrains}.
+
+\myskip
+
+If we look the first method, i.e. the direct trasformation of the monomial coefficients to Bernstein coefficients, the results confirm that the method is exact the two polynomial, the approximator and the approximatee are the same. We can see that the error is in the order of $10^{-16}$: if degree is 25 the $L_1$ norm error is $2\times10^{-15}$; if the degree is 1029 the error is $L_1=9.7\times10^{-15}$. If we increse firther the degree by one unit, the system fail and we obtain a $NaN$, exactly as described in Section~\ref{sec:bernstein_library_constrains}.
+
+\myskip
+
+If we look to the method that use the basis matrix to compute the Bernstein coefficients, the thinks change drastically. Already for a small degree, like 10, we have an error of $L_1=1.84 \times 10^{-14}$; if we increase the degree to 35 we have $L_1=2.04\times 10^{-2}$; if the degree is grether than 50 the problem began intractable and we obtain an error of $L_1=1.7\times10^{5}$.
