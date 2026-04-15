@@ -17,7 +17,6 @@ The implementation follows a modular approach for defining polynomials and their
     - `BernsteinPolynomial`: Represents a Bernstein polynomial and provides evaluation methods.
     - `BernsteinBasis` (`basis` sub-package): Abstract base class for the Bernstein basis functions.
     - `LinearBernsteinBasis`: Implements a linear mapping for finite support.
-    - `ExponentialBernsteinBasis`: Implements an exponential mapping for semi-infinite support.
 - **Utilities (`utils` package):**
     - `MyMath`: Mathematical helper functions like binomial coefficients.
     - `MyUtils`: Input validation and general utilities.
