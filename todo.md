@@ -9,7 +9,8 @@
         - $D>R$: Il job $i$-esimo non avrà completato prima del rilascio del job $i+1$-esimo. Teoricamente non è un problema visto che il simulatore è stocastico e quindi è una situazione che è possibile. Praticamente non è un problema, ma è da implementare? È una situazione che ci interessa o in questo caso dobbiao porre $D=R$.
 
 # Bernstein
-- studiare da gemini la convoluzione tra polinomi.
+- studiare la convoluzione tra BP.
+- come sono gestiti gli intervalli in cui un poly è definito durante la convoluzione? direi che un polinomio in forma monomiale non ci sono problemi, ma in un polinomio di berstein si, vist che sono definiti su intervalli specifici.
 - convoluzione in BernsteinPolynomial.
 - riportare il polinomio a grado n da 2n.
 

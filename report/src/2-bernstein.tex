@@ -9,7 +9,7 @@ In Figure~\ref{fig:bernstein_library_class_diagram} we can see the architecture 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Library Constraints}
-\label{sec:bernstein_library_constrains}
+\label{sec:bernstein_library_constraints}
 The critical part of the library, from a computational perspective, is the calculation of the binomial coefficients. The whole library is based on \texttt{double} type and this implies some limitations on the degree of the polynomial that can be evaluated.
 
 \myskip
@@ -17,14 +17,14 @@ The critical part of the library, from a computational perspective, is the calcu
 These limitations are due to two factors:
 \begin{itemize}
     \item Range \\
-        The exponent allow us to represent numbers up to $1.8\times10^{308}$.
+        The exponent allows us to represent numbers up to $1.8\times10^{308}$.
     \item Precision \\
-        We can garantee a precision up to 15 decimal digits: the 52 digits of the mantissa brings the machine $\epsilon$ error to circa $10^{-16}$.
+        We can guarantee a precision up to 15 decimal digits: the 52 digits of the mantissa brings the machine $\epsilon$ error to circa $10^{-16}$.
 \end{itemize}
 
 \myskip
 
-The conseguence of these approach is the following:
+The consequence of this approach is the following:
 \begin{itemize}
     \item Within a $degree<54$ we can compute the polynomial without any precision loss.
     \item If the degree is within the $[54,1029]$ interval we have a precision loss due to the large binomial coefficients and small powers, but we can still compute the polynomial.
@@ -33,74 +33,69 @@ The conseguence of these approach is the following:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Approximation of Empirical Cumulative Distribution Function}
-In this Section we discuss the part of the library responsable to the approximation of a Empirical Cumulative Distribution Function (ECDF) with a Bernstein polynomial.
+In this Section we discuss the part of the library responsible for the approximation of a Empirical Cumulative Distribution Function (ECDF) with a Bernstein polynomial.
 
-The system allow us to approximate both CDF and PDF curve, given an empirical CDF $F$. For each curve we have three variant of basis:
+The system allows us to approximate both CDF and PDF curve, given an empirical CDF $F$. For each curve we have three variants of basis:
 \begin{itemize}
     \item \textbf{Normal}: The original ECDF must be in $[0,1]$, i.e. $F:[0,1]\to[0,1]$.
-    \item \textbf{Linear}: The original ECDF must be in $[a,b]$, i.e. $F:[a,b]\to[0,1]$, where bot $a$ and $b$ must be finite value.
+    \item \textbf{Linear}: The original ECDF must be in $[a,b]$, i.e. $F:[a,b]\to[0,1]$, where both $a$ and $b$ must be finite value.
     \item \textbf{Exponential}: The original ECDF can be in $[0,+\infty]$, i.e. $F:[0,+\infty]\to[0,1]$.
 \end{itemize}
 
 \subsection{Implementation}
-From the Figure~\ref{fig:bernstein_library_class_diagram} we can that there are only two single class the work together:
+From the Figure~\ref{fig:bernstein_library_class_diagram} we can see that there are only two single classes that work together:
 \begin{itemize}
     \item \textbf{BernsteinFromECDF} \\
-        It is the facede of the system. It expose six methods, three for the aproximation of the empirical CDF and three for the empirical PDF.
+        It is the facade of the system. It exposes six methods, three for the approximation of the empirical CDF and three for the empirical PDF.
     \item \textbf{ECDF} \\
-        It is the representation of the empirical CDF. It allow the evaluation of the ECDF in a point $x$.
+        It is the representation of the empirical CDF. It allows the evaluation of the ECDF in a point $x$.
 \end{itemize}
-
-\subsection{Testing}
-The test of this library component validate the correct handling of the empirical data and the correct calculation of the empirical probability.
-
-The test case cover the following: input validation; empty input data; single value case; duplicate data in the input; correct ordering of input data; correctness of approximation of CDF and PDF given the ECDF.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Approximation of Polynomial}
-The system allow us to map a polynomial in monomial form to a Bernstein polynomial. In particular, given a polynomial $\displaystyle P(x) = \sum_{i=0}^{M} a_i x^i$ of degree $M$ with known analytical form, we want identify the Bernstein Polynomial $\displaystyle B(x) = \sum_{i=0}^{N} \beta_i b_{i,N}(x)$ of degree $N$ that best fits it.
+The system allows us to map a polynomial in monomial form to a Bernstein polynomial. In particular, given a polynomial $\displaystyle P(x) = \sum_{i=0}^{M} a_i x^i$ of degree $M$ with known analytical form, we want to identify the Bernstein Polynomial $\displaystyle B(x) = \sum_{i=0}^{N} \beta_i b_{i,N}(x)$ of degree $N$ that best fits it.
 
 \subsection{Implementation}
-In Figure~\ref{fig:bernstein_library_class_diagram} there are the subsystem that is responsable to the approximation from the polynomial defined by monomial to a Bernstein Polynomial. Let's see the main components:
+In Figure~\ref{fig:bernstein_library_class_diagram} there is the subsystem that is responsible for the approximation from the polynomial defined by monomial to a Bernstein Polynomial. Let's see the main components:
 \begin{itemize}
-    \item \textbf{BersteinFromMonomial} \\
+    \item \textbf{BernsteinFromMonomial} \\
         It's the facade to use the system and abstract the domain model that shape the polynomial.
     \item \textbf{Polynomial} \\
-        It's the abstract class the wraps the state of a polynomial, i.e. the coefficients that define the polynomial. It define also the \texttt{eval} method to evaluate the polynomial in given point \texttt{x}, the \texttt{visualyze()} method to plot it self with a given precision and the method \texttt{convolve()} to perform the convolution between two polynomials of the same type.
+        It's the abstract class that wraps the state of a polynomial, i.e. the coefficients that define the polynomial. It defines also the \texttt{eval} method to evaluate the polynomial in given point \texttt{x} and the method \texttt{convolve()} to perform the convolution between two polynomials of the same type.
     \item \textbf{MonomialPolynomial} \\
         Classical polynomial where the basis is defined as an integer power of \texttt{x}.
     \item \textbf{BernsteinPolynomial} \\
-        It represents the Bernstein polynomial. It's defined by the coefficient and the type of \texttt{Basis}. There is only one kind of basis: the linear basis map the input \texttt{x} in the \texttt{[a,b]} intervall.
+        It represents the Bernstein polynomial. It's defined by the coefficient and the type of \texttt{Basis}. There is only one kind of basis: the linear basis map the input \texttt{x} in the \texttt{[a,b]} interval.
 \end{itemize}
 
-\subsection{Testing}
-The tests for this section verify the correctness of the core model.
-
-We ensure that the system have a correct behaviour on the edge case, for different support, that respect the matematical properties of the Bernstein polynomial and that the validation of the input is exaustive.
-
 \subsection{Approximation Techniques}
-We have tested some mapping technoques from the polynomial in monomial form and the Bernstein polynomial.
+We have tested some mapping techniques from the polynomial in monomial form and the Bernstein polynomial.
 
 \subsubsection{Support in $[0,1]$ and $N=M$}
 \label{subsec:monomial_approximation_support_0_1_N_equal_M}
-The simplest scenario is if we have a support in $[0,1]$ and the degree fo the input and output polynomials are the same.
+The simplest scenario is if we have a support in $[0,1]$ and the degree of the input and output polynomials are the same.
 \begin{itemize}
-    \item We can provide a closed form forula to perform the conversion of the coefficients from the monomial ones to the Bernstein ones. This formula is $\displaystyle\beta_i = \sum_{j=0}^{i} \frac{\binom{i}{j}}{\binom{N}{j}} a_j$. We have a $\mathcal{O}(n^2)$ cost due to two inner loops.
-    \item We can multiply the vector of Bernstein coefficients $b$ and a conversion matrix $M$ to obtain the monomial coefficient $a$ as $a=Mb$; in this way we can find the bersntein coefficient as $b=M^{-1}a$ We have a $\mathcal{O}(n^3)+\mathcal{O}(n^2)$ cost due to the inversion of $M$ and two inner loops for the product; the inversion of the matrix is instable for big order of $N$. This basis change matrix is obtain from this steps: the bernstein basis are defined as $\displaystyle B_{i,N}(x) = \binom{N}{i} x^i (1-x)^{N-i}$; we can expand this in $\displaystyle B_{i,N}(x) = \binom{N}{i} x^i \sum_{j=0}^{N-i} \binom{N-i}{j} (-1)^j x^j$ and than obtain $\displaystyle B_{i,N}(x) = \binom{N}{i} x^i \left[ \sum_{j=0}^{N-i} \binom{N-i}{j} (-1)^j x^j \right]$; we can now change $i = k + j$ and obtain $\displaystyle B_{i,N}(x) = \sum_{j=i}^{N} \left[ \binom{N}{i} \binom{n-i}{j-i} (-1)^{j-i} \right] x^j$; at this point we can define the matrix as $M_{i,j} = \begin{cases} \binom{n}{j} \binom{n-j}{i-j} (-1)^{i-j} & \text{ se } i \ge j \\ 0 & \text{ se } i < j \end{cases}$.
+    \item We can provide a closed form formula to perform the conversion of the coefficients from the monomial ones to the Bernstein ones. This formula is $\displaystyle\beta_i = \sum_{j=0}^{i} \frac{\binom{i}{j}}{\binom{N}{j}} a_j$. We have a $\mathcal{O}(n^2)$ cost due to two inner loops.
+    \item We can multiply the vector of Bernstein coefficients $b$ and a conversion matrix $M$ to obtain the monomial coefficient $a$ as $a=Mb$; in this way we can find the Bernstein coefficient as $b=M^{-1}a$. We have a $\mathcal{O}(n^3)+\mathcal{O}(n^2)$ cost due to the inversion of $M$ and two inner loops for the product; the inversion of the matrix is unstable for big order of $N$. This basis change matrix is obtained from these steps: the Bernstein basis are defined as $\displaystyle B_{i,N}(x) = \binom{N}{i} x^i (1-x)^{N-i}$; we can expand this in $\displaystyle B_{i,N}(x) = \binom{N}{i} x^i \sum_{j=0}^{N-i} \binom{N-i}{j} (-1)^j x^j$ and then obtain $\displaystyle B_{i,N}(x) = \binom{N}{i} x^i \left[ \sum_{j=0}^{N-i} \binom{N-i}{j} (-1)^j x^j \right]$; we can now change $i = k + j$ and obtain $\displaystyle B_{i,N}(x) = \sum_{j=i}^{N} \left[ \binom{N}{i} \binom{n-i}{j-i} (-1)^{j-i} \right] x^j$; at this point we can define the matrix as $M_{i,j} = \begin{cases} \binom{n}{j} \binom{n-j}{i-j} (-1)^{i-j} & \text{ se } i \ge j \\ 0 & \text{ se } i < j \end{cases}$.
 \end{itemize}
 
+\subsection{Functionality}
+This part of the library allows some operations that are independent from the domain model.
 \subsection{Distance}
-In the system there's the possibility to testing the distance between two given polynomials and an interval $[a,b]$. This is usefull if we test the polynomial $P_m$ in monomial form and its Berstein approximation $P_b$.
+In the system there's the possibility of testing the distance between two given polynomials and an interval $[a,b]$. This is useful if we test the polynomial $P_m$ in monomial form and its Bernstein approximation $P_b$.
 
-The distances implemented are three the three most used type of norm, that considers the whole interval. We have considered the following:
+The distances implemented are the three most used types of norm, that consider the whole interval. We have considered the following:
 \begin{itemize}
-    \item $L_1$: It measure the global mean error and it's obtained as $\displaystyle\int_a^b |P_m(x) - P_b(x)| dx$.
-    \item $L_2$: It penalyze the big error in the whole intervall $[a,b]$ and it's obtained as $\sqrt{\displaystyle\int_a^b (P_m(x) - P_b(x))^2 dx}$.
-    \item $L_\infty$: It represent the biggest error in the intervall between the two polynomials and it's obtained as $\max_{x \in [a,b]} |P_m(x) - P_b(x)|$.
+    \item $L_1$: It measures the global mean error and it's obtained as $\displaystyle\int_a^b |P_m(x) - P_b(x)| dx$.
+    \item $L_2$: It penalizes the big error in the whole interval $[a,b]$ and it's obtained as $\sqrt{\displaystyle\int_a^b (P_m(x) - P_b(x))^2 dx}$.
+    \item $L_\infty$: It represents the biggest error in the interval between the two polynomials and it's obtained as $\max_{x \in [a,b]} |P_m(x) - P_b(x)|$.
 \end{itemize}
 
 \myskip
 
-Each of these norm, except for $L_\infty$, is calculated with a numerical integration: it is a family of techniques to approximate the value of a definite integral in without calculation the primitive of the function. This is usefull when is difficult derive the primitive of the function or when the function isn't known in the analytical form.
+Each of these norms, except for $L_\infty$, is calculated with a numerical integration: it is a family of techniques to approximate the value of a definite integral without calculating the primitive of the function. This is useful when it is difficult to derive the primitive of the function or when the function isn't known in the analytical form.
 
-In this case we used a specific newton-cotes formula, the Simpson's rule.
+In this case we used a specific Newton-Cotes formula, the Simpson's rule.
+
+\subsubsection{Visualization}
+There is an abstract class that allows us to plot a polynomial with a given precision and in a given interval.

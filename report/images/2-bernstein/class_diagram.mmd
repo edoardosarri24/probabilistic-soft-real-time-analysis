@@ -26,7 +26,6 @@ classDiagram
         <<abstract>>
         - coefficient : double[]
         + eval(double x)
-        + visualize(String title, double lowerBound upperBound, int numbersOfPoints)
         + convolve(Polynomial poly) Polynomial
     }
 
@@ -50,18 +49,25 @@ classDiagram
         - upperSupport : double
     }
 
+    %% Functionality
     class PolynomialDistance {
-        <<final>>
+        <<static-final>>
         + withPlot(Polynomial poly1, Polynomial poly2, double lowerBound upperBound numberOfSamples)
         + normL1(Polynomial poly1, Polynomial poly2, double lowerBound upperBound numberOfSamples)
         + normL2(Polynomial poly1, Polynomial poly2, double lowerBound upperBound numberOfSamples)
         + normLinf(Polynomial poly1, Polynomial poly2, double lowerBound upperBound numberOfSamples)
     }
 
+    class PolynomialVisualization {
+        <<static-final>>
+        + visualize(String title, Polynomial poly, double lowerBound, upperBound, numbersOfPoints)
+    }
+
     %% Relation
     Client --> BernsteinFromMonomial
     Client --> BernsteinFromECDF
     Client --> PolynomialDistance
+    Client --> PolynomialVisualization
     BernsteinFromMonomial --> Polynomial
     Polynomial <|-- MonomialPolynomial
     Polynomial <|-- BernsteinPolynomial
