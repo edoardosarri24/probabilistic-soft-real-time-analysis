@@ -70,8 +70,13 @@ public abstract class Polynomial {
         }
     }
 
+
     // Hooks.
     protected abstract double evalBasis(double x, int i, int degree);
 
-}
+    /**
+     * Convolve this polyunomial with another one dealing with the coefficients.
+     */
+    public abstract Polynomial convolve(Polynomial poly);
 
+}

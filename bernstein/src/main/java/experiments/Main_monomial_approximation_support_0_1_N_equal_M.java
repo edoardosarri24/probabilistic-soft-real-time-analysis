@@ -1,3 +1,4 @@
+package experiments;
 import approximation.BernsteinFromMonomial;
 import domainModel.polynomial.BernsteinPolynomial;
 import domainModel.polynomial.MonomialPolynomial;

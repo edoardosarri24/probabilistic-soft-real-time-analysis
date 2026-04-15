@@ -26,7 +26,8 @@ classDiagram
         <<abstract>>
         - coefficient : double[]
         + eval(double x)
-        - visualize(String title, double lowerBound upperBound, int numbersOfPoints)
+        + visualize(String title, double lowerBound upperBound, int numbersOfPoints)
+        + convolve(Polynomial poly) Polynomial
     }
 
     class MonomialPolynomial {
@@ -40,6 +41,7 @@ classDiagram
 
     class BernsteinBasis {
         <<interface>>
+        + map(double x) double
     }
 
     class LinearBernsteinBasis {

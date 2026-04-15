@@ -1,5 +1,6 @@
 package domainModel.polynomial;
 import domainModel.polynomial.bernsteinBasis.BernsteinBasis;
+import utils.MyMath;
 
 public final class BernsteinPolynomial extends Polynomial {
 
@@ -14,7 +15,16 @@ public final class BernsteinPolynomial extends Polynomial {
     // Hooks.
     @Override
     protected double evalBasis(double x, int i, int degree) {
-        return this.basis.eval(x, i, degree);
+        double t = this.basis.map(x);
+        return MyMath.binomialCoefficient(degree, i)
+            * MyMath.intPow(t, i)
+            * MyMath.intPow(1-t, degree-i);
+    }
+
+    @Override
+    public Polynomial convolve(Polynomial poly) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'convolve'");
     }
 
 }

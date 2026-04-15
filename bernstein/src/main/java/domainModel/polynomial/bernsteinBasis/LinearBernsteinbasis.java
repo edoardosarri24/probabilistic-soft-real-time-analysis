@@ -1,5 +1,4 @@
 package domainModel.polynomial.bernsteinBasis;
-import utils.MyMath;
 import utils.MyUtils;
 
 public final class LinearBernsteinbasis implements BernsteinBasis {
@@ -18,12 +17,11 @@ public final class LinearBernsteinbasis implements BernsteinBasis {
 
     // Methods.
     @Override
-    public double eval(double x, int i, int degree) {
+    public double map(double x) {
         MyUtils.validateRange(x, this.lowerSupport, this.upperSupport);
         double t = (x-lowerSupport) / (upperSupport-lowerSupport);
-        return MyMath.binomialCoefficient(degree, i)
-            * MyMath.intPow(t, i)
-            * MyMath.intPow(1-t, degree-i);
+        return t;
+
     }
 
 }
