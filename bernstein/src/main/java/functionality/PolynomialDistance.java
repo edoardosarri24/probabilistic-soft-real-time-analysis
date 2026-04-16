@@ -27,8 +27,7 @@ public final class PolynomialDistance {
         if (lowerBound >= upperBound)
             throw new IllegalArgumentException(String.format(
         "The support is invalid: lower bound (%f) must be lower than the upper (%f)", lowerBound, upperBound));
-        if (numberOfSamples <= 0)
-            throw new IllegalArgumentException("numberOfSamples must be greater than 0");
+        MyUtils.requirePositive(numberOfSamples, "numberOfSamples");
         // Compute and visualyze distance.
         double normL1 = normL1(poly1, poly2, lowerBound, upperBound, numberOfSamples);
         double normL2 = normL2(poly1, poly2, lowerBound, upperBound, numberOfSamples);
@@ -41,6 +40,14 @@ public final class PolynomialDistance {
      * Calculates the L1 distance (integral of absolute difference) on [a, b] using the simpson rule.
      */
     public static double normL1(Polynomial poly1, Polynomial poly2, double lowerBound, double upperBound, int numberOfSamples) {
+        // Input checks.
+        MyUtils.requireNonNull(poly1, "poly1");
+        MyUtils.requireNonNull(poly2, "poly2");
+        if (lowerBound >= upperBound)
+            throw new IllegalArgumentException(String.format(
+        "The support is invalid: lower bound (%f) must be lower than the upper (%f)", lowerBound, upperBound));
+        MyUtils.requirePositive(numberOfSamples, "numberOfSamples");
+        // Result.
         double integral = integrateSimpson(
             lowerBound, upperBound,
             numberOfSamples,
@@ -52,6 +59,14 @@ public final class PolynomialDistance {
      * Calculates the L2 distance (root of the integral of squared difference) on [a, b] using the simpson rule.
      */
     public static double normL2(Polynomial poly1, Polynomial poly2, double lowerBound, double upperBound, int numberOfSamples) {
+        // Input checks.
+        MyUtils.requireNonNull(poly1, "poly1");
+        MyUtils.requireNonNull(poly2, "poly2");
+        if (lowerBound >= upperBound)
+            throw new IllegalArgumentException(String.format(
+        "The support is invalid: lower bound (%f) must be lower than the upper (%f)", lowerBound, upperBound));
+        MyUtils.requirePositive(numberOfSamples, "numberOfSamples");
+        // Result.
         double integral = integrateSimpson(
             lowerBound, upperBound,
             numberOfSamples,
@@ -66,6 +81,14 @@ public final class PolynomialDistance {
      * Calculates the L-infinity distance (maximum absolute difference) on [a,b].
      */
     public static double normLinf(Polynomial poly1, Polynomial poly2, double lowerBound, double upperBound, int numberOfSamples) {
+        // Input checks.
+        MyUtils.requireNonNull(poly1, "poly1");
+        MyUtils.requireNonNull(poly2, "poly2");
+        if (lowerBound >= upperBound)
+            throw new IllegalArgumentException(String.format(
+        "The support is invalid: lower bound (%f) must be lower than the upper (%f)", lowerBound, upperBound));
+        MyUtils.requirePositive(numberOfSamples, "numberOfSamples");
+        // Result.
         double stepSize = (upperBound-lowerBound) / numberOfSamples;
         double max = 0.0;
         for (int i=0; i <= numberOfSamples; i++) {

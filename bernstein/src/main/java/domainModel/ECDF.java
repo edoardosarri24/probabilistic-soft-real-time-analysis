@@ -15,7 +15,6 @@ public class ECDF {
      * @throws IllegalArgumentException se l'input o un suo elemento è null.
      */
     public ECDF(Collection<Double> inputData) {
-        // Input checks.
         if (inputData == null)
             throw new IllegalArgumentException("I dati in input non possono essere null");
         // Memorize and sort the input.

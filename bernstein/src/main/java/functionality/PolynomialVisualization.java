@@ -8,12 +8,20 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import domainModel.polynomial.Polynomial;
+import utils.MyUtils;
 
 public final class PolynomialVisualization {
 
     private PolynomialVisualization() {}
 
     public static void visualize(String title, Polynomial poly, double lowerBound, double upperBound, int numbersOfPoints) {
+        // Input checks.
+        MyUtils.requireNonNull(title, "title");
+        MyUtils.requireNonNull(poly, "poly");
+        if (lowerBound >= upperBound)
+            throw new IllegalArgumentException(String.format(
+        "The support is invalid: lower bound (%f) must be lower than the upper (%f)", lowerBound, upperBound));
+        MyUtils.requirePositive(numbersOfPoints, "numbersOfPoints");
         if (lowerBound >= upperBound)
             throw new IllegalArgumentException(String.format(
         "The support is invalid: lower bound (%f) must be lower than the upper (%f)", lowerBound, upperBound));

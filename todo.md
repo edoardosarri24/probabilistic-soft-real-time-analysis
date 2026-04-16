@@ -9,6 +9,7 @@
         - $D>R$: Il job $i$-esimo non avrà completato prima del rilascio del job $i+1$-esimo. Teoricamente non è un problema visto che il simulatore è stocastico e quindi è una situazione che è possibile. Praticamente non è un problema, ma è da implementare? È una situazione che ci interessa o in questo caso dobbiao porre $D=R$.
 
 # Bernstein
+- javadoc e asserzioni sugli input.
 - convoluzione tra BP.
 
 ### domande
@@ -18,6 +19,3 @@
     - come funziona l'intervallo $[a,b]$ e $[c,d]$? ho visto che può essere $[a+c,b+d]$ o $[a,b]\cap[c,d]$
 - riportare il polinomio a grado n da 2n.
     Come farlo? ho parlato con il professore e mi ha parlato di un metodo additivo che mantiene anche l'ordine stocastico.
-
-
-
