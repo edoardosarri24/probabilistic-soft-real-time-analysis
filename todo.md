@@ -9,13 +9,13 @@
         - $D>R$: Il job $i$-esimo non avrà completato prima del rilascio del job $i+1$-esimo. Teoricamente non è un problema visto che il simulatore è stocastico e quindi è una situazione che è possibile. Praticamente non è un problema, ma è da implementare? È una situazione che ci interessa o in questo caso dobbiao porre $D=R$.
 
 # Bernstein
-- javadoc e asserzioni sugli input.
+- come si gestisce polinomi di coefficienti diversi nella convoluzione?
 - convoluzione tra BP.
 
 ### domande
-- quando valuto un polinomio di Bernstein con basi diverse, posso usare sempre la stessa formula (coefficient * basis) e mappre l'input a seconda della base?
-- quando vado a fare la convoluzione di due polinomi di berstein:
+- convoluzione BP:
+    - come funziona se i due polinomi sono in $[a,b]$ e $[c,d]$? ho visto che può essere $[a+c,b+d]$ o $[a,b]\cap[c,d]$.
+    - Gemini mi ha dato la forumula ma non riesco a trovarla.
     - come gestisco le basi diverse? si possono convolvere BP con basi diverse?
-    - come funziona l'intervallo $[a,b]$ e $[c,d]$? ho visto che può essere $[a+c,b+d]$ o $[a,b]\cap[c,d]$
 - riportare il polinomio a grado n da 2n.
     Come farlo? ho parlato con il professore e mi ha parlato di un metodo additivo che mantiene anche l'ordine stocastico.
