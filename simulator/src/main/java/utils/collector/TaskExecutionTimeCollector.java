@@ -38,7 +38,7 @@ public final class TaskExecutionTimeCollector {
     public void visualyze() {
         try {
             // Create a Python process using 'uv run' to handle dependencies automatically.
-            ProcessBuilder pb = new ProcessBuilder("uv", "run", "src/distribution_extractor.py");
+            ProcessBuilder pb = new ProcessBuilder("uv", "run", "src/main/java/utils/collector/distribution_extractor.py");
             pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
             pb.redirectError(ProcessBuilder.Redirect.INHERIT);
             Process process = pb.start();
